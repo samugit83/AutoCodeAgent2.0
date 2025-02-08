@@ -1,136 +1,94 @@
-import logging
 import json
 import os
 from typing import List, Dict
-from .prompts import (
-    CODE_SYSTEM_PROMPT, 
-    EVALUATION_AGENT_PROMPT
-)
-from .utils import sanitize_gpt_response
-from models.models import call_model
 from .default_tools import generate_default_tools
-
-class MemoryLogHandler(logging.Handler):
-    def __init__(self, memory_logs: List[str], *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.memory_logs = memory_logs
-
-    def emit(self, record):
-        log_entry = self.format(record)
-        self.memory_logs.append(log_entry)
+from .logging_handler import LoggingConfigurator
+from .agent_plan_generator import PlanGenerator
+from .agent_plan_evaluator import PlanEvaluator
+from .agent_subtask_executor import SubtaskExecutor
 
 class CodeAgent:
     def __init__(self, chat_history: List[Dict], tools: List[str]):
-        logging.basicConfig(level=logging.DEBUG)  
+        """
+        Initializes the CodeAgent with conversation history and a list of tool names.
+        Additional default tools are appended automatically.
+        """
         self.chat_history = chat_history
-        self.tools = tools
-        self.memory_logs = []  # Initialize the logs list
-        self.logger = logging.getLogger(__name__)
-        self.json_plan = None
+        self.tools = tools + generate_default_tools()
+        self.execution_logs = []  # This list will collect logs (excluding those with 'no_memory' extra).
+        self.logger = LoggingConfigurator.configure_logger(self.execution_logs)
+        self.enrich_log = LoggingConfigurator.enrich_log
         self.models = {
             "TOOL_HELPER_MODEL": os.getenv("TOOL_HELPER_MODEL"), 
             "JSON_PLAN_MODEL": os.getenv("JSON_PLAN_MODEL"),
             "EVALUATION_MODEL": os.getenv("EVALUATION_MODEL"),
             "SIMPLE_RAG_EMBEDDING_MODEL": os.getenv("SIMPLE_RAG_EMBEDDING_MODEL")
         }
-
-        memory_handler = MemoryLogHandler(self.memory_logs)
-        memory_handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
-        memory_handler.setFormatter(formatter)
-        self.logger.addHandler(memory_handler)
+        # Instantiate helper components.
+        self.plan_generator = PlanGenerator(self.chat_history, self.tools, self.models["JSON_PLAN_MODEL"])
+        self.plan_evaluator = PlanEvaluator(self.models["EVALUATION_MODEL"])
+        self.subtask_executor = SubtaskExecutor(self.logger, self.enrich_log, self.execution_logs)
+        self.json_plan = None
 
     def run_agent(self):
-        tools = generate_default_tools()
+        """
+        Orchestrates the agent's execution: generating a plan, executing subtasks,
+        and evaluating the output iteratively.
+        """
         try:
-            self.logger.info(f"\n\n\n\n\n\n🟢 Starting agent with main task: {self.chat_history}")
-            self.tools = self.tools + tools
-
-            agent_prompt = CODE_SYSTEM_PROMPT.format(
-                conversation_history=self.chat_history,
-                tools=self.tools
+            self.logger.info(
+                self.enrich_log(f"🚀🚀🚀 Starting agent with user request: {json.dumps(self.chat_history, indent=4)}", "add_green_divider"),
+                extra={'no_memory': True}
             )
 
-            agent_output_str = call_model(
-                chat_history=[{"role": "user", "content": agent_prompt}],
-                model=self.models["JSON_PLAN_MODEL"]
+            # Generate initial JSON plan and agent prompt.
+            self.json_plan, agent_prompt = self.plan_generator.generate_plan()
+
+            self.logger.info(
+                self.enrich_log(f"💡💡💡 Code agent json plan: {json.dumps(self.json_plan, indent=4)}", "add_green_divider"),
+                extra={'no_memory': True} 
             )
-
-            agent_output_str = sanitize_gpt_response(agent_output_str)
-            self.json_plan = json.loads(agent_output_str)
-
-            print(f"\n\n🔵 Code agent json plan: {json.dumps(self.json_plan, indent=4)}")
 
             max_iterations = 2
             iteration = 0
 
             while iteration <= max_iterations + 1:
                 iteration += 1
-                print(f"\n\n🟠 Executing iteration: {iteration}")
-                subtasks = self.json_plan["subtasks"]
-                results = {}
+                self.logger.info(
+                    f"● ● ● JSON plan execution iteration nr. {iteration} ● ● ● \n\n",
+                    extra={'no_memory': True}
+                ) 
+                
+                # Execute each subtask in the JSON plan.
+                self.subtask_executor.execute_subtasks(self.json_plan)
 
-                # Execute each subtask in the JSON plan
-                for subtask in subtasks:
-                    code_string = subtask["code"]
-                    # Pass in the logger to the exec context
-                    temp_namespace = {"logger": self.logger}
-                    
-                    # Execute the code string which now uses logger for output
-                    exec(code_string, temp_namespace)
-                    
-                    subtask_name = subtask["subtask_name"]
-                    input_tool_name = subtask.get("input_from_subtask", "")
-
-                    # If the tool exists in the temp_namespace, proceed
-                    if subtask_name in temp_namespace:
-                        tool_func = temp_namespace[subtask_name]
-
-                        # Determine input if specified
-                        if input_tool_name:
-                            previous_result = results.get(input_tool_name, {})
-                            result = tool_func(previous_result)  # Call the function with the previous result
-                        else:
-                            result = tool_func()
-
-                        results[subtask_name] = result
-                        self.logger.info(f"\n\n🟣 Output from '{subtask_name}': {result}")
-
-                print(f"\n🟠 Memory logs at iteration {iteration}: {self.memory_logs}")
-
-                evaluation_prompt = EVALUATION_AGENT_PROMPT.format(
-                    original_prompt=agent_prompt,
-                    original_json_plan=json.dumps(self.json_plan, indent=4),
-                    max_iterations=max_iterations,
-                    iteration=iteration,
-                    logs=self.memory_logs
+                # Evaluate the results of the current iteration.
+                evaluation_output = self.plan_evaluator.evaluate(
+                    agent_prompt, self.json_plan, iteration, max_iterations, self.execution_logs
                 )
 
-                evaluation_output_str = call_model(
-                    chat_history=[{"role": "user", "content": evaluation_prompt}],
-                    model=self.models["EVALUATION_MODEL"]
-                )
-
-                evaluation_output_str = sanitize_gpt_response(evaluation_output_str)
-                print('\n\n🟠 evaluation_output_str', evaluation_output_str)
-
-                evaluation_output = json.loads(evaluation_output_str)
-
-                # Check if the evaluation is satisfactory
                 if iteration < max_iterations + 1:
                     if evaluation_output.get("satisfactory", False):
-                        print(f"\n\n\🟢🟢🟢 Evaluation is satisfactory, returning final answer: {evaluation_output.get('final_answer', '')}")
-                        return evaluation_output.get("final_answer", "")
-                    else:
-                        if evaluation_output.get("satisfactory", False) is False and evaluation_output.get("max_iterations_reached", False) is False:
-                            print(f"\n\n🔴🔴🔴 Evaluation is not satisfactory, updating json plan: {evaluation_output}")
+                        self.logger.info(
+                            self.enrich_log(f"✅ Evaluation is satisfactory, returning final answer: {evaluation_output.get('final_answer', '')}", "add_green_divider"),
+                            extra={'no_memory': True}
+                        )
+                        return evaluation_output.get("final_answer", "")  
+                    else: 
+                        if (not evaluation_output.get("satisfactory", False) and  
+                            not evaluation_output.get("max_iterations_reached", False)):
+                            self.logger.info(
+                                self.enrich_log(f"❌ Evaluation is not satisfactory, updating JSON plan.", "add_red_divider"),
+                                extra={'no_memory': True}
+                            )
                             self.json_plan = evaluation_output.get("new_json_plan", {})
+                            self.logger.info(f"Evaluation is not satisfactory. {evaluation_output.get('thoughts', '')}. Now updating JSON plan...\n\n 💡💡💡 New JSON plan: {self.json_plan}")
                         elif evaluation_output.get("max_iterations_reached", False):
-                            self.logger.warning("\n\n🔴 Max iterations reached without satisfactory evaluation.")
+                            self.logger.warning("Max iterations reached without satisfactory evaluation.")
                             return evaluation_output.get("final_answer", "")
                 else:
-                    self.logger.warning("\n\n🔴 Max iterations reached without satisfactory evaluation.")
+                    self.logger.warning("❌❌❌ Max iterations reached without satisfactory evaluation.", extra={'no_memory': True})
                     return evaluation_output.get("final_answer", "")
                     
         except Exception as e:
-            self.logger.error(f"\n\n\n\n🔴 Error running agent: {e}")
+            self.logger.error(f"Error running agent: {e}")

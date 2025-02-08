@@ -1,10 +1,5 @@
 Flask
-transitions
-redis
-pickle-mixin
 openai
-graphviz
-pygraphviz
 numpy
 beautifulsoup4
 requests
@@ -14,3 +9,5 @@ chromadb
 spacy
 neo4j
 PyPDF2
+playwright
+python-dotenv

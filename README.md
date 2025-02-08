@@ -1,4 +1,4 @@
-# AutoCodeAgent 2.0 with multi RAG Retrieval/Ingestion techniques
+# AutoCodeAgent 2.0 with multi RAG Retrieval/Ingestion techniques - Version 2.0.1
 
 ## Introduction
 Welcome to the project! This section provides a general overview of the project, its goals, and its main features.
@@ -24,6 +24,10 @@ Step-by-step guide to setting up the project for the first time.
 Description of the tools that are included by default in the project.
 [Go to Default Tools](#default-tools)
 
+## NEW! Integration of SurfAi as an Automated Web Navigation Tool (local function type)
+We have integrated SurfAi into our suite as a powerful automated web navigation tool. This enhancement enables seamless interaction with web pages, efficient extraction of data and images, and supports the resolution of more complex tasks through intelligent automation.
+[Go to SurfAi Integration](#surfai-integration)
+
 ## All RAG Techniques at Your Fingertips, Each as a Tool
 Overview of the different RAG techniques available and how to use them as tools.
 [Go to All RAG Techniques](#all-rag-techniques)
@@ -38,13 +42,19 @@ Detailed description of the Hybrid Vector Graph RAG technique.
 
 
 
-
 ## Introduction <a name="introduction"></a>
 Welcome to the Advanced AI Code Agent project! This intelligent agent leverages cutting-edge AI techniques to automatically generate, execute, and refine Python code in a modular and iterative way. It is designed to break down complex tasks into manageable subtasks, generate precise code for each, and orchestrate their execution using a variety of tools and libraries.
 The Advanced AI Code Agent is an AI-powered system that automates the process of decomposing complex problems, writing Python code, executing that code, and evaluating the results. It uses a combination of AI language models, dynamic code execution, and an evaluation loop to refine its approach until the task is successfully completed. This repository provides a robust framework that you can extend to solve a wide range of problems by simply defining new tasks and integrating appropriate tools.
 
-### What's New in Version 2.0
-The idea is to treat the RAG ingestion and retrieval functions as tools in the form of local functions, so the agent will use them as tools and insert them into the flow of the JSON plan.
+AutoCodeAgent allows you to handle complex tasks such as:
+
+- *"I want to review the picture on Wikipedia for three different actors. Use browser_navigation to visit each actor's Wikipedia page, please use your vision capability guess the actor's age in the picture. Your goal is to guess the actor's age in the picture. Then, create a summary when you compare the picture age with the actual actor's age. Once you have completed the report, send it by email to (your_email). The actors are: Brad Pitt Robert De Niro Marlon Rando. Good luck!"*
+
+- *"Visit 4 different electronics e-commerce sites to get the average price of the top 3 search results for the query: iPhone 13 Pro. The websites are: https://www.bestbuy.com/, https://www.croma.com/, https://www.mediaworld.it/, https://www.boulanger.com/. Then, provide me with a price comparison report. If you find a currency other than the euro, search Google for the latest exchange rate and convert the prices. Finally, save the report in the simple rag database and send me the same report via email to (your_email)"*
+
+- *"Go to LinkedIn Feed and log in using your email (your_email) and password (your_password). Scroll down to the first post and leave a comment that is both intelligent and contextually relevant, taking into account the text and image. Your comment must contain at least 40 words. Once you have posted your comment, email the execution result to (your_email)."*
+
+
 AutoCodeAgent 2.0 introduces RAG (Retrieval-Augmented Generation) capabilities, empowering the system with multi RAG techniques, each having its own ingestion and retrieval tools. 
 The system uses many persistent Database integrated in Docker, like Vector ChromaDB, Graph Neo4j, and Others.
 The great potential of this agent lies in its ability to use many RAG techniques as tools for both ingestion and retrieval.
@@ -60,6 +70,7 @@ Dynamically analyze and preprocess data before ingestion, ensuring high compatib
 Efficiently retrieve relevant information from the database based on context, enabling informed decision-making and more accurate code generation.
 Seamlessly integrate retrieved data into ongoing tasks, ensuring continuity and adaptability.
 These features allow the agent to leverage previously ingested knowledge and improve task performance, particularly in scenarios requiring iterative learning or contextual awareness.
+
 
 
 ## Features <a name="features"></a>
@@ -109,8 +120,6 @@ Sanitizes outputs from AI model responses to ensure robust JSON parsing and prev
 ### Here you can find a workflow that illustrates the agent's operation:
 ![AutoCode Agent with RAG Workflow](./static/autocode.png)
 
-
-
 ## Each tool can be added in different ways: <a name="all-ways-to-add-tools"></a>
 
 1) **ONLY LIBRARY NAME**: specifying only the name of the Python library:
@@ -118,146 +127,183 @@ Ensure the library is listed in requirements.txt
 ```python
     {   
         "tool_name": "numpy",
-        "lib_name":["numpy"]
+        "lib_names":["numpy"]
     }
 ```
 
 2) **LIBRARY NAME + INSTRUCTIONS + CODE EXAMPLE**: specifying a python library, providing a description, and a non-strict code example:
 Ensure the library is listed in requirements.txt
 ```python
-    {   
-        "lib_name": ["geopy"],
-        "lib_name": ["geopy"],
+    {    
+        "tool_name": "geopy",
+        "lib_name": ["geopy"], 
         "instructions": "A library to get the coordinates of a given location.",
         "code_example": """
-            from geopy.geocoders import Nominatim
-            from geopy.exc import GeocoderTimedOut, GeocoderServiceError
-
-            def get_coordinates({{user_agent, location}}):
             
+            def get_coordinates(previous_output):
+            
+                from geopy.geocoders import Nominatim
+                updated_dict = previous_output.copy()
+
                 user_agent = "my-app/1.0"
-                location = "Rome, Italy"
+                location = updated_dict.get("location", "")
             
                 geolocator = Nominatim(user_agent=user_agent)
 
-                try:
+                try: 
                     # Geocode the location
                     geo_location = geolocator.geocode(location)
                     
                     if geo_location:
-                        return (geo_location.latitude, geo_location.longitude)
+                        updated_dict["coordinates"] = (geo_location.latitude, geo_location.longitude)
                     else:
-                        print(f"Location '{{location}}' not found.")
-                        return None
+                        updated_dict["coordinates"] = None
+                    return updated_dict
 
-                except GeocoderTimedOut:
-                    print("Geocoding service timed out.")
-                    return None
-                except GeocoderServiceError as e:
-                    print(f"Geocoding service error: {{e}}")
-                    return None
+                except Exception as error:
+                    logger.error(f"Error retrieving coordinates: {error}")
+                    return previous_output
 
         """
     }
+
 ```
 
 3) **LIBRARIES + INSTRUCTIONS + STRICT CODE EXAMPLE**: defining a precise custom function associated with one or more libraries:
 ```python
-            {
-            "tool_name": "send_email",
-            "lib_names": ["smtplib", "email"],
-            "instructions": "Send an email to the user with the given email, subject and html content.",
-            "use_exaclty_code_example": True,
-            "code_example": """
-                def send_email(email: str, subject: str = "", html: str = "", GMAILUSER: str = "your_email@gmail.com", PASSGMAILAPP: str = "your_password") -> dict:
+    {
+        "tool_name": "send_email",
+        "lib_names": ["smtplib", "email"],
+        "instructions": "Send an email to the user with the given email, subject and html content.",
+        "use_exactly_code_example": True,
+        "code_example": """
+def send_email(previous_output, GMAILUSER: str = "your_email@gmail.com", PASSGMAILAPP: str = "your_password") -> dict:
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
 
-                    import smtplib
-                    from email.mime.text import MIMEText
-                    from email.mime.multipart import MIMEMultipart
+    # Gmail credentials
+    usermail = GMAILUSER
+    passgmailapp = PASSGMAILAPP
 
-                    # Gmail credentials
-                    usermail = GMAILUSER
-                    passgmailapp = PASSGMAILAPP
+    # SMTP server configuration
+    smtp_server = "smtp.gmail.com"
+    port = 587  # For TLS encryption
 
-                    # SMTP server configuration
-                    smtp_server = "smtp.gmail.com"
-                    port = 587  # For TLS encryption
+    try:
+        updated_dict = previous_output.copy()
 
-                    try:
-                        # Create the email message
-                        message = MIMEMultipart()
-                        message["From"] = usermail
-                        message["To"] = email
-                        message["Subject"] = subject
+        # Create the email message
+        message = MIMEMultipart()
+        message["From"] = usermail
+        message["To"] = updated_dict.get("email", "")
+        message["Subject"] = updated_dict.get("subject", "")
 
-                        # Attach the HTML content
-                        if html:
-                            message.attach(MIMEText(html, "html"))
+        # Attach the HTML content
+        html_content = updated_dict.get("html", "")
+        if html_content:
+            message.attach(MIMEText(html_content, "html"))
 
-                        # Establish connection to the SMTP server
-                        with smtplib.SMTP(smtp_server, port) as server:
-                            server.starttls()  # Secure the connection
-                            server.login(usermail, passgmailapp)  # Log in to the SMTP server
-                            
-                            # Send the email
-                            server.sendmail(usermail, email, message.as_string())
+        # Establish connection to the SMTP server
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls()  # Secure the connection
+            server.login(usermail, passgmailapp)  # Log in to the SMTP server
+            
+            # Send the email
+            server.sendmail(usermail, updated_dict.get("email", ""), message.as_string())
+            logger.info(f"Email sent to {updated_dict.get('email', '')} with subject {updated_dict.get('subject', '')}")
 
-                        return {"info": "Email sent successfully"}
-
-                    except Exception as error:
-                        print(f"Error sending email: {{error}}")
-                        return {}
-
-                """
-            }
+        updated_dict["info"] = "Email sent successfully"
+        return updated_dict
+    except Exception as error:
+        logger.error(f"Error sending email: {error}")
+        return previous_output
+"""
+    }
 ```
 
 4) Add tools such as LLMs for support:
 ```python
     {
+        "tool_name": "helper_model",
         "lib_names": ["models"],
-        "instructions": "An LLM usefull to elaborate any output from previous steps. Don't create loops, just use the LLM to elaborate the output for just one step.",
-        "use_exaclty_code_example": True,
+        "instructions": "An LLM useful to elaborate any output from previous steps. Don't create loops, just use the LLM to elaborate the output for a single step.",
+        "use_exactly_code_example": True,
         "code_example": """
-            from models.models import call_model
-            prompt = f"<here you describe how to elaborate the previous output>: <previous_output>"
-            llm_response = call_model(
-                chat_history=[{"role": "user", "content": prompt}],
-                model="o1-mini"
-            )
-            return {"elaborated_output": llm_response}
-        """
+def call_helper_model(previous_output):
+    from models.models import call_model
+    try:
+        updated_dict = previous_output.copy()
+
+        message = updated_dict.get('message', '')
+        if len(message) > 350000:
+            message = message[:350000]
+        updated_dict['message'] = message
+        
+        prompt = f"here you describe how to elaborate the previous output: {updated_dict.get('message','')}"
+        llm_response: str = call_model(
+            chat_history=[{"role": "user", "content": prompt}],
+            model="$TOOL_HELPER_MODEL"
+        )
+        updated_dict["elaborated_output"] = llm_response
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error calling helper model: {e}")
+        return previous_output
+"""
     }
 ```
 
 5) **ADD LOCAL FUNCTIONS**: adding a local function to the agent, we use this technique to add RAG retrieval and RAG ingestion as tools:
 ```python
     {
-        "tool_name": "ingest_hybrid_vector_graph_rag", 
-        "lib_names": ["rag.hybrid_vector_graph_rag"],
-        "instructions": """This is an Hybrid Vector Graph RAG ingestion tool. Ingest the text into the vector and graph database.""",
-        "use_exaclty_code_example": True,
+        "tool_name": "ingest_hybrid_vector_graph_rag",
+        "lib_names": ["tools.rag.hybrid_vector_graph_rag"],
+        "instructions": "This is an Hybrid Vector Graph RAG ingestion tool. Ingest the text into the vector and graph database.",
+        "use_exactly_code_example": True,
         "code_example": """
-            def ingest_hybrid_vector_graph_rag_db(previous_output):
-                # Ingest texts into the vector and graph database
-                '''
-                previous_output input types:
-                    "text": string
-                return types:
-                    "ingest_result": string
-                '''
-                from rag.hybrid_vector_graph_rag.engine import HybridVectorGraphRag
-
-                try:
-                    engine = HybridVectorGraphRag()
-                    text = previous_output.get("text", "")
-                    ingest_result = engine.ingest([text])
-                    return {"ingest_result": ingest_result} 
-                except Exception as e:
-                    logger.error(f"Error ingesting texts: {e}")
-                    return {"ingest_result": ""}
-        """
+def ingest_hybrid_vector_graph_rag_db(previous_output):
+    from tools.rag.hybrid_vector_graph_rag.engine import HybridVectorGraphRag
+    try:
+        updated_dict = previous_output.copy()
+        
+        engine = HybridVectorGraphRag()
+        text: str = updated_dict.get("text", "")
+        ingest_result: dict = engine.ingest([text])
+        updated_dict["ingest_result"] = str(ingest_result)
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error ingesting texts: {e}")
+        return previous_output
+"""
     }
+```
+
+To add new tools, simply insert them into the tools array in app.py.
+Some rules to follow:
+- The tool name (tool_name) must be unique.
+- Use exactly the same JSON structure you see, for example, for geopy.
+- For the function, always use this schema:
+
+```python
+def function_name(previous_output):
+
+    from library_name import method_name
+    updated_dict = previous_output.copy()
+    # some variables here
+
+    try: 
+        # add your logic here
+        # remember to always update updated_dict based on what the function returns
+        # for example: updated_dict["new_variable_1"] = "new_value_1"
+        # for example: updated_dict["new_variable_2"] = "new_value_2"
+        # always specify the type for the outputs of the library functions used, for example: answer: str = method_name(args)
+
+        return updated_dict
+
+    except Exception as error:
+        logger.error(f"Error for the function_name: {function_name} : {error}")
+        return previous_output
 ```
 
 ## Video Demo <a name="video-demo"></a>
@@ -271,7 +317,7 @@ Follow the steps below to set up and run the pplication using Docker. This setup
 
 ### Prerequisites
 - **Docker**: Ensure that Docker is installed on your system. You can download it from [here](https://www.docker.com/get-started).
-- **Docker Compose**: Typically included with Docker Desktop installations. Verify by running `docker-compose --version`.
+- **Docker Compose**: Typically included with Docker Desktop installations. Verify by running `docker-compose --version`. 
 
 ### Steps to Initialize the Application
 
@@ -296,35 +342,35 @@ docker-compose build
 docker-compose up -d
 ```
 
-5. Check the backend logs:
+5. Check the backend logs: 
 ```bash
 docker logs -f flask_app
 ```
 
-6. Access the AI Agent chat interface:
+6. Access the AI Agent chat interface: 
 ```bash
-http://localhost:5000
+http://localhost:5000  
 ```
 
 - if you want to rebuild and restart the application:
 
 ```bash
 docker-compose down
-docker-compose build
+docker-compose build --no-cache
 docker-compose up -d
-docker logs -f flask_app
+docker logs -f flask_app  
 ```
 
 7. Environment Variables:
 Create a file named .env in the root folder and insert all the following variables to ensure the application functions correctly:
 
 ```bash
-OPENAI_API_KEY=your api key
-FLASK_PORT=5000
-DB_PATH=./rag/database/chroma_db
+OPENAI_API_KEY=your_api_key
+FLASK_PORT=5000 
+CHROMA_DB_PATH=./tools/rag/database/chroma_db
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USER=neo4j
-NEO4J_PASSWORD=your password
+NEO4J_PASSWORD=your_password 
 
 SIMPLE_RAG_CHUNK_SIZE=1500  # chunk size for simple rag
 SIMPLE_RAG_OVERLAP=200  # overlap for simple rag
@@ -341,10 +387,12 @@ HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH=10000  # max context length for
 TOOL_HELPER_MODEL=gpt-4o  # tool helper model
 JSON_PLAN_MODEL=gpt-4o  # json plan model
 EVALUATION_MODEL=gpt-4o  # evaluation model
+SURF_AI_JSON_TASK_MODEL=gpt-4o  # surf ai json task model, important: for surfAi you must use a multimodal modal with text + vision capabilities
 
-SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002S  # simple rag embedding model
+SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002  # simple rag embedding model
 HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL="text-embedding-ada-002"  # hybrid vector graph rag embedding vector model
 HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL="gpt-4o"  # hybrid vector graph rag summarization graph node model
+
 ```
 
 
@@ -352,6 +400,8 @@ HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL="gpt-4o"  # hybrid vector
 The default tools are pre-implemented and fully functional, supporting the agent in executing subtasks. These default tools are listed below and can be found in the file: 
 /code_agent/default_tools.py
 
+- browser_navigation
+  - integration of SurfAi for web navigation, data and image extraction, with multimodal text + vision capabilities
 - helper_model
   - An LLM useful for processing the output of a subtask
 - ingest_simple_rag
@@ -366,6 +416,39 @@ The default tools are pre-implemented and fully functional, supporting the agent
   - A tool for searching information on the web
 - send_email
   - A tool for sending an email
+
+
+
+## SurfAi 🌐🤖 - now as a default tool! <a name="surfai-integration"></a>
+
+**AI-Powered Web Automation Agent** - Version 1.1.0
+
+SurfAi is an intelligent and lightweight web automation engine that harnesses AI to interpret natural language instructions and automate web interactions using Playwright. It seamlessly integrates large language model capabilities with browser automation to execute complex tasks.
+
+The groundbreaking innovation lies in its integration as a tool within AutoCodeAgent, enabling the execution of even more sophisticated tasks. SurfAi allows users to navigate web pages, interact with them, extract information, and visually analyze images, ultimately delivering a structured output for the next tool in the complex task workflow.
+
+## Video Demo 
+Discover the capabilities of SurfAi:
+[Task: Post on Linkedin](https://youtu.be/n2jnfNpV6BQ).
+[Task: Job application on LinkedIn](https://youtu.be/T3Ej4-eeDag).
+[Task: Add a new work experience on LinkedIn](https://youtu.be/hR73ftZ4t_4).
+[Task: Search for an available hotel on Booking.com and get info](https://youtu.be/o5Gn-XVv_h8).
+
+## Features ✨
+
+- **AI-Driven Task Generation**: Converts natural language prompts into executable Playwright commands
+- **Self-Correcting Workflow**: Dynamic task adjustment based on execution results and page context
+- **Interactive Element Highlighting**: Visual numbering system for precise element targeting
+- **Multi-Strategy Execution**: Automatic fallback commands for reliable task completion
+- **Context-Aware Scraping**: Real-time page analysis with intelligent content truncation
+- **Comprehensive Logging**: Detailed execution tracking with memory buffering
+- **Data Extraction**: Extract data from the page and store it in the tasks to provide a final answer
+- **Multi-Tab Navigation**: Navigate on multiple tabs and switch between them
+
+If the tool is invoked, you can view the navigation by accessing:
+```bash
+http://localhost:6901/vnc.html
+```
 
 
 
@@ -417,8 +500,9 @@ Hybrid Vector Graph RAG takes data retrieval to the next level by combining the 
 - *"Save the latest research papers on quantum computing in the database using the tool: `ingest_hybrid_vector_graph_rag`."*
 - *"Find information about the connections between AI and healthcare using the tool: `retrieve_hybrid_vector_graph_rag`."*
 
+
 **Bulk Ingestion:**
-You can ingest a corpus by directly uploading files in txt or pdf format to the /rag/hybrid_vector_graph_rag/corpus folder.
+You can ingest a corpus by directly uploading files in txt or pdf format to the /tools/rag/hybrid_vector_graph_rag/corpus folder.
 To start the batch processing, simply make an API call:
 ```bash
 curl -X POST "http://localhost:5000/hybrid-vector-graph-rag-ingest-corpus"
@@ -436,7 +520,7 @@ MATCH (n:Chunk) DETACH DELETE n
 ```
 
 ### Here you can find a workflow that illustrates hybrid vector graph RAG ingestion and retrieval:
-![Hybrid Vector Graph RAG Workflow](./rag/hybrid_vector_graph_rag/hybrid_vectr_graph_rag_workflow.png)
+![Hybrid Vector Graph RAG Workflow](./tools/rag/hybrid_vector_graph_rag/hybrid_vectr_graph_rag_workflow.png)
 
 ### Ingestion steps:
 
@@ -508,3 +592,25 @@ With these RAG techniques, AutoCodeAgent 2.0 transforms the way you interact wit
 
 
 
+## Contribution Guidelines 
+
+We welcome contributions from the community! If you'd like to contribute, please follow these guidelines:
+
+### How to Contribute
+1. **Fork the Repository** – Click the "Fork" button at the top right of this page and clone the forked repository to your local machine.
+2. **Create a Branch** – Use a descriptive branch name related to the feature or fix (e.g., `feature-new-component` or `fix-bug-123`).
+3. **Make Your Changes** – Implement your feature, bug fix, or improvements, ensuring the code follows the project's coding style.
+4. **Test Your Changes** – Run all tests to ensure that nothing is broken.
+5. **Commit Your Changes** – Use clear and concise commit messages (e.g., `fix: resolve issue with user authentication`).
+6. **Push to GitHub** – Push your branch to your forked repository.
+7. **Submit a Pull Request (PR)** – Open a PR against the `main` or `develop` branch with a clear description of your changes.
+
+### Contribution Guidelines
+- Follow the coding standards and style used in the project.
+- Keep PRs focused and small for easier review.
+- Ensure new features or fixes are well-tested.
+- Provide clear documentation if introducing a new feature.
+
+By contributing, you agree that your changes will be licensed under the same license as the project.
+
+Thank you for helping improve this project! 🚀

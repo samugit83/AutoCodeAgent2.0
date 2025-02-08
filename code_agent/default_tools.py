@@ -1,304 +1,300 @@
 import copy
-import re
 import os
+import logging
+from string import Template
+
+logger = logging.getLogger(__name__)
+
 
 DEFAULT_TOOLS = [
-            {
-                "tool_name": "helper_model",
-                "lib_names": ["models"],
-                "instructions": "An LLM usefull to elaborate any output from previous steps. Don't create loops, just use the LLM to elaborate the output for just one step.",
-                "use_exaclty_code_example": True,
-                "code_example": """
-                    def call_helper_model(previous_output):
-                        '''
-                        previous_output input types:
-                            "message": string
-                        return types:
-                            "elaborated_output": string
-                        '''
-                        from models.models import call_model
-                        prompt = f"<here you describe how to elaborate the previous output>: <previous_output.message>"
-                        llm_response = call_model(
-                            chat_history=[{"role": "user", "content": prompt}],
-                            model="{TOOL_HELPER_MODEL}"
-                        )
-                        return {"elaborated_output": llm_response}
-                    except Exception as e:
-                        logger.error(f"Error calling helper model: {e}")
-                        return {"elaborated_output": ""}
-                """
-            },
-            { 
-                "tool_name": "ingest_simple_rag",
-                "lib_names": ["rag.simple_rag"],
-                "instructions": """This is a simple RAG ingestion tool. Ingest the text into the vector database.""",
-              
-                "use_exaclty_code_example": True,
-                "code_example": """
-                    def ingest_rag_db(previous_output):
-                        # Ingest texts into the database
-                        '''
-                        previous_output input types:
-                            "text": string
-                        return types:
-                            "ingest_result": string
-                        '''
-                        from rag.simple_rag.ingest import ingest_texts
+    {
+        "tool_name": "helper_model",
+        "lib_names": ["models"],
+        "instructions": "An LLM useful to elaborate any output from previous steps. Don't create loops, just use the LLM to elaborate the output for a single step.",
+        "use_exactly_code_example": True,
+        "code_example": """
+def call_helper_model(previous_output):
+    from models.models import call_model
+    try:
+        updated_dict = previous_output.copy()
 
-                        text = previous_output.get("text", "")
+        message = updated_dict.get('message', '')
+        if len(message) > 350000:
+            message = message[:350000]
+        updated_dict['message'] = message
+        
+        prompt = f"here you describe how to elaborate the previous output: {updated_dict.get('message','')}"
+        llm_response: str = call_model(
+            chat_history=[{"role": "user", "content": prompt}],
+            model="$TOOL_HELPER_MODEL"
+        )
+        updated_dict["elaborated_output"] = llm_response
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error calling helper model: {e}")
+        return previous_output
+"""
+    },
+    {
+        "tool_name": "ingest_simple_rag",
+        "lib_names": ["tools.rag.simple_rag"],
+        "instructions": "This is a simple RAG ingestion tool. Ingest the text into the vector database.",
+        "use_exactly_code_example": True,
+        "code_example": """
+def ingest_rag_db(previous_output):
+    from tools.rag.simple_rag.ingest import ingest_texts
+    try:
+        updated_dict = previous_output.copy()
+        
+        text: str = updated_dict.get("text", "")
+        ingest_result: dict = ingest_texts([text], model="$SIMPLE_RAG_EMBEDDING_MODEL")
+        updated_dict["ingest_result"] = str(ingest_result)
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error ingesting texts: {e}")
+        return previous_output
+"""
+    },
+    {
+        "tool_name": "retrieve_simple_rag",
+        "lib_names": ["tools.rag.simple_rag"],
+        "instructions": ("This is a simple RAG extraction tool. Extract only the information and provide a straightforward response "
+                         "with the acquired information. Do not create additional tools unless necessary. Retrieve the text from the vector database."),
+        "use_exactly_code_example": True,
+        "code_example": """
+def retrieve_rag_db(previous_output):
+    try:
+        from tools.rag.simple_rag.retrieve import retrieve_documents 
+        updated_dict = previous_output.copy()
+        
+        query = updated_dict.get("query", "")
+        retrieve_result: dict = retrieve_documents(query, model="$SIMPLE_RAG_EMBEDDING_MODEL")
+        updated_dict["retrieve_result"] = str(retrieve_result)
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error extracting documents: {e}")
+        return previous_output
+"""
+    },
+    {
+        "tool_name": "ingest_hybrid_vector_graph_rag",
+        "lib_names": ["tools.rag.hybrid_vector_graph_rag"],
+        "instructions": "This is an Hybrid Vector Graph RAG ingestion tool. Ingest the text into the vector and graph database.",
+        "use_exactly_code_example": True,
+        "code_example": """
+def ingest_hybrid_vector_graph_rag_db(previous_output):
+    from tools.rag.hybrid_vector_graph_rag.engine import HybridVectorGraphRag
+    try:
+        updated_dict = previous_output.copy()
+        
+        engine = HybridVectorGraphRag()
+        text: str = updated_dict.get("text", "")
+        ingest_result: dict = engine.ingest([text])
+        updated_dict["ingest_result"] = str(ingest_result)
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error ingesting texts: {e}")
+        return previous_output
+"""
+    },
+    {
+        "tool_name": "retrieve_hybrid_vector_graph_rag",
+        "lib_names": ["tools.rag.hybrid_vector_graph_rag"],
+        "instructions": ("This is an Hybrid Vector Graph RAG extraction tool. Extract only the information and provide a straightforward response "
+                         "with the acquired information. Do not create additional tools unless necessary. Retrieve the text from the vector database. "
+                         "Activate this tool when the client explicitly requests to retrieve the text from a database."),
+        "use_exactly_code_example": True,
+        "code_example": """
+def retrieve_hybrid_vector_graph_rag_db(previous_output):
+    from tools.rag.hybrid_vector_graph_rag.engine import HybridVectorGraphRag
+    try:
+        updated_dict = previous_output.copy()
+        
+        engine = HybridVectorGraphRag()
+        question: str = updated_dict.get("query", "")
+        result: dict = engine.retrieve(question)
+        updated_dict["retrieve_result"] = str(result)
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error extracting documents: {e}")
+        return previous_output
+"""
+    },
+    { 
+        "tool_name": "search_web",
+        "lib_names": ["duckduckgo_search", "beautifulsoup4", "requests"],
+        "instructions": ("A library to scrape the web. Never use the regex or other specific method to extract the data, always output the whole page. "
+                         "The data must be extracted or summarized from the page using the models library. Never perform searches in a loop, if you need to make more research, create a new subtask."),
+        "use_exactly_code_example": True,
+        "code_example": """
+def search_web(previous_output, max_results=3, max_chars=10000):
+    from duckduckgo_search import DDGS
+    import requests
+    from bs4 import BeautifulSoup
 
-                        ingest_result = ingest_texts([text], model="{SIMPLE_RAG_EMBEDDING_MODEL}")
-                        ingest_result_string = str(ingest_result)
-                        return {"ingest_result": ingest_result_string}
-                    except Exception as e:
-                        logger.error(f"Error ingesting texts: {e}")
-                        return {"ingest_result": ""}
-                """
-            },
-            {
-                "tool_name": "retrieve_simple_rag",
-                "lib_names": ["rag.simple_rag"],
-                "instructions": """This is a simple RAG extraction tool. Extract only the information and provide a straightforward response with the acquired information. Do not create additional tools unless necessary. Retrieve the text from the vector database. Activate this tool when the client explicitly requests to retrieve the text from a database.""",
-                "use_exaclty_code_example": True,
-                "code_example": """
-                    def retrieve_rag_db(previous_output):
-                        # Function to retrieve content from the vector db
-                        '''
-                        previous_output input types:
-                            "query": string
-                        return types:
-                            "retrieve_result": string
-                        '''
-                        try:
-                            from rag.simple_rag.retrieve import retrieve_documents
-                            query = previous_output.get("query", "")
-                            retrieve_result = retrieve_documents(query, model="{SIMPLE_RAG_EMBEDDING_MODEL}")
-                            retrieve_result_string = str(retrieve_result)
-                            return {"retrieve_result": retrieve_result_string}
-                        except Exception as e:
-                            logger.error(f"Error extracting documents: {e}")
-                            return {"retrieve_result": ""}
-                """
-            },
-            {
-                "tool_name": "ingest_hybrid_vector_graph_rag", 
-                "lib_names": ["rag.hybrid_vector_graph_rag"],
-                "instructions": """This is an Hybrid Vector Graph RAG ingestion tool. Ingest the text into the vector and graph database.""",
-                "use_exaclty_code_example": True,
-                "code_example": """
-                    def ingest_hybrid_vector_graph_rag_db(previous_output):
-                        # Ingest texts into the vector and graph database
-                        '''
-                        previous_output input types:
-                            "text": string
-                        return types:
-                            "ingest_result": string
-                        '''
-                        from rag.hybrid_vector_graph_rag.engine import HybridVectorGraphRag
+    try:
+        updated_dict = previous_output.copy()
+        
+        query = updated_dict.get("query", "")
+        ddgs = DDGS()
+        results = ddgs.text(query, max_results=max_results)
+        
+        successful_hrefs = []
+        full_text_output = [] 
 
-                        try:
-                            engine = HybridVectorGraphRag()
-                            text = previous_output.get("text", "")
-                            ingest_result = engine.ingest([text])
-                            return {"ingest_result": ingest_result} 
-                        except Exception as e:
-                            logger.error(f"Error ingesting texts: {e}")
-                            return {"ingest_result": ""}
-                """
-            },
-            {
-                "tool_name": "retrieve_hybrid_vector_graph_rag",
-                "lib_names": ["rag.hybrid_vector_graph_rag"],
-                "instructions": """This is an Hybrid Vector Graph RAG extraction tool. Extract only the information and provide a straightforward response with the acquired information. 
-                Do not create additional tools unless necessary. Retrieve the text from the vector database. Activate this tool when the client explicitly requests to retrieve the text from a database.""",
-                "use_exaclty_code_example": True,
-                "code_example": """
-                    def retrieve_hybrid_vector_graph_rag_db(previous_output):
-                        # function to retrieve content from the vector and graphg db
-                        '''
-                        previous_output input types:
-                            "query": string
-                        return types:
-                            "retrieve_result": string
-                        '''
-                        from rag.hybrid_vector_graph_rag.engine import HybridVectorGraphRag
+        for result in results:
+            href = result.get("href", "")
+            if not href:
+                # Skip if there's no link
+                continue
 
-                        try:
-                            engine = HybridVectorGraphRag()
-                            question = previous_output.get("query", "")
-                            result = engine.retrieve(question)
-                            return {"retrieve_result": result}
-                        except Exception as e:
-                            logger.error(f"Error extracting documents: {e}")
-                            return {"retrieve_result": ""}
-                """
-            },
-            { 
-                "tool_name": "search_web",
-                "lib_names": ["duckduckgo_search", "beautifulsoup4",  "requests"],
-                "instructions": "A library to scrape the web. Never use the regex or other specific method to extract the data, always output the whole page. The data must be extracted or summarized from the page with models lib.",
-                "use_exaclty_code_example": True,
-                "code_example": """
-                    def search_web(previous_output, max_results=3, max_chars=10000):
-                        #Perform a DuckDuckGo search for the specified query, then fetch the entire HTML of each result, capped at max_chars characters. Returns one long string containing the full HTML of all results.
-                        #Instructions:
-                        # If some page scrapes fail, it is not a critical issue. The final result can still be satisfactory if at least one page result is obtained.
-                        # Never use urls with parameters, just scrape simple urls.
-                        '''
-                        previous_output input types:
-                            "query": string
-                        return types:
-                            "html_content": string
-                        '''
-                        from duckduckgo_search import DDGS
-                        import requests
+            try:
+                resp = requests.get(href, timeout=10)
+                resp.raise_for_status()
 
-                        ddgs = DDGS()
-                        try:
-                            # Use DuckDuckGo to get 'max_results' search results
-                            results = ddgs.text(previous_output.get("query", ""), max_results=max_results)
-                            full_html_output = []
+                soup = BeautifulSoup(resp.text, 'html.parser')
+                text_content: str = soup.get_text(separator=' ', strip=True)
 
-                            # For each result, fetch the entire page with requests
-                            for result in results:
-                                href = result.get("href", "")
-                                if not href:
-                                    # Skip if there's no link
-                                    continue
+                limited_text: str = text_content[:max_chars]
 
-                                try:
-                                    resp = requests.get(href, timeout=10)
-                                    resp.raise_for_status()
+                title: str = result.get("title", "")
+                full_text_output.append(
+                    f"=== START OF ARTICLE ==="
+                    f"Title: {title} URL: {href}"
+                    f"{limited_text}"
+                    f"=== END OF ARTICLE ==="
+                )
 
-                                    # Parse HTML and extract visible text using BeautifulSoup
-                                    soup = BeautifulSoup(resp.text, 'html.parser')
-                                    text_content = soup.get_text(separator=' ', strip=True)
+                successful_hrefs.append(href)
 
-                                    # Limit the extracted text to max_chars characters
-                                    limited_text = text_content[:max_chars]
+            except Exception as fetch_err:
+                logger.error(f"Error fetching page {href}: {fetch_err}") 
+                continue
 
-                                    # Optionally, prepend some metadata
-                                    title = result.get("title", "")
-                                    full_text_output.append(
-                                        f"=== START OF ARTICLE ==="
-                                        f"Title: {title} URL: {href}"
-                                        f"{limited_text}"
-                                        f"=== END OF ARTICLE ==="
-                                    )
+        logger.info(f"Retrieved {len(successful_hrefs)} pages. URLs: {successful_hrefs}")
+        updated_dict["html_content"] = " ".join(full_text_output)
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error in search_web: {e}")
+        return previous_output
+"""
+    },
+    {
+        "tool_name": "browser_navigation",  
+        "lib_names": ["tools.surf_ai.engine"],
+        "instructions": ("This is an agent that automates browser navigation. Use it to interact with the browser and extract data during navigation.\n"
+                         "From the original prompt, reformulate it with input containing only the instructions for navigation, vision capablity and text data extraction.\n"
+                         "It also has visual capabilities, so it can be used to analyze the graphics of the web page and images.\n"
+                         "For example: \n"
+                         "Initial user prompt: use the browser navigator to go to Wikipedia, search for Elon Musk, extract all the information from the page, and analyze with your vision capability his image, and send a summary of the extracted information via email to someone@example.com\n"
+                         "Input prompt for browser navigation: go to Wikipedia, search for Elon Musk, extract all the information from the page, and analyze with your vision capability his image.\n"
+                         "**Never forget important instructions on navigation and data extraction.**"),
+        "use_exactly_code_example": True,
+        "code_example": """
+def browser_navigation(previous_output):
+    from tools.surf_ai.engine import SurfAiEngine 
+    try:
+        updated_dict = previous_output.copy()
+        
+        prompt: str = updated_dict.get("prompt", "")
+        surf_ai_engine = SurfAiEngine() 
+        final_answer_message: str = surf_ai_engine.go_surf(prompt)
+        updated_dict["result"] = final_answer_message
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error browser navigation: {e}")
+        return previous_output
+"""
+    },
+    {
+        "tool_name": "send_email",
+        "lib_names": ["smtplib", "email"],
+        "instructions": "Send an email to the user with the given email, subject and html content.",
+        "use_exactly_code_example": True,
+        "code_example": """
+def send_email(previous_output, GMAILUSER: str = "your_email@gmail.com", PASSGMAILAPP: str = "your_password") -> dict:
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
 
-                                    successful_hrefs.append(href)
+    # Gmail credentials
+    usermail = GMAILUSER
+    passgmailapp = PASSGMAILAPP
 
-                                except Exception as fetch_err:
-                                    logger.error(f"Error fetching page {href}: {fetch_err}")
-                                    continue
+    # SMTP server configuration
+    smtp_server = "smtp.gmail.com"
+    port = 587  # For TLS encryption
 
-                            # Join all the fetched content into a single string
-                            logger.info(f"Retrieved {len(successful_hrefs)} pages. URLs: {successful_hrefs}")
-                            return {"html_content": " ".join(full_text_output)}
+    try:
+        updated_dict = previous_output.copy()
 
-                        except Exception as e:
-                            logger.error(f"Error in search_web: {e}")
-                            return {"html_content": "no data found"}
-                """
-            },
-            {
-            "tool_name": "send_email",
-            "lib_names": ["smtplib", "email"],
-            "instructions": "Send an email to the user with the given email, subject and html content.",
-            "use_exaclty_code_example": True,
-            "code_example": """
-                def send_email(previous_output, GMAILUSER: str = "cronomegawatt@gmail.com", PASSGMAILAPP: str = "viyuqoeqhitzxtkl") -> dict:
-                    '''
-                    previous_output input types:
-                        "email": string
-                        "subject": string
-                        "html": string
-                    return types:
-                        "info": string
-                    '''
+        # Create the email message
+        message = MIMEMultipart()
+        message["From"] = usermail
+        message["To"] = updated_dict.get("email", "")
+        message["Subject"] = updated_dict.get("subject", "")
 
-                    import smtplib
-                    from email.mime.text import MIMEText
-                    from email.mime.multipart import MIMEMultipart
+        # Attach the HTML content
+        html_content = updated_dict.get("html", "")
+        if html_content:
+            message.attach(MIMEText(html_content, "html"))
 
-                    # Gmail credentials
-                    usermail = GMAILUSER
-                    passgmailapp = PASSGMAILAPP
+        # Establish connection to the SMTP server
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls()  # Secure the connection
+            server.login(usermail, passgmailapp)  # Log in to the SMTP server
+            
+            # Send the email
+            server.sendmail(usermail, updated_dict.get("email", ""), message.as_string())
+            logger.info(f"Email sent to {updated_dict.get('email', '')} with subject {updated_dict.get('subject', '')}")
 
-                    # SMTP server configuration
-                    smtp_server = "smtp.gmail.com"
-                    port = 587  # For TLS encryption
-
-                    try:
-                        # Create the email message
-                        message = MIMEMultipart()
-                        message["From"] = usermail
-                        message["To"] = previous_output.get("email", "")
-                        message["Subject"] = previous_output.get("subject", "")
-
-                        # Attach the HTML content
-                        if previous_output.get("html", ""):
-                            message.attach(MIMEText(previous_output.get("html", ""), "html"))
-
-                        # Establish connection to the SMTP server
-                        with smtplib.SMTP(smtp_server, port) as server:
-                            server.starttls()  # Secure the connection
-                            server.login(usermail, passgmailapp)  # Log in to the SMTP server
-                            
-                            # Send the email
-                            server.sendmail(usermail, previous_output.get("email", ""), message.as_string())
-                            logger.info(f"Email sent to {previous_output.get('email', '')} with subject {previous_output.get('subject', '')}")
-
-                        return {"info": "Email sent successfully"}
-
-                    except Exception as error:
-                        logger.error(f"Error sending email: {error}")
-                        return {"info": "Error sending email"}
-
-                """
-        }]
-
-
+        updated_dict["info"] = "Email sent successfully"
+        return updated_dict
+    except Exception as error:
+        logger.error(f"Error sending email: {error}")
+        return previous_output
+"""
+    }
+]
 
 def generate_default_tools(tools=DEFAULT_TOOLS):
     """
-    Applies dynamic variables to any string fields within the tools that contain matching placeholders.
+    Applies dynamic variables to any string fields within the tools using Python's string.Template.
 
     Args:
         tools (list): The list of tool dictionaries.
-        variables (dict): A dictionary of variables to replace in the tool configurations.
-
     Returns:
         list: A new list of tools with variables applied.
     """
     updated_tools = copy.deepcopy(tools)
-    placeholder_pattern = re.compile(r"\{(\w+)\}")  # Matches {VAR_NAME}
 
     variables = {
-        "TOOL_HELPER_MODEL": os.getenv("TOOL_HELPER_MODEL"),
-        "JSON_PLAN_MODEL": os.getenv("JSON_PLAN_MODEL"),
-        "EVALUATION_MODEL": os.getenv("EVALUATION_MODEL"),
-        "SIMPLE_RAG_EMBEDDING_MODEL": os.getenv("SIMPLE_RAG_EMBEDDING_MODEL")
+        "TOOL_HELPER_MODEL": os.getenv("TOOL_HELPER_MODEL", ""),
+        "JSON_PLAN_MODEL": os.getenv("JSON_PLAN_MODEL", ""),
+        "EVALUATION_MODEL": os.getenv("EVALUATION_MODEL", ""),
+        "SIMPLE_RAG_EMBEDDING_MODEL": os.getenv("SIMPLE_RAG_EMBEDDING_MODEL", "")
     }
-
     for tool in updated_tools:
         for key, value in tool.items():
             if isinstance(value, str):
-                matches = placeholder_pattern.findall(value)
-                for match in matches:
-                    if match in variables:
-                        placeholder = f"{{{match}}}"
-                        value = value.replace(placeholder, variables[match])
-                tool[key] = value
+                tmpl = Template(value)
+                try:
+                    tool[key] = tmpl.substitute(variables)
+                except KeyError as e:
+                    logger.error(f"Missing substitution for variable {e} in key {key}")
+                    tool[key] = tmpl.safe_substitute(variables)
             elif isinstance(value, list):
                 new_list = []
                 for item in value:
                     if isinstance(item, str):
-                        matches = placeholder_pattern.findall(item)
-                        for match in matches:
-                            if match in variables:
-                                placeholder = f"{{{match}}}"
-                                item = item.replace(placeholder, variables[match])
-                    new_list.append(item)
+                        tmpl = Template(item)
+                        try:
+                            new_list.append(tmpl.substitute(variables))
+                        except KeyError as e:
+                            logger.error(f"Missing substitution for variable {e} in list item")
+                            new_list.append(tmpl.safe_substitute(variables))
+                    else:
+                        new_list.append(item)
                 tool[key] = new_list
     return updated_tools
+
