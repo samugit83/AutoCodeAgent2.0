@@ -449,6 +449,7 @@ If the tool is invoked, you can view the navigation by accessing:
 ```bash
 http://localhost:6901/vnc.html
 ```
+You can find the screenshots generated during navigation at the following path: /tools/surf_ai/screenshots
 
 
 
