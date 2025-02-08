@@ -314,7 +314,7 @@ Discover the capabilities of AutoCodeAgent with those videos:
 [General Video Demo](https://youtu.be/T3Ej4-eeDag).
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).
 [Integration with SurfAi Video Demo 1](https://youtu.be/b5OPk7-FPrk).
-[Integration with SurfAi Video Demo 2](https://youtu.be/80Lpc1PmCBo).
+[Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).
 
 ## Application Setup <a name="application-setup"></a>
 Follow the steps below to set up and run the pplication using Docker. This setup ensures that all necessary services are built and started correctly, with session management handled seamlessly via a Redis database.
