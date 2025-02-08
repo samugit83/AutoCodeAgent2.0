@@ -75,7 +75,8 @@ These features allow the agent to leverage previously ingested knowledge and imp
 
 ## Features <a name="features"></a>
 
-### Task Decomposition: Automatically breaks down a complex main task into multiple smaller subtasks. Each subtask corresponds to a specific tool or function designed to handle a part of the problem, resulting in a clear and structured JSON plan.
+### Task Decomposition: 
+Automatically breaks down a complex main task into multiple smaller subtasks. Each subtask corresponds to a specific tool or function designed to handle a part of the problem, resulting in a clear and structured JSON plan.
 
 ### Dynamic Code Generation & Execution: 
 For each subtask, the agent:
@@ -310,6 +311,7 @@ def function_name(previous_output):
 Discover the capabilities of AutoCodeAgent with those videos:
 [General Video Demo](https://youtu.be/T3Ej4-eeDag).
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).
+[Integration with SurfAi Video Demo](https://youtu.be/b5OPk7-FPrk).
 
 
 ## Application Setup <a name="application-setup"></a>
