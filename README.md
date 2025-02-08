@@ -54,6 +54,8 @@ AutoCodeAgent allows you to handle complex tasks such as:
 
 - *"Go to LinkedIn Feed and log in using your email (your_email) and password (your_password). Scroll down to the first post and leave a comment that is both intelligent and contextually relevant, taking into account the text and image. Your comment must contain at least 40 words. Once you have posted your comment, email the execution result to (your_email)."*
 
+- *"Please visit Booking.com and search for a Hotel in Milan that is available from June 1st to June 10th. Extract the name and price of the first hotel in the result. Then save it on simple rag database, send an email to (your_email) with the hotel's name and price."*
+
 
 AutoCodeAgent 2.0 introduces RAG (Retrieval-Augmented Generation) capabilities, empowering the system with multi RAG techniques, each having its own ingestion and retrieval tools. 
 The system uses many persistent Database integrated in Docker, like Vector ChromaDB, Graph Neo4j, and Others.
@@ -311,8 +313,8 @@ def function_name(previous_output):
 Discover the capabilities of AutoCodeAgent with those videos:
 [General Video Demo](https://youtu.be/T3Ej4-eeDag).
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).
-[Integration with SurfAi Video Demo](https://youtu.be/b5OPk7-FPrk).
-
+[Integration with SurfAi Video Demo 1](https://youtu.be/b5OPk7-FPrk).
+[Integration with SurfAi Video Demo 2](https://youtu.be/80Lpc1PmCBo).
 
 ## Application Setup <a name="application-setup"></a>
 Follow the steps below to set up and run the pplication using Docker. This setup ensures that all necessary services are built and started correctly, with session management handled seamlessly via a Redis database.
