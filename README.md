@@ -1,4 +1,4 @@
-# AutoCodeAgent 2.0 with multi RAG Retrieval/Ingestion techniques - Version 2.0.1
+# AutoCodeAgent 2.0 with multi RAG Retrieval/Ingestion techniques - Version 1.1.0
 
 ## Introduction
 Welcome to the project! This section provides a general overview of the project, its goals, and its main features.
@@ -10,7 +10,7 @@ Here, the main features of the project are listed and described.
 
 ## All Ways to Add Tools
 This section explains the various methods available for adding tools to the project.
-[Go to All Ways to Add Tools](#all-ways-to-add-tools)
+[Go to All Ways to Add Tools](#all-ways-to-add-tools)+
 
 ## Video Demo
 Explore the full potential of AutoCodeAgent by watching these demonstration videos.
@@ -310,12 +310,12 @@ def function_name(previous_output):
 ```
 
 ## Video Demo <a name="video-demo"></a>
-Discover the capabilities of AutoCodeAgent with those videos:
-[General Video Demo](https://youtu.be/T3Ej4-eeDag).
-[Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).
-[Integration with SurfAi Video Demo 1](https://youtu.be/b5OPk7-FPrk).
-[Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).
-
+Discover the capabilities of AutoCodeAgent with those videos:<br>
+[General Video Demo](https://youtu.be/T3Ej4-eeDag).<br>
+[Project explanation Video Demo](https://youtu.be/4XGYf0ePSUY).<br>
+[Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).<br>
+[Integration with SurfAi Video Demo 1](https://youtu.be/b5OPk7-FPrk).<br>
+[Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).<br>
 ## Application Setup <a name="application-setup"></a>
 Follow the steps below to set up and run the pplication using Docker. This setup ensures that all necessary services are built and started correctly, with session management handled seamlessly via a Redis database.
 

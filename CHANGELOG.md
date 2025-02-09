@@ -2,10 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.0.0] - 2025-01-15
+## [1.0.0] - 2025-02-09
 - initial release
 
-## [2.0.1] - 2025-02-08
+## [1.1.0] - 2025-02-09
 ### Added
 - Added integration of SurfAi agent for browser automation as a default tool
 - Improved the logging system.
