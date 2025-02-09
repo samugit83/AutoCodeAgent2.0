@@ -1,4 +1,5 @@
-# AutoCodeAgent 2.0 with multi RAG Retrieval/Ingestion techniques - Version 1.1.0
+# AutoCodeAgent - AI Agent for Complex Task Resolution
+![version](https://img.shields.io/badge/version-1.1.0-blue)
 
 ## Introduction
 Welcome to the project! This section provides a general overview of the project, its goals, and its main features.
