@@ -11,7 +11,7 @@ Here, the main features of the project are listed and described.
 
 ## All Ways to Add Tools
 This section explains the various methods available for adding tools to the project.
-[Go to All Ways to Add Tools](#all-ways-to-add-tools)+
+[Go to All Ways to Add Tools](#all-ways-to-add-tools)
 
 ## Video Demo
 Explore the full potential of AutoCodeAgent by watching these demonstration videos.
@@ -421,6 +421,10 @@ The default tools are pre-implemented and fully functional, supporting the agent
   - A tool for ingesting text into a ChromaDB Vector database with simple RAG
 - retrieve_simple_rag
   - A tool for retrieving the most similar documents to a query from a ChromaDB Vector database with simple RAG
+- ingest_llama_index
+  - A tool for ingesting text into a LlamaIndex vector database
+- retrieve_llama_index
+  - A tool for retrieving the most similar documents to a query from a LlamaIndex vector database
 - ingest_hybrid_vector_graph_rag
   - A tool for ingesting text into a Neo4j database with hybrid vector graph RAG
 - retrieve_hybrid_vector_graph_rag
