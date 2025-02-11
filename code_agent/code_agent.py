@@ -8,9 +8,9 @@ from .agent_plan_evaluator import PlanEvaluator
 from .agent_subtask_executor import SubtaskExecutor
 
 class CodeAgent:
-    def __init__(self, chat_history: List[Dict], tools: List[str]):
+    def __init__(self, chat_history: List[Dict], tools: List[str]): 
         """
-        Initializes the CodeAgent with conversation history and a list of tool names.
+        Initializes the CodeAgent with conversation history and a list of tool names. 
         Additional default tools are appended automatically.
         """
         self.chat_history = chat_history
@@ -27,17 +27,18 @@ class CodeAgent:
         # Instantiate helper components.
         self.plan_generator = PlanGenerator(self.chat_history, self.tools, self.models["JSON_PLAN_MODEL"])
         self.plan_evaluator = PlanEvaluator(self.models["EVALUATION_MODEL"])
-        self.subtask_executor = SubtaskExecutor(self.logger, self.enrich_log, self.execution_logs)
         self.json_plan = None
+        self.subtask_executor = SubtaskExecutor(self)
+       
 
     def run_agent(self):
         """
         Orchestrates the agent's execution: generating a plan, executing subtasks,
         and evaluating the output iteratively.
-        """
+        """ 
         try:
             self.logger.info(
-                self.enrich_log(f"🚀🚀🚀 Starting agent with user request: {json.dumps(self.chat_history, indent=4)}", "add_green_divider"),
+                self.enrich_log(f"🚀🚀🚀 Starting agent with user request: {json.dumps(self.chat_history, indent=4)}\n\n✨ Generating initial JSON plan...", "add_green_divider"),
                 extra={'no_memory': True}
             )
 
@@ -60,7 +61,7 @@ class CodeAgent:
                 ) 
                 
                 # Execute each subtask in the JSON plan.
-                self.subtask_executor.execute_subtasks(self.json_plan)
+                self.subtask_executor.execute_subtasks()
 
                 # Evaluate the results of the current iteration.
                 evaluation_output = self.plan_evaluator.evaluate(
@@ -78,17 +79,17 @@ class CodeAgent:
                         if (not evaluation_output.get("satisfactory", False) and  
                             not evaluation_output.get("max_iterations_reached", False)):
                             self.logger.info(
-                                self.enrich_log(f"❌ Evaluation is not satisfactory, updating JSON plan.", "add_red_divider"),
+                                self.enrich_log(f"🔄 Evaluation is not satisfactory, updating JSON plan.", "add_red_divider"),
                                 extra={'no_memory': True}
-                            )
+                            ) 
                             self.json_plan = evaluation_output.get("new_json_plan", {})
                             self.logger.info(f"Evaluation is not satisfactory. {evaluation_output.get('thoughts', '')}. Now updating JSON plan...\n\n 💡💡💡 New JSON plan: {self.json_plan}")
                         elif evaluation_output.get("max_iterations_reached", False):
                             self.logger.warning("Max iterations reached without satisfactory evaluation.")
                             return evaluation_output.get("final_answer", "")
                 else:
-                    self.logger.warning("❌❌❌ Max iterations reached without satisfactory evaluation.", extra={'no_memory': True})
+                    self.logger.warning("🔴 Max iterations reached without satisfactory evaluation.", extra={'no_memory': True})
                     return evaluation_output.get("final_answer", "")
                     
         except Exception as e:
-            self.logger.error(f"Error running agent: {e}")
+            self.logger.error("Error running agent:", exc_info=True) 

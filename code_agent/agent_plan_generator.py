@@ -22,7 +22,7 @@ class PlanGenerator:
         """
         agent_prompt = CODE_SYSTEM_PROMPT.substitute(
             conversation_history=self.chat_history,
-            tools=self.tools
+            tools=self.tools 
         )
         agent_output_str = call_model(
             chat_history=[{"role": "user", "content": agent_prompt}],

@@ -35,15 +35,15 @@ class LoggingConfigurator:
 
         if enrichment_key == "add_green_divider":
             divider = "\n\033[32m" + "-" * 150 + "\033[0m\n"
-            return f"\n\n\n{divider}\n{message}\n{divider}\n\n\n"
+            return f"\n{divider}\n{message}\n{divider}\n"
         elif enrichment_key == "add_red_divider":
             divider = "\n\033[31m" + "-" * 150 + "\033[0m\n"
-            return f"\n\n\n{divider}\n{message}\n{divider}\n\n\n"
+            return f"\n{divider}\n{message}\n{divider}\n"
         elif enrichment_key == "add_blue_divider":
             divider = "\n\033[34m" + "-" * 150 + "\033[0m\n"
-            return f"\n\n\n{divider}\n{message}\n{divider}\n\n\n"
+            return f"\n{divider}\n{message}\n{divider}\n"
         elif enrichment_key == "add_orange_divider":
             divider = "\n\033[33m" + "-" * 150 + "\033[0m\n"
-            return f"\n\n\n{divider}\n{message}\n{divider}\n\n\n"
+            return f"\n{divider}\n{message}\n{divider}\n"
         else:
             return message

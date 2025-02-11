@@ -11,3 +11,6 @@ neo4j
 PyPDF2
 playwright
 python-dotenv
+llama-index
+llama-index-llms-openai
+llama-index-embeddings-openai

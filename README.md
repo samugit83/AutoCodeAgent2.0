@@ -1,5 +1,5 @@
 # AutoCodeAgent - AI Agent for Complex Task Resolution
-![version](https://img.shields.io/badge/version-1.1.0-blue)
+![version](https://img.shields.io/badge/version-1.2.0-blue)
 
 ## Introduction
 Welcome to the project! This section provides a general overview of the project, its goals, and its main features.
@@ -41,6 +41,9 @@ Detailed description of the Simple RAG technique.
 Detailed description of the Hybrid Vector Graph RAG technique.
 [Go to Hybrid Vector Graph RAG](#hybrid-vector-graph-rag)
 
+### LlamaIndex RAG
+Discover how to use the LlamaIndex RAG.
+[Go to LlamaIndex RAG](#llama-index-rag)
 
 
 ## Introduction <a name="introduction"></a>
@@ -57,6 +60,7 @@ AutoCodeAgent allows you to handle complex tasks such as:
 
 - *"Please visit Booking.com and search for a Hotel in Milan that is available from June 1st to June 10th. Extract the name and price of the first hotel in the result. Then save it on simple rag database, send an email to (your_email) with the hotel's name and price."*
 
+- *"Calculate the area of the triangle formed by Paris, Moscow, and Rome in square kilometers, and send me an email at samuele.giampieri1@gmail.com with the coordinates of the cities and the calculated area."*
 
 AutoCodeAgent 2.0 introduces RAG (Retrieval-Augmented Generation) capabilities, empowering the system with multi RAG techniques, each having its own ingestion and retrieval tools. 
 The system uses many persistent Database integrated in Docker, like Vector ChromaDB, Graph Neo4j, and Others.
@@ -92,9 +96,7 @@ Library-Based Tools: Easily integrate Python libraries by specifying their names
 Custom Function Tools: Define specific functions as tools. The agent identifies these and avoids auto-generating code for them, ensuring custom implementations remain intact and reliable.
 
 ### Iterative Evaluation Loop:
-A dedicated Evaluation Agent monitors execution logs, assesses whether the process ran successfully, and decides whether re-execution is necessary.
-If errors or strange outputs are detected, the agent regenerates a new JSON plan with improved code and repeats the execution process.
-The iterative loop continues until a satisfactory result is achieved or a maximum number of iterations is reached.
+A dedicated Evaluation Agent monitors execution logs, assesses success, and, if necessary, re-plans or regenerates subtasks until a satisfactory result is achieved.
 
 ### Memory Logging & Error Handling:
 Integrates a robust logging system to capture detailed execution logs. This allows for precise debugging and refinement of the agent's behavior.
@@ -105,8 +107,10 @@ The framework encourages reusability and modularity by consolidating related ope
 Designed to integrate seamlessly with various Python libraries, allowing for flexible tool expansion without significant modifications to the core agent logic.
 
 ### Safe and Secure Execution:
-Uses controlled namespaces and captures standard output to prevent unintended side effects during code execution.
-Sanitizes outputs from AI model responses to ensure robust JSON parsing and prevent syntax issues in dynamically generated code.
+Uses controlled namespaces and captures standard output to prevent unintended side effects.
+
+### Python Function Validation & Task Regeneration:
+A function validator inspects each subtask’s code (via AST analysis) for syntax, dangerous constructs, parameter correctness, allowed libraries and other issues *before execution*. If validation or execution errors occur, the agent automatically regenerates the subtask to ensure successful task completion.
 
 ### RAG retrieval / ingestion
 - The agent now uses a vector database (ChromaDB) to store and retrieve information.
@@ -288,6 +292,7 @@ Some rules to follow:
 - The tool name (tool_name) must be unique.
 - Use exactly the same JSON structure you see, for example, for geopy.
 - For the function, always use this schema:
+- add default parameters in the function parameters only if you need fixed values to use in the function
 
 ```python
 def function_name(previous_output):
@@ -337,7 +342,7 @@ git clone https://github.com/samugit83/AutoCodeAgent
 cd interactive-multiagent
 ```
 
-3. Build the Docker image:
+3. Build the Docker image: 
 ```bash
 docker-compose build
 ```
@@ -388,6 +393,9 @@ HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_EDGE_THRESHOLD=0.9  # similarity edge thresho
 HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_DEPTH=3  # max depth for hybrid vector graph rag
 HYBRID_VECTOR_GRAPH_RAG_QUERY_TOP_K=3  # top k for hybrid vector graph rag
 HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH=10000  # max context length for hybrid vector graph rag
+
+GMAILUSER=your_email@gmail.com
+PASSGMAILAPP=your_password
 
 TOOL_HELPER_MODEL=gpt-4o  # tool helper model
 JSON_PLAN_MODEL=gpt-4o  # json plan model
@@ -466,7 +474,6 @@ In this section, we dive into the diverse RAG techniques that AutoCodeAgent 2.0 
 
 Think of these RAG techniques as your personal data assistants, ready to fetch, store, and process information at your command. With AutoCodeAgent 2.0, you’re not just working with data—you’re orchestrating it. Let’s explore how each RAG technique can transform the way you interact with information, making your tasks smarter, faster, and more intuitive.
 
----
 
 ### Simple RAG <a name="simple-rag"></a>
 Simple RAG is your go-to tool for straightforward data retrieval and ingestion tasks. It leverages vector embeddings to store and retrieve text chunks efficiently, making it ideal for scenarios where quick access to relevant information is crucial. Whether you're saving web search results or retrieving documents based on a query, Simple RAG ensures that your data is always within reach.
@@ -485,7 +492,7 @@ Simple RAG is your go-to tool for straightforward data retrieval and ingestion t
 - *"Search for the latest news on AI advancements and save it in the database using the tool: `ingest_simple_rag`."*
 - *"Retrieve information about climate change from the database using the tool: `retrieve_simple_rag`."*
 
----
+
 
 ### Hybrid Vector Graph RAG <a name="hybrid-vector-graph-rag"></a>
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).
@@ -582,7 +589,7 @@ Checks if the currently gathered context is sufficient to answer the question by
 End Retrieval Marks the completion of the retrieval process, signaling that the system has successfully answered the user's question.
 
 - No: Expand BFS to Next Depth Continues the BFS to explore more related chunks in Neo4j. This involves searching deeper into the graph database to find additional relevant information. Retrieve Neighbors Above Threshold Fetches neighboring chunks connected via SIMILAR_TO relationships with similarity scores above a defined threshold. Only connections that meet or exceed this similarity level are considered for further exploration. Update Visited and Queue Updates the set of visited chunks and adds new chunks to the BFS queue for further exploration. This ensures that the system efficiently tracks which pieces of information have been examined. Check Max Depth Ensures that the BFS does not exceed the maximum allowed depth. If the maximum depth is reached, the system proceeds to generate the final answer regardless of whether the context is fully sufficient. Loop Back to "Is Context Enough?" Re-evaluates if the newly accumulated context meets the sufficiency criteria. The system checks again whether the gathered information is adequate to answer the question.
-
+ 
 6. Generate Final Answer
 After gathering sufficient context or reaching the maximum BFS depth, the system compiles the final answer using the collected information. This step synthesizes all relevant data into a coherent response.
 
@@ -592,10 +599,13 @@ Delivers the generated answer to the user. The system presents the final respons
 8. End Retrieval
 Concludes the retrieval process by finalizing all tasks and ensuring that all data is properly stored and connections are closed. It confirms that the system has successfully processed the user's query.
 
----
+
+### Llama Index RAG <a name="llama-index-rag"></a>
+In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.
+Example Prompt for retrieval: "Find the latest market trends using the Llama Index."
+Example prompt for ingestion: "Find the latest market trends from the web and save it in the database using the Llama Index."
 
 With these RAG techniques, AutoCodeAgent 2.0 transforms the way you interact with data, making it easier than ever to store, retrieve, and analyze information. Whether you're working on simple tasks or tackling complex data challenges, these tools are here to empower your workflow and unlock new possibilities.
-
 
 
 ## Contribution Guidelines 
@@ -620,3 +630,5 @@ We welcome contributions from the community! If you'd like to contribute, please
 By contributing, you agree that your changes will be licensed under the same license as the project.
 
 Thank you for helping improve this project! 🚀
+
+

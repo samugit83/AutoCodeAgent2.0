@@ -44,6 +44,4 @@ def retrieve_documents(query, model, k=5):
         include=["documents", "metadatas"]
     )
 
-    print(results)
-
     return results

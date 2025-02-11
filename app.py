@@ -30,11 +30,11 @@ def run_code_agent():
         tools = [ 
             {
                 "tool_name": "numpy",
-                "lib_name": ["numpy"]
+                "lib_names": ["numpy"]
             },
             {    
                 "tool_name": "geopy",
-                "lib_name": ["geopy"], 
+                "lib_names": ["geopy"], 
                 "instructions": "A library to get the coordinates of a given location.",
                 "code_example": """
                     

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_TOOLS = [
     {
         "tool_name": "helper_model",
-        "lib_names": ["models"],
+        "lib_names": ["models.models"],
         "instructions": "An LLM useful to elaborate any output from previous steps. Don't create loops, just use the LLM to elaborate the output for a single step.",
         "use_exactly_code_example": True,
         "code_example": """
@@ -37,7 +37,7 @@ def call_helper_model(previous_output):
     },
     {
         "tool_name": "ingest_simple_rag",
-        "lib_names": ["tools.rag.simple_rag"],
+        "lib_names": ["tools.rag.simple_rag.ingest"],
         "instructions": "This is a simple RAG ingestion tool. Ingest the text into the vector database.",
         "use_exactly_code_example": True,
         "code_example": """
@@ -57,7 +57,7 @@ def ingest_rag_db(previous_output):
     },
     {
         "tool_name": "retrieve_simple_rag",
-        "lib_names": ["tools.rag.simple_rag"],
+        "lib_names": ["tools.rag.simple_rag.retrieve"],
         "instructions": ("This is a simple RAG extraction tool. Extract only the information and provide a straightforward response "
                          "with the acquired information. Do not create additional tools unless necessary. Retrieve the text from the vector database."),
         "use_exactly_code_example": True,
@@ -78,7 +78,7 @@ def retrieve_rag_db(previous_output):
     },
     {
         "tool_name": "ingest_hybrid_vector_graph_rag",
-        "lib_names": ["tools.rag.hybrid_vector_graph_rag"],
+        "lib_names": ["tools.rag.hybrid_vector_graph_rag.engine"],
         "instructions": "This is an Hybrid Vector Graph RAG ingestion tool. Ingest the text into the vector and graph database.",
         "use_exactly_code_example": True,
         "code_example": """
@@ -99,7 +99,7 @@ def ingest_hybrid_vector_graph_rag_db(previous_output):
     },
     {
         "tool_name": "retrieve_hybrid_vector_graph_rag",
-        "lib_names": ["tools.rag.hybrid_vector_graph_rag"],
+        "lib_names": ["tools.rag.hybrid_vector_graph_rag.engine"],
         "instructions": ("This is an Hybrid Vector Graph RAG extraction tool. Extract only the information and provide a straightforward response "
                          "with the acquired information. Do not create additional tools unless necessary. Retrieve the text from the vector database. "
                          "Activate this tool when the client explicitly requests to retrieve the text from a database."),
@@ -108,7 +108,7 @@ def ingest_hybrid_vector_graph_rag_db(previous_output):
 def retrieve_hybrid_vector_graph_rag_db(previous_output):
     from tools.rag.hybrid_vector_graph_rag.engine import HybridVectorGraphRag
     try:
-        updated_dict = previous_output.copy()
+        updated_dict = previous_output.copy() 
         
         engine = HybridVectorGraphRag()
         question: str = updated_dict.get("query", "")
@@ -120,9 +120,54 @@ def retrieve_hybrid_vector_graph_rag_db(previous_output):
         return previous_output
 """
     },
+    {
+    "tool_name": "ingest_llama_index",
+    "lib_names": ["tools.rag.llama_index.ingest"],
+    "instructions": "This tool ingests text into the LlamaIndex vector database.",
+    "use_exactly_code_example": True,
+    "code_example": """
+def ingest_llama_index(previous_output): 
+    from tools.rag.llama_index.ingest import ingest_texts
+    try:
+        updated_dict = previous_output.copy()
+        text = updated_dict.get("text", "")
+        if not text:
+            return updated_dict
+
+        # Call the function with the text wrapped in a list.
+        result = ingest_texts([text])
+        updated_dict["ingest_result"] = str(result)
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error in ingest_llama_index: {e}") 
+        return previous_output
+"""
+    },
+    {
+    "tool_name": "retrieve_llama_index",
+    "lib_names": ["tools.rag.llama_index.retrieve"],
+    "instructions": ("This tool retrieves documents from a persisted LlamaIndex index."),
+    "use_exactly_code_example": True,
+    "code_example": """
+def retrieve_llama_index(previous_output):
+    from tools.rag.llama_index.retrieve import retrieve_documents
+    try:
+        updated_dict = previous_output.copy()
+        query = updated_dict.get("query", "")
+        if not query:
+            return updated_dict
+        
+        result: str = retrieve_documents(query) 
+        updated_dict["retrieve_result"] = result
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error in retrieve_llama_index: {e}")
+        return previous_output 
+"""
+    }, 
     { 
         "tool_name": "search_web",
-        "lib_names": ["duckduckgo_search", "beautifulsoup4", "requests"],
+        "lib_names": ["duckduckgo_search", "bs4", "requests"],
         "instructions": ("A library to scrape the web. Never use the regex or other specific method to extract the data, always output the whole page. "
                          "The data must be extracted or summarized from the page using the models library. Never perform searches in a loop, if you need to make more research, create a new subtask."),
         "use_exactly_code_example": True,
@@ -212,14 +257,14 @@ def browser_navigation(previous_output):
         "instructions": "Send an email to the user with the given email, subject and html content.",
         "use_exactly_code_example": True,
         "code_example": """
-def send_email(previous_output, GMAILUSER: str = "your_email@gmail.com", PASSGMAILAPP: str = "your_password") -> dict:
+def send_email(previous_output) -> dict:
     import smtplib
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
 
     # Gmail credentials
-    usermail = GMAILUSER
-    passgmailapp = PASSGMAILAPP
+    usermail = $GMAILUSER
+    passgmailapp = $PASSGMAILAPP
 
     # SMTP server configuration
     smtp_server = "smtp.gmail.com"
@@ -232,7 +277,7 @@ def send_email(previous_output, GMAILUSER: str = "your_email@gmail.com", PASSGMA
         message = MIMEMultipart()
         message["From"] = usermail
         message["To"] = updated_dict.get("email", "")
-        message["Subject"] = updated_dict.get("subject", "")
+        message["Subject"] = updated_dict.get("subject", "") 
 
         # Attach the HTML content
         html_content = updated_dict.get("html", "")
@@ -272,7 +317,9 @@ def generate_default_tools(tools=DEFAULT_TOOLS):
         "TOOL_HELPER_MODEL": os.getenv("TOOL_HELPER_MODEL", ""),
         "JSON_PLAN_MODEL": os.getenv("JSON_PLAN_MODEL", ""),
         "EVALUATION_MODEL": os.getenv("EVALUATION_MODEL", ""),
-        "SIMPLE_RAG_EMBEDDING_MODEL": os.getenv("SIMPLE_RAG_EMBEDDING_MODEL", "")
+        "SIMPLE_RAG_EMBEDDING_MODEL": os.getenv("SIMPLE_RAG_EMBEDDING_MODEL", ""),
+        "GMAILUSER": os.getenv("GMAILUSER", ""),
+        "PASSGMAILAPP": os.getenv("PASSGMAILAPP", "")
     }
     for tool in updated_tools:
         for key, value in tool.items():

@@ -550,7 +550,7 @@ class HybridVectorGraphRag:
             f"Context:\n{full_context}\n\n"
             f"Question:\n{question}\n"
             "Provide a concise answer:"
-        )
+        ) 
 
         self.logger.info("Calling the LLM to produce the final answer.")
         try:
@@ -559,7 +559,7 @@ class HybridVectorGraphRag:
                 model=self.summarization_graph_node_model
             ).strip()
         except Exception as e:
-            self.logger.error(f"Error calling the model for final answer: {e}")
+            self.logger.error(f"Error calling the model for final answer: {e}")  
             raise RuntimeError("Failed to generate an answer from the model.") from e
 
         self.logger.info(f"related_chunk_ids: {list(all_related_chunk_ids)}")
