@@ -436,9 +436,8 @@ The default tools are pre-implemented and fully functional, supporting the agent
 
 
 
-## SurfAi Integration 🌐🤖 - now as a default tool!
-
-**AI-Powered Web Automation Agent** - Version 1.1.0
+## SurfAi Integration  
+🌐🤖 **AI-Powered Web Automation Agent**
 
 SurfAi is an intelligent and lightweight web automation engine that harnesses AI to interpret natural language instructions and automate web interactions using Playwright. It seamlessly integrates large language model capabilities with browser automation to execute complex tasks.
 
