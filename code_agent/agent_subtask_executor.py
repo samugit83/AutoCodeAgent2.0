@@ -1,5 +1,5 @@
 import json
-import traceback
+import re
 import inspect
 from .function_validator import FunctionValidator
 from models.models import call_model
@@ -19,43 +19,97 @@ class SubtaskExecutor:
             lib_name for tool in self.agent.tools for lib_name in tool["lib_names"]
         ]
 
+
+ 
     def execute_subtasks(self):
-        """
-        Iterates over the subtasks in the JSON plan, validates each subtask’s code,
-        attempts to execute it (with regeneration on error), and then calls the subtask function.
+            """
+            Iterates over the subtasks in the JSON plan, validates each subtask’s code,
+            executes it (with regeneration on error based on in-memory log inspection),
+            and then calls the subtask function.
 
-        :return: A dictionary with the results of the executed subtasks.
-        """
-        results = {}
-        subtasks = self.agent.json_plan.get("subtasks", [])
+            :return: A dictionary with the results of the executed subtasks.
+            """
+            results = {}
+            subtasks = self.agent.json_plan.get("subtasks", [])
 
-        for index, subtask in enumerate(subtasks):
-            # --- Step 1: Validate subtask code ---
-            output_validator, subtask = self._validate_subtask_code(subtask, index, results)
-            code_string = output_validator["code_string"]
+            error_pattern = re.compile(r"\[ERROR\]")
 
-            # --- Step 2: Execute the subtask code (with retries) ---
-            temp_namespace, code_string = self._execute_subtask_code(subtask, code_string, index)
+            for index, subtask in enumerate(subtasks):
+                # --- Step 1: Validate subtask code ---
+                output_validator, subtask = self._validate_subtask_code(subtask, index, results)
+                code_string = output_validator["code_string"]
 
-            # --- Step 3: Run the subtask function from the namespace ---
-            subtask_name = subtask["subtask_name"]
-            input_tool_name = subtask.get("input_from_subtask", "")
-            if subtask_name in temp_namespace:
-                tool_func = temp_namespace[subtask_name]
-                sig = inspect.signature(tool_func)
-                if index > 0:
-                    previous_result = results.get(input_tool_name, {})
-                    result = tool_func(previous_result)
-                else:
-                    if "previous_output" in sig.parameters:
-                        result = tool_func({})
+                subtask_name = subtask["subtask_name"]
+                input_tool_name = subtask.get("input_from_subtask", "")
+                attempts = 0
+                success = False
+
+                # Regeneration loop for execution errors (based on log inspection)
+                while attempts < self.execution_max_regeneration_attempts and not success:
+                    # --- Step 2: Execute the subtask code ---
+                    temp_namespace, code_string = self._execute_subtask_code(subtask, code_string, index)
+
+                    if subtask_name not in temp_namespace:
+                        error_msg = f"Subtask '{subtask_name}' not found in the execution namespace."
+                        self.agent.logger.error(
+                            self.agent.enrich_log(error_msg, "add_red_divider"),
+                            extra={'no_memory': True}
+                        )
+                        raise Exception(error_msg)
+
+                    tool_func = temp_namespace[subtask_name]
+                    sig = inspect.signature(tool_func)
+
+                    log_start_index = len(self.agent.execution_logs)
+
+                    # --- Step 3: Call the subtask function ---
+                    if index > 0:
+                        previous_result = results.get(input_tool_name, {})
+                        result = tool_func(previous_result)
                     else:
-                        result = tool_func()
-                results[subtask_name] = result
+                        if "previous_output" in sig.parameters:
+                            result = tool_func({})
+                        else:
+                            result = tool_func()
+                    results[subtask_name] = result
 
-                results_str = json.dumps(results, indent=4) 
+                    # After calling the function, retrieve new log entries.
+                    new_logs = self.agent.execution_logs[log_start_index:]
+                    if any(error_pattern.search(log) for log in new_logs):
+                        error_message = "\n".join(new_logs)
+                        self.agent.logger.error(
+                            self.agent.enrich_log(
+                                f"❌ Errors found after executing subtask '{subtask_name}' "
+                                f"(attempt {attempts + 1}/{self.execution_max_regeneration_attempts}):\n{error_message}",
+                                "add_red_divider"
+                            ),
+                            extra={'no_memory': True} 
+                        )
+                        # Regenerate the subtask code based on the error logs.
+                        regen_subtask = self.regenerate_subtask(error_message, subtask)
+                        self._update_subtask_in_plan(subtask_name, regen_subtask)
+                        subtask = regen_subtask
+                        code_string = subtask["code"]
+                        attempts += 1
+                    else:
+                        success = True
+
+                if not success:
+                    error_msg = (
+                        f"❌❌❌ Subtask '{subtask_name}' still fails after {attempts} execution regeneration attempts."
+                    )
+                    self.agent.logger.error(
+                        self.agent.enrich_log(error_msg, "add_red_divider"),
+                        extra={'no_memory': True}
+                    )
+                    raise Exception(error_msg)
+
+                # --- Logging the successful execution ---
+                results_str = json.dumps(results, indent=4)
                 if index == len(subtasks) - 1:
-                    self.agent.logger.info(f"✅ Last subtask '{subtask_name}' executed successfully. this is the final result: {results_str}")
+                    self.agent.logger.info(
+                        f"✅ Last subtask '{subtask_name}' executed successfully. This is the final result: {results_str}"
+                    )
                 if len(results_str) > 500:
                     results_str = results_str[:500] + "... [truncated]"
 
@@ -68,15 +122,9 @@ class SubtaskExecutor:
                     ),
                     extra={'no_memory': True}
                 )
-            else:
-                error_msg = f"Subtask '{subtask_name}' not found in the execution namespace."
-                self.agent.logger.error(
-                    self.agent.enrich_log(error_msg, "add_red_divider"),
-                    extra={'no_memory': True}
-                )
-                raise Exception(error_msg)
 
-        return results
+            return results
+
 
     def _update_subtask_in_plan(self, subtask_name, new_subtask):
         """
@@ -170,18 +218,7 @@ class SubtaskExecutor:
         return output_validator, subtask
 
     def _execute_subtask_code(self, subtask, code_string, index):
-        """
-        Executes the code string within a dedicated namespace and attempts regeneration if an error occurs.
-
-        :param subtask: The current subtask (a dict).
-        :param code_string: The Python code (as a string) to execute.
-        :param index: The index of the current subtask.
-        :return: A tuple (temp_namespace, code_string) where temp_namespace is the dictionary in which the code was executed.
-        :raises Exception: If execution fails after the maximum regeneration attempts.
-        """
-        attempts = 0
         temp_namespace = {"logger": self.agent.logger}
-
         self.agent.logger.info(
             self.agent.enrich_log(
                 f"⌛ Executing subtask nr.{index + 1} of {len(self.agent.json_plan.get('subtasks', []))}: {subtask['subtask_name']}",
@@ -190,35 +227,9 @@ class SubtaskExecutor:
             extra={'no_memory': True}
         )
 
-        while attempts < self.execution_max_regeneration_attempts:
-            try:
-                exec(code_string, temp_namespace)
-                return temp_namespace, code_string
-            except Exception:
-                error_message = traceback.format_exc()
-                self.agent.logger.error(
-                    self.agent.enrich_log(
-                        f"❌ Error during execution of subtask '{subtask['subtask_name']}' "
-                        f"(attempt {attempts + 1}/{self.execution_max_regeneration_attempts}):\n{error_message}",
-                        "add_red_divider"
-                    ),
-                    extra={'no_memory': True}
-                )
-                regen_subtask = self.regenerate_subtask(error_message, subtask)
-                self._update_subtask_in_plan(subtask["subtask_name"], regen_subtask)
-                # In this case we assume that the regenerated subtask has an updated "code" field.
-                code_string = regen_subtask["code"]
-                attempts += 1
+        exec(code_string, temp_namespace)
+        return temp_namespace, code_string
 
-        error_msg = (
-            f"❌❌❌ Subtask '{subtask['subtask_name']}' still fails after "
-            f"{attempts} execution regeneration attempts."
-        )
-        self.agent.logger.error(
-            self.agent.enrich_log(error_msg, "add_red_divider"),
-            extra={'no_memory': True}
-        )
-        raise Exception(error_msg)
 
     def regenerate_subtask(self, subtask_errors, subtask):
         """

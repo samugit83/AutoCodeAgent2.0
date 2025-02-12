@@ -13,7 +13,7 @@ def retrieve_documents(query, persist_dir="./tools/rag/llama_index/database"):
       query (str): The query string to search for.
       persist_dir (str): Directory where the LlamaIndex is persisted.
       
-    Returns:
+    Returns:  
       str: A string containing the query response. 
     """
     storage_context = StorageContext.from_defaults(persist_dir=persist_dir)

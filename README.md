@@ -54,13 +54,20 @@ AutoCodeAgent allows you to handle complex tasks such as:
 
 - *"I want to review the picture on Wikipedia for three different actors. Use browser_navigation to visit each actor's Wikipedia page, please use your vision capability guess the actor's age in the picture. Your goal is to guess the actor's age in the picture. Then, create a summary when you compare the picture age with the actual actor's age. Once you have completed the report, send it by email to (your_email). The actors are: Brad Pitt Robert De Niro Marlon Rando. Good luck!"*
 
-- *"Visit 4 different electronics e-commerce sites to get the average price of the top 3 search results for the query: iPhone 13 Pro. The websites are: https://www.bestbuy.com/, https://www.croma.com/, https://www.mediaworld.it/, https://www.boulanger.com/. Then, provide me with a price comparison report. If you find a currency other than the euro, search Google for the latest exchange rate and convert the prices. Finally, save the report in the simple rag database and send me the same report via email to (your_email)"*
+- *"Navigate with browser different electronics e-commerce sites to get the average price of the top 3 search results for the query: iPhone 13 Pro. The websites are: https://www.bestbuy.com/, https://www.croma.com/, https://www.mediaworld.it/, https://www.boulanger.com/. Then, provide me with a price comparison report. If you find a currency other than the euro, search Google for the latest exchange rate and convert the prices. Finally, save the report in the llama index database and send me the same report via email to (your_email)"*
 
 - *"Go to LinkedIn Feed and log in using your email (your_email) and password (your_password). Scroll down to the first post and leave a comment that is both intelligent and contextually relevant, taking into account the text and image. Your comment must contain at least 40 words. Once you have posted your comment, email the execution result to (your_email)."*
 
 - *"Please visit Booking.com and search for a Hotel in Milan that is available from June 1st to June 10th. Extract the name and price of the first hotel in the result. Then save it on simple rag database, send an email to (your_email) with the hotel's name and price."*
 
-- *"Calculate the area of the triangle formed by Paris, Moscow, and Rome in square kilometers, and send me an email at samuele.giampieri1@gmail.com with the coordinates of the cities and the calculated area."*
+- *"Calculate the area of the triangle formed by Paris, Moscow, and Rome in square kilometers, and send me an email at your_email@gmail.com with the coordinates of the cities and the calculated area."*
+
+- *"Search for the latest news about Open AI, summarize it and send me an email at your_email@gmail.com with the summary."*
+
+- *"Search for the latest articles on cybersecurity, extract full-page content along with any notable images and captions using your web search and browser navigation tools, compile everything into an HTML report, and send it via email to my team at your_email@gmail.com with the subject 'Cybersecurity Trends Update'."*
+
+- *"Search for the latest news about the latest Ferrari model, summarize it, and save it in the LlamaIndex database. After that, make 3 different queries on the database to check if the information was stored correctly. Finally, send me a report by email to your_email@gmail.com"*
+
 
 AutoCodeAgent 2.0 introduces RAG (Retrieval-Augmented Generation) capabilities, empowering the system with multi RAG techniques, each having its own ingestion and retrieval tools. 
 The system uses many persistent Database integrated in Docker, like Vector ChromaDB, Graph Neo4j, and Others.
@@ -634,5 +641,3 @@ We welcome contributions from the community! If you'd like to contribute, please
 By contributing, you agree that your changes will be licensed under the same license as the project.
 
 Thank you for helping improve this project! 🚀
-
-

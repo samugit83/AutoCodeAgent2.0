@@ -1,6 +1,37 @@
 import ast
 import builtins
 
+SAFE_BUILTIN_MODULES = [
+    "math",
+    "cmath",
+    "decimal",
+    "fractions",
+    "random",
+    "statistics",
+    "itertools",
+    "functools",
+    "operator",
+    "collections",
+    "heapq",
+    "bisect",
+    "datetime",
+    "time",
+    "calendar",
+    "re",
+    "string",
+    "json",
+    "copy",
+    "pprint",
+    "logging",
+    "enum",
+    "abc",
+    "dataclasses",
+    "types",
+    "traceback",
+    "uuid"
+]
+
+
 # -------------------------------
 # Helper classes (AST Visitors)
 # -------------------------------
@@ -27,7 +58,6 @@ class AllowedImportsChecker(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_ImportFrom(self, node):
-        # Flag any relative (local) import: relative imports have node.level > 0.
         if node.level and node.level > 0:
             relative_import = "." * node.level + (node.module or "")
             self.illegal_imports.add(f"Relative import: '{relative_import}'")
@@ -62,7 +92,6 @@ class AssignedNamesVisitor(ast.NodeVisitor):
         self.assigned = set()
 
     def visit_FunctionDef(self, node):
-        # Record the function name (for nested functions)
         self.assigned.add(node.name)
         self.generic_visit(node)
 
@@ -107,10 +136,10 @@ class AssignedNamesVisitor(ast.NodeVisitor):
         self.generic_visit(node)
   
 
-
 class UndefinedNameVisitor(ast.NodeVisitor):
     """
     Checks for any undefined names (variables, functions, etc.) used in a function.
+    Updated to bypass names defined in comprehensions.
     """
     def __init__(self, allowed_names: set):
         self.allowed_names = allowed_names
@@ -121,6 +150,39 @@ class UndefinedNameVisitor(ast.NodeVisitor):
             if node.id not in self.allowed_names:
                 self.undefined_names.add(node.id)
         self.generic_visit(node)
+
+    def visit_ListComp(self, node):
+        for generator in node.generators:
+            self._add_comprehension_targets(generator.target)
+            self.generic_visit(generator)
+        self.generic_visit(node.elt)
+
+    def visit_GeneratorExp(self, node):
+        for generator in node.generators:
+            self._add_comprehension_targets(generator.target)
+            self.generic_visit(generator)
+        self.generic_visit(node.elt)
+
+    def visit_SetComp(self, node):
+        for generator in node.generators:
+            self._add_comprehension_targets(generator.target)
+            self.generic_visit(generator)
+        self.generic_visit(node.elt)
+
+    def visit_DictComp(self, node):
+        for generator in node.generators:
+            self._add_comprehension_targets(generator.target)
+            self.generic_visit(generator)
+        self.generic_visit(node.key)
+        self.generic_visit(node.value)
+
+    def _add_comprehension_targets(self, target):
+        if isinstance(target, ast.Name):
+            self.allowed_names.add(target.id)
+        elif isinstance(target, (ast.Tuple, ast.List)):
+            for elt in target.elts:
+                if isinstance(elt, ast.Name):
+                    self.allowed_names.add(elt.id) 
 
 
 class UpdatedDictCopyVisitor(ast.NodeVisitor):
@@ -149,6 +211,7 @@ class UpdatedDictGetVisitor(ast.NodeVisitor):
     Checks that any call of the form:
         updated_dict.get(<key>, ...)
     uses a key that is present in previous_output.
+    Modified to bypass non–literal key arguments.
     """
     def __init__(self, previous_keys: set):
         self.previous_keys = previous_keys
@@ -161,6 +224,7 @@ class UpdatedDictGetVisitor(ast.NodeVisitor):
                 node.func.value.id == "updated_dict"):
                 if node.args:
                     key_arg = node.args[0]
+                    # Only check if the key is a string literal.
                     if isinstance(key_arg, ast.Constant) and isinstance(key_arg.value, str):
                         key_used = key_arg.value
                         if key_used not in self.previous_keys:
@@ -168,9 +232,8 @@ class UpdatedDictGetVisitor(ast.NodeVisitor):
                                 f"Key '{key_used}' used in updated_dict.get is not present in previous_output."
                             )
                     else:
-                        self.errors.append(
-                            "The key argument in updated_dict.get must be a string literal."
-                        )
+                        # Bypass the error if the key is not a literal.
+                        pass
         self.generic_visit(node)
 
 
@@ -186,7 +249,7 @@ class FunctionNestingVisitor(ast.NodeVisitor):
     def check_nesting(self, node, depth=0):
         if isinstance(node, ast.FunctionDef):
             if depth > 1:
-                self.errors.append(
+                self.errors.append( 
                     f"Function '{node.name}' is nested too deeply at level {depth}. Only one level of nested functions is allowed."
                 )
             for child in ast.iter_child_nodes(node):
@@ -210,7 +273,6 @@ class DangerousCallVisitor(ast.NodeVisitor):
         self.dangerous_full_names = {"os.system", "os.popen", "subprocess.call", "subprocess.Popen", "pickle.loads"}
 
     def visit_Call(self, node):
-        # If the function is called by name.
         if isinstance(node.func, ast.Name):
             if node.func.id in self.dangerous_function_names:
                 self.dangerous_calls.add(node.func.id)
@@ -233,18 +295,18 @@ class DangerousCallVisitor(ast.NodeVisitor):
 # Main FunctionValidator Class
 # -------------------------------
  
-class FunctionValidator:
+class FunctionValidator: 
     def __init__(self, subtask_name: str, allowed_lib_names: list, subtask_idx: int, total_subtasks: int, previous_output: dict = None):
         """
         Initializes the validator with the expected subtask name, a list of allowed libraries,
         and the index of the subtask (to validate the parameter signature accordingly).
 
         :param subtask_name: The expected name of the function. 
-        :param allowed_lib_names: A list of allowed library names (e.g., ["models"] or ["tools.rag.simple_rag"]).
-        :param subtask_idx: The index of the subtask. For index 0 the rules differ from those for index > 0.
+        :param allowed_lib_names: A list of allowed library names.
+        :param subtask_idx: The index of the subtask.
         """
         self.subtask_name = subtask_name
-        self.allowed_lib_names = allowed_lib_names if allowed_lib_names is not None else []
+        self.allowed_lib_names = list(set(allowed_lib_names + SAFE_BUILTIN_MODULES))
         self.subtask_idx = subtask_idx
         self.previous_output = previous_output
         self.total_subtasks = total_subtasks
@@ -254,20 +316,16 @@ class FunctionValidator:
         """
         Validates the given code by:
          1. Checking for syntax errors.
-         2. Ensuring that only allowed libraries (from allowed_lib_names) are imported.
+         2. Ensuring that only allowed libraries are imported.
          3. Checking that all used names are defined.
          4. Validating the function parameter signature based on the subtask index.
          5. For subtask indices > 0, verifying that the function includes the assignment
             'updated_dict = previous_output.copy()'.
          6. If previous_output is provided, ensuring that any calls to updated_dict.get(...)
             use keys that are present in previous_output.
-         7. Validating that there is only one level of function nesting (primary function plus optional helper functions).
-         8. Ensuring that dangerous function calls (e.g., eval, exec, compile, __import__, os.system, etc.) are not used.
+         7. Validating that there is only one level of function nesting.
+         8. Ensuring that dangerous function calls are not used.
          9. Renaming the function to match the expected subtask name if no errors occur.
-
-        :param code_string: The code to validate.
-        :param previous_output: (Optional) The dictionary produced by a previous subtask.
-        :return: A dictionary with the (possibly modified) code string and any errors encountered.
         """
         try:
             tree = ast.parse(code_string)
@@ -305,19 +363,16 @@ class FunctionValidator:
                         self.errors_for_regeneration.append(f"Keyword-only argument '{arg.arg}' must have a default value.")
 
                 # Validate positional arguments.
-                positional_args = function_def.args.args  # list of ast.arg
+                positional_args = function_def.args.args  
                 num_defaults = len(function_def.args.defaults)
                 non_default_count = len(positional_args) - num_defaults
 
                 if self.subtask_idx == 0:
-                    # For subtask 0: if any parameters exist, they must all have default values.
                     if non_default_count != 0 and self.total_subtasks > 1:
                         self.errors_for_regeneration.append(
                             f"For subtask at index 0, all positional parameters must have default values. Found {non_default_count} parameter(s) without defaults."
                         )
                 else:
-                    # For subtasks with index > 0:
-                    # The first parameter must be "previous_output" and it should be the only non-default parameter.
                     if not positional_args:
                         self.errors_for_regeneration.append("For subtask index > 0, the function must have at least one parameter named 'previous_output'.")
                     else:

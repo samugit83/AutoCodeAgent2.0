@@ -550,9 +550,9 @@ class HybridVectorGraphRag:
             f"Context:\n{full_context}\n\n"
             f"Question:\n{question}\n"
             "Provide a concise answer:"
-        ) 
+        )   
 
-        self.logger.info("Calling the LLM to produce the final answer.")
+        self.logger.info("Calling the LLM to produce the final answer.") 
         try:
             final_answer = call_model(
                 chat_history=[{"role": "user", "content": final_prompt}],
