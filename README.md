@@ -1,3 +1,5 @@
+![AutoCode Agent with RAG Workflow](./static/autocode.png)
+
 # AutoCodeAgent - AI Agent for Complex Task Resolution
 ![version](https://img.shields.io/badge/version-1.2.0-blue)
 
@@ -132,8 +134,6 @@ A function validator inspects each subtask’s code (via AST analysis) for synta
 - At Docker startup, all support databases for any RAG technique, including vector databases (ChromaDB) and graph databases (Neo4j), are automatically created.
 - The database is stored in the container, so it is persistent and will be available even after the container is stopped.
 
-### Here you can find a workflow that illustrates the agent's operation:
-![AutoCode Agent with RAG Workflow](./static/autocode.png)
 
 ## Each tool can be added in different ways: <a name="all-ways-to-add-tools"></a>
 
