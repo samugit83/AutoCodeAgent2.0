@@ -48,7 +48,7 @@ Discover how to use the LlamaIndex RAG.
 [Go to LlamaIndex RAG](#llama-index-rag)
 
 
-## Introduction <a name="introduction"></a>
+## Introduction {#introduction}
 Welcome to the Advanced AI Code Agent project! This intelligent agent leverages cutting-edge AI techniques to automatically generate, execute, and refine Python code in a modular and iterative way. It is designed to break down complex tasks into manageable subtasks, generate precise code for each, and orchestrate their execution using a variety of tools and libraries.
 The Advanced AI Code Agent is an AI-powered system that automates the process of decomposing complex problems, writing Python code, executing that code, and evaluating the results. It uses a combination of AI language models, dynamic code execution, and an evaluation loop to refine its approach until the task is successfully completed. This repository provides a robust framework that you can extend to solve a wide range of problems by simply defining new tasks and integrating appropriate tools.
 
@@ -89,7 +89,7 @@ These features allow the agent to leverage previously ingested knowledge and imp
 
 
 
-## Features <a name="features"></a>
+## Features {#features}
 
 ### Task Decomposition: 
 Automatically breaks down a complex main task into multiple smaller subtasks. Each subtask corresponds to a specific tool or function designed to handle a part of the problem, resulting in a clear and structured JSON plan.
@@ -135,7 +135,7 @@ A function validator inspects each subtask’s code (via AST analysis) for synta
 - The database is stored in the container, so it is persistent and will be available even after the container is stopped.
 
 
-## Each tool can be added in different ways: <a name="all-ways-to-add-tools"></a>
+## Each tool can be added in different ways: {#all-ways-to-add-tools}
 
 1) **ONLY LIBRARY NAME**: specifying only the name of the Python library:
 Ensure the library is listed in requirements.txt
@@ -322,14 +322,16 @@ def function_name(previous_output):
         return previous_output
 ```
 
-## Video Demo <a name="video-demo"></a>
+## Video Demo {#video-demo}
 Discover the capabilities of AutoCodeAgent with those videos:<br>
 [General Video Demo](https://youtu.be/T3Ej4-eeDag).<br>
 [Project explanation Video Demo](https://youtu.be/4XGYf0ePSUY).<br>
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).<br>
 [Integration with SurfAi Video Demo 1](https://youtu.be/b5OPk7-FPrk).<br>
 [Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).<br>
-## Application Setup <a name="application-setup"></a>
+
+
+## Application Setup {#application-setup}
 Follow the steps below to set up and run the pplication using Docker. This setup ensures that all necessary services are built and started correctly, with session management handled seamlessly via a Redis database.
 
 ### Prerequisites
@@ -416,7 +418,7 @@ HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL="gpt-4o"  # hybrid vector
 ```
 
 
-## Default Tools <a name="default-tools"></a>
+## Default Tools {#default-tools}
 The default tools are pre-implemented and fully functional, supporting the agent in executing subtasks. These default tools are listed below and can be found in the file: 
 /code_agent/default_tools.py
 
@@ -443,7 +445,7 @@ The default tools are pre-implemented and fully functional, supporting the agent
 
 
 
-## SurfAi 🌐🤖 - now as a default tool! <a name="surfai-integration"></a>
+## SurfAi 🌐🤖 - now as a default tool! {#surfai-integration}
 
 **AI-Powered Web Automation Agent** - Version 1.1.0
 
@@ -477,7 +479,7 @@ You can find the screenshots generated during navigation at the following path: 
 
 
 
-## All RAG Techniques at Your Fingertips, Each as a Tool <a name="all-rag-techniques"></a>
+## All RAG Techniques at Your Fingertips, Each as a Tool {#all-rag-techniques}
 
 Welcome to the heart of AutoCodeAgent 2.0, where the power of Retrieval-Augmented Generation (RAG) is seamlessly integrated into your workflow. Imagine having a suite of advanced RAG techniques at your disposal, each designed to handle specific data retrieval and ingestion tasks with precision and efficiency. These techniques are not just abstract concepts—they are practical tools that you can invoke with a simple prompt, enabling the agent to interact with structured and unstructured data in ways that were previously unimaginable.
 
@@ -486,7 +488,7 @@ In this section, we dive into the diverse RAG techniques that AutoCodeAgent 2.0 
 Think of these RAG techniques as your personal data assistants, ready to fetch, store, and process information at your command. With AutoCodeAgent 2.0, you’re not just working with data—you’re orchestrating it. Let’s explore how each RAG technique can transform the way you interact with information, making your tasks smarter, faster, and more intuitive.
 
 
-### Simple RAG <a name="simple-rag"></a>
+### Simple RAG {#simple-rag}
 Simple RAG is your go-to tool for straightforward data retrieval and ingestion tasks. It leverages vector embeddings to store and retrieve text chunks efficiently, making it ideal for scenarios where quick access to relevant information is crucial. Whether you're saving web search results or retrieving documents based on a query, Simple RAG ensures that your data is always within reach.
 
 **Key Features:**
@@ -505,7 +507,7 @@ Simple RAG is your go-to tool for straightforward data retrieval and ingestion t
 
 
 
-### Hybrid Vector Graph RAG <a name="hybrid-vector-graph-rag"></a>
+### Hybrid Vector Graph RAG {#hybrid-vector-graph-rag}
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).
 
 Hybrid Vector Graph RAG takes data retrieval to the next level by combining the strengths of vector embeddings and graph databases. This technique not only stores text chunks as vectors but also captures the relationships between them in a graph structure. The result is a powerful tool that can navigate complex data relationships, making it perfect for tasks that require deep contextual understanding.
@@ -611,7 +613,7 @@ Delivers the generated answer to the user. The system presents the final respons
 Concludes the retrieval process by finalizing all tasks and ensuring that all data is properly stored and connections are closed. It confirms that the system has successfully processed the user's query.
 
 
-### Llama Index RAG <a name="llama-index-rag"></a>
+### Llama Index RAG {#llama-index-rag}
 In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.
 Example Prompt for retrieval: "Find the latest market trends using the Llama Index."
 Example prompt for ingestion: "Find the latest market trends from the web and save it in the database using the Llama Index."
