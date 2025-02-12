@@ -3,45 +3,40 @@
 # AutoCodeAgent - AI Agent for Complex Task Resolution
 ![version](https://img.shields.io/badge/version-1.2.0-blue)
 
-[Introduction](#introduction)
+[Introduction](#introduction)  
 Welcome to the project! This section provides a general overview of the project, its goals, and its main features.
 
-[Features](#features)
+[Features](#features)  
 Here, the main features of the project are listed and described.
 
-[All Ways to Add Tools](#all-ways-to-add-tools)
+[All Ways to Add Tools](#all-ways-to-add-tools)  
 This section explains the various methods available for adding tools to the project.
 
-[Video Demo](#video-demo)
+[Video Demo](#video-demo)  
 Explore the full potential of AutoCodeAgent by watching these demonstration videos.
 
-## Application Setup
+[Application Setup](#application-setup)  
 Step-by-step guide to setting up the project for the first time.
-[Go to Application Setup](#application-setup)
 
-## Default Tools
+[Default Tools](#default-tools)  
 Description of the tools that are included by default in the project.
-[Go to Default Tools](#default-tools)
 
-## NEW! Integration of SurfAi as an Automated Web Navigation Tool (local function type)
+[SurfAi Integration](#surfai-integration)  
+NEW! Integration of SurfAi as an Automated Web Navigation Tool (local function type)
 We have integrated SurfAi into our suite as a powerful automated web navigation tool. This enhancement enables seamless interaction with web pages, efficient extraction of data and images, and supports the resolution of more complex tasks through intelligent automation.
-[Go to SurfAi Integration](#surfai-integration)
 
-## All RAG Techniques at Your Fingertips, Each as a Tool
+[All RAG Techniques](#all-rag-techniques)  
 Overview of the different RAG techniques available and how to use them as tools.
-[Go to All RAG Techniques](#all-rag-techniques)
 
-### Simple RAG
+[Simple RAG](#simple-rag)  
 Detailed description of the Simple RAG technique.
-[Go to Simple RAG](#simple-rag)
 
-### Hybrid Vector Graph RAG
+[Hybrid Vector Graph RAG](#hybrid-vector-graph-rag)  
 Detailed description of the Hybrid Vector Graph RAG technique.
-[Go to Hybrid Vector Graph RAG](#hybrid-vector-graph-rag)
 
-### LlamaIndex RAG
+[LlamaIndex RAG](#llama-index-rag)  
 Discover how to use the LlamaIndex RAG.
-[Go to LlamaIndex RAG](#llama-index-rag)
+
 
 
 ## Introduction
@@ -131,7 +126,7 @@ A function validator inspects each subtask’s code (via AST analysis) for synta
 - The database is stored in the container, so it is persistent and will be available even after the container is stopped.
 
 
-## Each tool can be added in different ways: {#all-ways-to-add-tools}
+## All Ways to Add Tools
 
 1) **ONLY LIBRARY NAME**: specifying only the name of the Python library:
 Ensure the library is listed in requirements.txt
@@ -318,7 +313,7 @@ def function_name(previous_output):
         return previous_output
 ```
 
-## Video Demo {#video-demo}
+## Video Demo
 Discover the capabilities of AutoCodeAgent with those videos:<br>
 [General Video Demo](https://youtu.be/T3Ej4-eeDag).<br>
 [Project explanation Video Demo](https://youtu.be/4XGYf0ePSUY).<br>
@@ -327,7 +322,7 @@ Discover the capabilities of AutoCodeAgent with those videos:<br>
 [Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).<br>
 
 
-## Application Setup {#application-setup}
+## Application Setup
 Follow the steps below to set up and run the pplication using Docker. This setup ensures that all necessary services are built and started correctly, with session management handled seamlessly via a Redis database.
 
 ### Prerequisites
@@ -414,7 +409,7 @@ HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL="gpt-4o"  # hybrid vector
 ```
 
 
-## Default Tools {#default-tools}
+## Default Tools
 The default tools are pre-implemented and fully functional, supporting the agent in executing subtasks. These default tools are listed below and can be found in the file: 
 /code_agent/default_tools.py
 
@@ -441,7 +436,7 @@ The default tools are pre-implemented and fully functional, supporting the agent
 
 
 
-## SurfAi 🌐🤖 - now as a default tool! {#surfai-integration}
+## SurfAi Integration 🌐🤖 - now as a default tool!
 
 **AI-Powered Web Automation Agent** - Version 1.1.0
 
@@ -450,11 +445,11 @@ SurfAi is an intelligent and lightweight web automation engine that harnesses AI
 The groundbreaking innovation lies in its integration as a tool within AutoCodeAgent, enabling the execution of even more sophisticated tasks. SurfAi allows users to navigate web pages, interact with them, extract information, and visually analyze images, ultimately delivering a structured output for the next tool in the complex task workflow.
 
 ## Video Demo 
-Discover the capabilities of SurfAi:
-[Task: Post on Linkedin](https://youtu.be/n2jnfNpV6BQ).
-[Task: Job application on LinkedIn](https://youtu.be/T3Ej4-eeDag).
-[Task: Add a new work experience on LinkedIn](https://youtu.be/hR73ftZ4t_4).
-[Task: Search for an available hotel on Booking.com and get info](https://youtu.be/o5Gn-XVv_h8).
+Discover the capabilities of SurfAi:  
+[Task: Post on Linkedin](https://youtu.be/n2jnfNpV6BQ)  
+[Task: Job application on LinkedIn](https://youtu.be/T3Ej4-eeDag)  
+[Task: Add a new work experience on LinkedIn](https://youtu.be/hR73ftZ4t_4)  
+[Task: Search for an available hotel on Booking.com and get info](https://youtu.be/o5Gn-XVv_h8)  
 
 ## Features ✨
 
@@ -475,7 +470,7 @@ You can find the screenshots generated during navigation at the following path: 
 
 
 
-## All RAG Techniques at Your Fingertips, Each as a Tool {#all-rag-techniques}
+## All Rag Techniques
 
 Welcome to the heart of AutoCodeAgent 2.0, where the power of Retrieval-Augmented Generation (RAG) is seamlessly integrated into your workflow. Imagine having a suite of advanced RAG techniques at your disposal, each designed to handle specific data retrieval and ingestion tasks with precision and efficiency. These techniques are not just abstract concepts—they are practical tools that you can invoke with a simple prompt, enabling the agent to interact with structured and unstructured data in ways that were previously unimaginable.
 
@@ -484,7 +479,7 @@ In this section, we dive into the diverse RAG techniques that AutoCodeAgent 2.0 
 Think of these RAG techniques as your personal data assistants, ready to fetch, store, and process information at your command. With AutoCodeAgent 2.0, you’re not just working with data—you’re orchestrating it. Let’s explore how each RAG technique can transform the way you interact with information, making your tasks smarter, faster, and more intuitive.
 
 
-### Simple RAG {#simple-rag}
+### Simple RAG
 Simple RAG is your go-to tool for straightforward data retrieval and ingestion tasks. It leverages vector embeddings to store and retrieve text chunks efficiently, making it ideal for scenarios where quick access to relevant information is crucial. Whether you're saving web search results or retrieving documents based on a query, Simple RAG ensures that your data is always within reach.
 
 **Key Features:**
@@ -502,8 +497,7 @@ Simple RAG is your go-to tool for straightforward data retrieval and ingestion t
 - *"Retrieve information about climate change from the database using the tool: `retrieve_simple_rag`."*
 
 
-
-### Hybrid Vector Graph RAG {#hybrid-vector-graph-rag}
+### Hybrid Vector Graph RAG
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).
 
 Hybrid Vector Graph RAG takes data retrieval to the next level by combining the strengths of vector embeddings and graph databases. This technique not only stores text chunks as vectors but also captures the relationships between them in a graph structure. The result is a powerful tool that can navigate complex data relationships, making it perfect for tasks that require deep contextual understanding.
@@ -609,7 +603,7 @@ Delivers the generated answer to the user. The system presents the final respons
 Concludes the retrieval process by finalizing all tasks and ensuring that all data is properly stored and connections are closed. It confirms that the system has successfully processed the user's query.
 
 
-### Llama Index RAG {#llama-index-rag}
+### Llama Index RAG
 In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.
 Example Prompt for retrieval: "Find the latest market trends using the Llama Index."
 Example prompt for ingestion: "Find the latest market trends from the web and save it in the database using the Llama Index."
