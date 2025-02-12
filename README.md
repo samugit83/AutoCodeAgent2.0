@@ -3,21 +3,17 @@
 # AutoCodeAgent - AI Agent for Complex Task Resolution
 ![version](https://img.shields.io/badge/version-1.2.0-blue)
 
-## Introduction
+[Introduction](#introduction)
 Welcome to the project! This section provides a general overview of the project, its goals, and its main features.
-[Go to Introduction](#introduction)
 
-## Features
+[Features](#features)
 Here, the main features of the project are listed and described.
-[Go to Features](#features)
 
-## All Ways to Add Tools
+[All Ways to Add Tools](#all-ways-to-add-tools)
 This section explains the various methods available for adding tools to the project.
-[Go to All Ways to Add Tools](#all-ways-to-add-tools)
 
-## Video Demo
+[Video Demo](#video-demo)
 Explore the full potential of AutoCodeAgent by watching these demonstration videos.
-[Go to Video Demo](#video-demo)
 
 ## Application Setup
 Step-by-step guide to setting up the project for the first time.
@@ -48,7 +44,7 @@ Discover how to use the LlamaIndex RAG.
 [Go to LlamaIndex RAG](#llama-index-rag)
 
 
-## Introduction {#introduction}
+## Introduction
 Welcome to the Advanced AI Code Agent project! This intelligent agent leverages cutting-edge AI techniques to automatically generate, execute, and refine Python code in a modular and iterative way. It is designed to break down complex tasks into manageable subtasks, generate precise code for each, and orchestrate their execution using a variety of tools and libraries.
 The Advanced AI Code Agent is an AI-powered system that automates the process of decomposing complex problems, writing Python code, executing that code, and evaluating the results. It uses a combination of AI language models, dynamic code execution, and an evaluation loop to refine its approach until the task is successfully completed. This repository provides a robust framework that you can extend to solve a wide range of problems by simply defining new tasks and integrating appropriate tools.
 
@@ -89,7 +85,7 @@ These features allow the agent to leverage previously ingested knowledge and imp
 
 
 
-## Features {#features}
+## Features
 
 ### Task Decomposition: 
 Automatically breaks down a complex main task into multiple smaller subtasks. Each subtask corresponds to a specific tool or function designed to handle a part of the problem, resulting in a clear and structured JSON plan.
