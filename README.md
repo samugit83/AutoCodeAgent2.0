@@ -2,10 +2,10 @@
 ![AutoCode Agent with RAG Workflow](./static/images/autocode.png)  
 
 <div align="center" style="width: 100%; background-color: white; padding: 15px; margin: 20px 0; display: flex; align-items: center; gap: 25px;">
-  <img src="./static/images/langchain-logo.png" alt="Logo 1" height="80" style="margin: 10px 0;" />
-  <img src="./static/images/llama-logo.png" alt="Logo 2" height="70" style="margin: 10px 0;" />
-  <img src="./static/images/neo4j-logo.png" alt="Logo 3" height="50" style="margin: 10px 0;" />
-  <img src="./static/images/chroma-logo.svg" alt="Logo 4" height="30" style="margin: 10px 0;" />
+  <img src="./static/images/langchain-logo.png" alt="Logo 1" height="80" />
+  <img src="./static/images/llama-logo.png" alt="Logo 2" height="70" />
+  <img src="./static/images/neo4j-logo.png" alt="Logo 3" height="50" />
+  <img src="./static/images/chroma-logo.svg" alt="Logo 4" height="30" />
 </div>
 
 # AutoCodeAgent - AI Agent for Complex Task Resolution
