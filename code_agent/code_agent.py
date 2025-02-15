@@ -1,20 +1,21 @@
 import json
 import os
 from typing import List, Dict
-from .default_tools import generate_default_tools
+from .tool_generator import generate_tools
 from .logging_handler import LoggingConfigurator
 from .agent_plan_generator import PlanGenerator
 from .agent_plan_evaluator import PlanEvaluator
 from .agent_subtask_executor import SubtaskExecutor
+from .utils import transform_final_answer
 
 class CodeAgent:
-    def __init__(self, chat_history: List[Dict], tools: List[str]): 
+    def __init__(self, chat_history: List[Dict], tools: List[str], use_default_tools: bool = True): 
         """
         Initializes the CodeAgent with conversation history and a list of tool names. 
         Additional default tools are appended automatically.
         """
         self.chat_history = chat_history
-        self.tools = tools + generate_default_tools()
+        self.tools = generate_tools(tools, use_default_tools)
         self.execution_logs = []  # This list will collect logs (excluding those with 'no_memory' extra).
         self.logger = LoggingConfigurator.configure_logger(self.execution_logs)
         self.enrich_log = LoggingConfigurator.enrich_log
@@ -35,19 +36,18 @@ class CodeAgent:
         """
         Orchestrates the agent's execution: generating a plan, executing subtasks,
         and evaluating the output iteratively.
-        """ 
-        try:
+        """  
+ 
+        try:  
             self.logger.info(
-                self.enrich_log(f"🚀🚀🚀 Starting agent with user request: {json.dumps(self.chat_history, indent=4)}\n\n✨ Generating initial JSON plan...", "add_green_divider"),
+                self.enrich_log(f"🚀 Starting agent with request: {json.dumps(self.chat_history, indent=4)}", "add_green_divider"),
                 extra={'no_memory': True}
             )
-
-            # Generate initial JSON plan and agent prompt.
             self.json_plan, agent_prompt = self.plan_generator.generate_plan()
 
             self.logger.info(
-                self.enrich_log(f"💡💡💡 Code agent json plan: {json.dumps(self.json_plan, indent=4)}", "add_green_divider"),
-                extra={'no_memory': True} 
+                self.enrich_log(f"💡 JSON plan: {json.dumps(self.json_plan, indent=4)}", "add_green_divider"),
+                extra={'no_memory': True}
             )
 
             max_iterations = 2
@@ -55,41 +55,41 @@ class CodeAgent:
 
             while iteration <= max_iterations + 1:
                 iteration += 1
-                self.logger.info(
-                    f"● ● ● JSON plan execution iteration nr. {iteration} ● ● ● \n\n",
-                    extra={'no_memory': True}
-                ) 
-                
-                # Execute each subtask in the JSON plan.
+                self.logger.info(f"Iteration nr. {iteration}", extra={'no_memory': True})
                 self.subtask_executor.execute_subtasks()
 
-                # Evaluate the results of the current iteration.
                 evaluation_output = self.plan_evaluator.evaluate(
                     agent_prompt, self.json_plan, iteration, max_iterations, self.execution_logs
                 )
 
                 if iteration < max_iterations + 1:
                     if evaluation_output.get("satisfactory", False):
+                        final = evaluation_output.get("final_answer", "")
+                        # Transform audio snippet if necessary.
+                        final = transform_final_answer(final)
                         self.logger.info(
-                            self.enrich_log(f"✅ Evaluation is satisfactory, returning final answer: {evaluation_output.get('final_answer', '')}", "add_green_divider"),
+                            self.enrich_log(f"✅ Evaluation satisfactory. Final answer: {final}", "add_green_divider"),
                             extra={'no_memory': True}
                         )
-                        return evaluation_output.get("final_answer", "")  
-                    else: 
-                        if (not evaluation_output.get("satisfactory", False) and  
-                            not evaluation_output.get("max_iterations_reached", False)):
+                        return final
+                    else:
+                        if not evaluation_output.get("max_iterations_reached", False):
                             self.logger.info(
-                                self.enrich_log(f"🔄 Evaluation is not satisfactory, updating JSON plan.", "add_red_divider"),
+                                self.enrich_log("🔄 Evaluation not satisfactory. Updating JSON plan.", "add_red_divider"),
                                 extra={'no_memory': True}
-                            ) 
+                            )
                             self.json_plan = evaluation_output.get("new_json_plan", {})
-                            self.logger.info(f"Evaluation is not satisfactory. {evaluation_output.get('thoughts', '')}. Now updating JSON plan...\n\n 💡💡💡 New JSON plan: {self.json_plan}")
+                            self.logger.info(f"New JSON plan: {json.dumps(self.json_plan, indent=4)}")
                         elif evaluation_output.get("max_iterations_reached", False):
                             self.logger.warning("Max iterations reached without satisfactory evaluation.")
-                            return evaluation_output.get("final_answer", "")
+                            final = evaluation_output.get("final_answer", "")
+                            final = transform_final_answer(final)
+                            return final
                 else:
                     self.logger.warning("🔴 Max iterations reached without satisfactory evaluation.", extra={'no_memory': True})
-                    return evaluation_output.get("final_answer", "")
+                    final = evaluation_output.get("final_answer", "")
+                    final = transform_final_answer(final)
+                    return final
                     
         except Exception as e:
-            self.logger.error("Error running agent:", exc_info=True) 
+            self.logger.error("Error running agent:", exc_info=True)

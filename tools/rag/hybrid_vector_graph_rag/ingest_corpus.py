@@ -80,7 +80,7 @@ def load_and_process_file(file_path, nlp):
     print(f"Successfully loaded and formatted corpus from {file_path}.")
     return formatted_content
 
-def ingest_corpus():
+def hybrid_vector_graph_rag_ingest_corpus():
     """
     Ingest all supported files from the corpus directory.
     """

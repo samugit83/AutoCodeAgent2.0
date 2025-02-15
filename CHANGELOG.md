@@ -35,3 +35,28 @@ All notable changes to this project will be documented in this file.
   - Implemented a new function that automatically regenerates a subtask if:
     - The function validator fails during pre-execution checks, or
     - An error is encountered during execution.
+
+
+## [1.3.0] - 2025-02-15
+### Added
+- **LangChain Toolbox Integration:**  
+  - Integrated LangChain's toolbox, enabling direct access to over 130 tools simply by specifying the tool name.
+  - Users can now leverage the extensive list of available tools, streamlining the process of incorporating new functionalities.
+  - For a complete list of tools, refer to [LangChain Tools Documentation](https://python.langchain.com/docs/integrations/tools/).
+
+- **Llama Index Corpus Ingestion:**  
+  - Integrated capabilities for ingesting data into the llama indexvector database, parsing any file inside the `tools/rag/llama_index/corpus` folder.
+  - It can ingest the following file types:
+    - `.csv`: Comma-Separated Values
+    - `.docx`: Microsoft Word
+    - `.epub`: EPUB eBook format
+    - `.hwp`: Hangul Word Processor
+    - `.ipynb`: Jupyter Notebook
+    - `.jpeg`, `.jpg`: JPEG image
+    - `.mbox`: MBOX email archive
+    - `.md`: Markdown
+    - `.mp3`, `.mp4`: Audio and video
+    - `.pdf`: Portable Document Format
+    - `.png`: Portable Network Graphics
+    - `.ppt`, `.pptm`, `.pptx`: Microsoft PowerPoint
+

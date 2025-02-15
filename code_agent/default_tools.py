@@ -1,11 +1,3 @@
-import copy
-import os
-import logging
-from string import Template
-
-logger = logging.getLogger(__name__)
-
-
 DEFAULT_TOOLS = [
     {
         "tool_name": "helper_model",
@@ -20,7 +12,7 @@ def call_helper_model(previous_output):
 
         message = updated_dict.get('message', '')
         if len(message) > 350000:
-            message = message[:350000]
+            message: str = message[:350000]
         updated_dict['message'] = message
         
         prompt = f"here you describe how to elaborate the previous output: {updated_dict.get('message','')}"
@@ -130,12 +122,12 @@ def ingest_llama_index(previous_output):
     from tools.rag.llama_index.ingest import ingest_texts
     try:
         updated_dict = previous_output.copy()
-        text = updated_dict.get("text", "")
+        text: str = updated_dict.get("text", "")
         if not text:
             return updated_dict
 
         # Call the function with the text wrapped in a list.
-        result = ingest_texts([text])
+        result: dict = ingest_texts([text])
         updated_dict["ingest_result"] = str(result)
         return updated_dict
     except Exception as e:
@@ -153,9 +145,9 @@ def retrieve_llama_index(previous_output):
     from tools.rag.llama_index.retrieve import retrieve_documents
     try:
         updated_dict = previous_output.copy()
-        query = updated_dict.get("query", "")
+        query: str = updated_dict.get("query", "")
         if not query:
-            return updated_dict
+            return updated_dict 
         
         result: str = retrieve_documents(query) 
         updated_dict["retrieve_result"] = result
@@ -180,7 +172,7 @@ def search_web(previous_output, max_results=3, max_chars=10000):
     try:
         updated_dict = previous_output.copy()
         
-        query = updated_dict.get("query", "")
+        query: str = updated_dict.get("query", "")
         ddgs = DDGS()
         results = ddgs.text(query, max_results=max_results)
         
@@ -217,7 +209,8 @@ def search_web(previous_output, max_results=3, max_chars=10000):
                 continue
 
         logger.info(f"Retrieved {len(successful_hrefs)} pages. URLs: {successful_hrefs}")
-        updated_dict["html_content"] = " ".join(full_text_output)
+        html_content: str = " ".join(full_text_output)
+        updated_dict["html_content"] = html_content
         return updated_dict
     except Exception as e:
         logger.error(f"Error in search_web: {e}")
@@ -280,7 +273,7 @@ def send_email(previous_output) -> dict:
         message["Subject"] = updated_dict.get("subject", "") 
 
         # Attach the HTML content
-        html_content = updated_dict.get("html", "")
+        html_content: str = updated_dict.get("html", "")
         if html_content:
             message.attach(MIMEText(html_content, "html"))
 
@@ -301,47 +294,3 @@ def send_email(previous_output) -> dict:
 """
     }
 ]
-
-def generate_default_tools(tools=DEFAULT_TOOLS):
-    """
-    Applies dynamic variables to any string fields within the tools using Python's string.Template.
-
-    Args:
-        tools (list): The list of tool dictionaries.
-    Returns:
-        list: A new list of tools with variables applied.
-    """
-    updated_tools = copy.deepcopy(tools)
-
-    variables = {
-        "TOOL_HELPER_MODEL": os.getenv("TOOL_HELPER_MODEL", ""),
-        "JSON_PLAN_MODEL": os.getenv("JSON_PLAN_MODEL", ""),
-        "EVALUATION_MODEL": os.getenv("EVALUATION_MODEL", ""),
-        "SIMPLE_RAG_EMBEDDING_MODEL": os.getenv("SIMPLE_RAG_EMBEDDING_MODEL", ""),
-        "GMAILUSER": os.getenv("GMAILUSER", ""),
-        "PASSGMAILAPP": os.getenv("PASSGMAILAPP", "")
-    }
-    for tool in updated_tools:
-        for key, value in tool.items():
-            if isinstance(value, str):
-                tmpl = Template(value)
-                try:
-                    tool[key] = tmpl.substitute(variables)
-                except KeyError as e:
-                    logger.error(f"Missing substitution for variable {e} in key {key}")
-                    tool[key] = tmpl.safe_substitute(variables)
-            elif isinstance(value, list):
-                new_list = []
-                for item in value:
-                    if isinstance(item, str):
-                        tmpl = Template(item)
-                        try:
-                            new_list.append(tmpl.substitute(variables))
-                        except KeyError as e:
-                            logger.error(f"Missing substitution for variable {e} in list item")
-                            new_list.append(tmpl.safe_substitute(variables))
-                    else:
-                        new_list.append(item)
-                tool[key] = new_list
-    return updated_tools
-

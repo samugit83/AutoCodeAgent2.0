@@ -14,3 +14,8 @@ python-dotenv
 llama-index
 llama-index-llms-openai
 llama-index-embeddings-openai
+langchain
+langchain_community
+google-search-results
+pyowm
+elevenlabs==0.2.27

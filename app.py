@@ -4,7 +4,8 @@ import os
 from code_agent.code_agent import CodeAgent
 import logging
 import traceback
-from tools.rag.hybrid_vector_graph_rag.ingest_corpus import ingest_corpus
+from tools.rag.hybrid_vector_graph_rag.ingest_corpus import hybrid_vector_graph_rag_ingest_corpus
+from tools.rag.llama_index.ingest_corpus import llama_index_ingest_corpus
 
 logging.basicConfig(
     level=logging.DEBUG,  
@@ -30,11 +31,13 @@ def run_code_agent():
         tools = [ 
             {
                 "tool_name": "numpy",
-                "lib_names": ["numpy"]
+                "lib_names": ["numpy"],
+                "type": "standard_custom"
             },
             {    
                 "tool_name": "geopy",
                 "lib_names": ["geopy"], 
+                "type": "standard_custom",
                 "instructions": "A library to get the coordinates of a given location.",
                 "code_example": """
                     
@@ -62,18 +65,30 @@ def run_code_agent():
                             logger.error(f"Error retrieving coordinates: {error}")
                             return previous_output
 
-                """
+                """ 
+            }, 
+            {   "langchain_tool_name": "serpapi",
+                "type": "langchain_tool"
+            },
+            {
+                "langchain_tool_name": "eleven_labs_text2speech",
+                "type": "langchain_tool"
+            },
+            {
+                "langchain_tool_name": "openweathermap-api", 
+                "type": "langchain_tool"
             }
-        ]
+        ] 
 
- 
         code_agent = CodeAgent(
             chat_history=chat_history,
             tools=tools,
+            use_default_tools=True
         )
 
         final_answer = code_agent.run_agent()
         return jsonify({"assistant": final_answer}), 200
+        
     
     except Exception as e:
         logging.error("Exception occurred in /run-code-agent: %s", str(e))
@@ -81,19 +96,33 @@ def run_code_agent():
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 
+#start the acquisition, parsing, and ingestion of all documents present in /tools/rag/hybrid_vector_graph_rag/corpus
 @app.route('/hybrid-vector-graph-rag-ingest-corpus', methods=['POST'])
-def hybrid_vector_graph_rag_ingest_corpus():
+def hybrid_vector_graph_rag_ingest():
     try:
-        ingest_corpus()
+        hybrid_vector_graph_rag_ingest_corpus()
         return jsonify({"message": "Script executed successfully"}), 200
     except Exception as e:
         logging.error("Exception occurred in /hybrid-vector-graph-rag-ingest-corpus: %s", str(e))  
         logging.error(traceback.format_exc())
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500               
      
+#start the acquisition, parsing, and ingestion of all documents present in /tools/rag/llama_index/corpus
+@app.route('/llama-index-ingest-corpus', methods=['POST'])
+def llama_index_ingest():
+    try:
+        llama_index_ingest_corpus()
+        return jsonify({"message": "Script executed successfully"}), 200
+    except Exception as e:
+        logging.error("Exception occurred in /llama-index-ingest-corpus: %s", str(e))  
+        logging.error(traceback.format_exc())
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500     
+
+
 if __name__ == '__main__':
     app.run(
         host='0.0.0.0',
         port=int(os.getenv('FLASK_PORT', 5000)),
         debug=True
     )
+

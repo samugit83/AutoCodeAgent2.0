@@ -11,3 +11,6 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Future
+FUTURE.md

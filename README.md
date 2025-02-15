@@ -1,7 +1,15 @@
-![AutoCode Agent with RAG Workflow](./static/autocode.png)
+
+![AutoCode Agent with RAG Workflow](./static/images/autocode.png)  
+
+<div align="center" style="width: 100%; background-color: white; padding: 15px; margin: 20px 0; display: flex; align-items: center; gap: 25px;">
+  <img src="./static/images/langchain-logo.png" alt="Logo 1" height="80" style="margin: 10px 0;" />
+  <img src="./static/images/llama-logo.png" alt="Logo 2" height="70" style="margin: 10px 0;" />
+  <img src="./static/images/neo4j-logo.png" alt="Logo 3" height="50" style="margin: 10px 0;" />
+  <img src="./static/images/chroma-logo.svg" alt="Logo 4" height="30" style="margin: 10px 0;" />
+</div>
 
 # AutoCodeAgent - AI Agent for Complex Task Resolution
-![version](https://img.shields.io/badge/version-1.2.0-blue)
+![version](https://img.shields.io/badge/version-1.3.0-blue)
 
 [Introduction](#introduction)  
 Welcome to the project! This section provides a general overview of the project, its goals, and its main features.
@@ -18,8 +26,14 @@ Explore the full potential of AutoCodeAgent by watching these demonstration vide
 [Application Setup](#application-setup)  
 Step-by-step guide to setting up the project for the first time.
 
+[Parameters](#parameters)  
+Description of the parameters to use in CodeAgent constructor.
+
 [Default Tools](#default-tools)  
 Description of the tools that are included by default in the project.
+
+[LangChain Tools](#langchain-tools)  
+LangChain tools are integrated in the project, in this section you will learn how to add them easily.
 
 [SurfAi Integration](#surfai-integration)  
 NEW! Integration of SurfAi as an Automated Web Navigation Tool (local function type)
@@ -114,7 +128,7 @@ A function validator inspects each subtask’s code (via AST analysis) for synta
 
 ### RAG retrieval / ingestion
 - The agent now uses a vector database (ChromaDB) to store and retrieve information.
-- Rag retrieval and Rag ingestion have been added as actual tools in code_agent.default_tools.py
+- Rag retrieval and Rag ingestion have been added as actual tools in code_agent.tool_generator.py
 - About RAG retrieval: always ensure to instruct the agent to acquire information from the database.
   Example prompt: "Retrieve information about Lamborghini from the database, translate it into German, and send it via email to devergo.sa@gmail.com"
 - About RAG ingestion: always ensure to instruct the agent to ingest information into the database.
@@ -126,23 +140,29 @@ A function validator inspects each subtask’s code (via AST analysis) for synta
 - The database is stored in the container, so it is persistent and will be available even after the container is stopped.
 
 
-## All Ways to Add Tools
+## All Ways to Add Custom Tools
+In addition to the default tools, users can create custom tools by describing the function and specifying the libraries to be used.
+There are several ways to create custom tools:
 
-1) **ONLY LIBRARY NAME**: specifying only the name of the Python library:
+1) **ONLY LIBRARY NAME**:  
+specifying only the name of the Python library:  
 Ensure the library is listed in requirements.txt
 ```python
     {   
         "tool_name": "numpy",
-        "lib_names":["numpy"]
+        "lib_names":["numpy"],
+        "type": "standard_custom"
     }
 ```
 
-2) **LIBRARY NAME + INSTRUCTIONS + CODE EXAMPLE**: specifying a python library, providing a description, and a non-strict code example:
+2) **LIBRARY NAME + INSTRUCTIONS + CODE EXAMPLE**:  
+specifying a python library, providing a description, and a non-strict code example:
 Ensure the library is listed in requirements.txt
 ```python
     {    
         "tool_name": "geopy",
         "lib_name": ["geopy"], 
+        "type": "standard_custom",
         "instructions": "A library to get the coordinates of a given location.",
         "code_example": """
             
@@ -175,11 +195,15 @@ Ensure the library is listed in requirements.txt
 
 ```
 
-3) **LIBRARIES + INSTRUCTIONS + STRICT CODE EXAMPLE**: defining a precise custom function associated with one or more libraries:
+3) **LIBRARIES + INSTRUCTIONS + STRICT CODE EXAMPLE**:   
+defining a precise custom function associated with one or more libraries:  
+By adding use_exactly_code_example: True, the code will be executed exactly as written, without any modifications. In the absence of this parameter, the code will be modified by the agent based on the task requested by the user. The second solution is more versatile but should only be applied to functions that do not require code modification.
+If the function you add is already complex and very specific with possible critical issues, it is recommended to use the use_exactly_code_example: True mode.
 ```python
     {
         "tool_name": "send_email",
         "lib_names": ["smtplib", "email"],
+        "type": "standard_custom",
         "instructions": "Send an email to the user with the given email, subject and html content.",
         "use_exactly_code_example": True,
         "code_example": """
@@ -228,11 +252,12 @@ def send_email(previous_output, GMAILUSER: str = "your_email@gmail.com", PASSGMA
     }
 ```
 
-4) Add tools such as LLMs for support:
+4) Add tools such as LLMs for support:  
 ```python
     {
         "tool_name": "helper_model",
         "lib_names": ["models"],
+        "type": "standard_custom",
         "instructions": "An LLM useful to elaborate any output from previous steps. Don't create loops, just use the LLM to elaborate the output for a single step.",
         "use_exactly_code_example": True,
         "code_example": """
@@ -260,11 +285,13 @@ def call_helper_model(previous_output):
     }
 ```
 
-5) **ADD LOCAL FUNCTIONS**: adding a local function to the agent, we use this technique to add RAG retrieval and RAG ingestion as tools:
+5) **ADD LOCAL FUNCTIONS**:  
+adding a local function to the agent, we use this technique to add RAG retrieval and RAG ingestion as tools:  
 ```python
     {
         "tool_name": "ingest_hybrid_vector_graph_rag",
         "lib_names": ["tools.rag.hybrid_vector_graph_rag"],
+        "type": "standard_custom",
         "instructions": "This is an Hybrid Vector Graph RAG ingestion tool. Ingest the text into the vector and graph database.",
         "use_exactly_code_example": True,
         "code_example": """
@@ -289,9 +316,18 @@ To add new tools, simply insert them into the tools array in app.py.
 Some rules to follow:
 - The tool name (tool_name) must be unique.
 - Use exactly the same JSON structure you see, for example, for geopy.
-- For the function, always use this schema:
-- add default parameters in the function parameters only if you need fixed values to use in the function
+- Add default parameters in the function parameters only if you need fixed values to use in the function
+- Add the type "standard_custom"
+- Always use typing for all variables that interact with updated_dict, both in get and set, for example:
+```python
+    # set
+    new_variable_1: str = "new_value_1"
+    updated_dict["new_variable_1"] = new_variable_1
 
+    # get
+    new_variable_2: str = updated_dict.get("new_variable_1", "")
+```
+- For the function, always use this schema:
 ```python
 def function_name(previous_output):
 
@@ -362,23 +398,23 @@ docker logs -f flask_app
 http://localhost:5000  
 ```
 
-- if you want to rebuild and restart the application:
+- if you want to rebuild and restart the application: 
 
 ```bash
-docker-compose down
+docker-compose down 
 docker-compose build --no-cache
 docker-compose up -d
-docker logs -f flask_app  
+docker logs -f flask_app    
 ```
 
 7. Environment Variables:
 Create a file named .env in the root folder and insert all the following variables to ensure the application functions correctly:
 
 ```bash
-OPENAI_API_KEY=your_api_key
+OPENAI_API_KEY=your_api_key  
 FLASK_PORT=5000 
 CHROMA_DB_PATH=./tools/rag/database/chroma_db
-NEO4J_URI=bolt://localhost:7687
+NEO4J_URI=bolt://localhost:7687  
 NEO4J_USER=neo4j
 NEO4J_PASSWORD=your_password 
 
@@ -408,9 +444,27 @@ HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL="gpt-4o"  # hybrid vector
 
 ```
 
+## Parameters
+**chat_history**: list of dictionaries, each containing a message history. 
+```json
+{
+    "role": "user" | "assistant",
+    "content": "message content"
+}
+```
+**tools**: list of dictionaries, each containing a custom tool defined by the user.
+**use_default_tools**: boolean, if True, the default tools will be included in the list of tools.
+```python
+code_agent = CodeAgent(
+    chat_history=chat_history,
+    tools=tools,
+    use_default_tools=True
+)
+```
 
 ## Default Tools
-The default tools are pre-implemented and fully functional, supporting the agent in executing subtasks. These default tools are listed below and can be found in the file: 
+The default tools are pre-implemented and fully functional, supporting the agent in executing subtasks. 
+These default tools are listed below and can be found in the file: 
 /code_agent/default_tools.py
 
 - browser_navigation
@@ -434,6 +488,7 @@ The default tools are pre-implemented and fully functional, supporting the agent
 - send_email
   - A tool for sending an email
 
+To include the default tools in the list of tools, set the parameter use_default_tools to True in the CodeAgent constructor.
 
 
 ## SurfAi Integration  
@@ -450,8 +505,7 @@ Discover the capabilities of SurfAi:
 [Task: Add a new work experience on LinkedIn](https://youtu.be/hR73ftZ4t_4)  
 [Task: Search for an available hotel on Booking.com and get info](https://youtu.be/o5Gn-XVv_h8)  
 
-## Features ✨
-
+## Features ✨  
 - **AI-Driven Task Generation**: Converts natural language prompts into executable Playwright commands
 - **Self-Correcting Workflow**: Dynamic task adjustment based on execution results and page context
 - **Interactive Element Highlighting**: Visual numbering system for precise element targeting
@@ -465,8 +519,47 @@ If the tool is invoked, you can view the navigation by accessing:
 ```bash
 http://localhost:6901/vnc.html
 ```
-You can find the screenshots generated during navigation at the following path: /tools/surf_ai/screenshots
+You can find the screenshots generated during navigation at the following path: /tools/surf_ai/screenshots  
 
+
+## LangChain Tools
+
+We have now integrated LangChain's toolbox, providing direct access to over 130 pre-built tools simply by specifying the tool name.  
+This powerful integration streamlines the process of incorporating new functionalities into your projects.
+
+### How to Add LangChain Tools
+
+To add a LangChain tool, include an object with the following attributes in the initial tools array (alongside your `standard_custom` tools):
+
+```json
+{
+  "langchain_tool_name": "serpapi",
+  "type": "langchain_tool",
+  "additional_parameters": {
+    "param_a": "param_a_value"
+  }
+}
+```
+- **langchain_tool_name**: Must exactly match the tool name as specified in the [LangChain Tools Documentation](https://python.langchain.com/docs/integrations/tools/).
+- **type**: Should always be set to langchain_tool.
+- **additional_parameters**: Contains any extra parameters required by the specific tool (for example, an API key). Although you can provide parameters here, it is recommended to store sensitive information like API keys in the .env file based on the tool's requirements.
+
+### Important Considerations
+- **Additional Libraries**: Some LangChain tools require extra libraries (e.g., elevenlabs, google-serp-api). Consult the LangChain Tools Documentation for details on which libraries to install, the necessary additional parameters, and the required environment variables.
+- **Requirements Update**: When integrating a new LangChain tool that requires extra libraries, add these libraries to your requirements.txt. After updating, you must rebuild the Docker image and restart the container from scratch. Please refer to the Application Setup section for instructions on restarting Docker.
+
+LangChain tools are extremely powerful for tackling complex tasks. For instance, consider a prompt that leverages the combined capabilities of different tools:
+
+**Example Prompt:**
+
+> *Generate a single audio file simulating a TV host presenting weather forecasts for the cities of Rome, Florence, and Venice. The script should include segments in English, Italian, and French, in that order, and consist solely of spoken text intended for playback.*
+
+In this example, the system would:
+1. Use **openweathermap-api** to fetch the weather forecasts.
+2. Employ **helper_model** to construct a script that seamlessly transitions between English, Italian, and French.
+3. Utilize **eleven_labs_text2speech** to convert the script into a cohesive audio file, perfect for a TV broadcast simulation.
+
+This demonstrates the flexibility and strength of LangChain's integration capabilities in orchestrating multiple tools to achieve a complex, multi-step task.
 
 
 ## All Rag Techniques
@@ -603,9 +696,38 @@ Concludes the retrieval process by finalizing all tasks and ensuring that all da
 
 
 ### Llama Index RAG
-In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.
-Example Prompt for retrieval: "Find the latest market trends using the Llama Index."
-Example prompt for ingestion: "Find the latest market trends from the web and save it in the database using the Llama Index."
+In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.  
+
+**Example Prompt for retrieval:** "Find the latest market trends using the Llama Index."  
+
+**Example prompt for ingestion:** "Find the latest market trends from the web and save it in the database using the Llama Index." 
+
+**Bulk Ingestion:**  
+You can ingest a corpus by directly uploading files to the /tools/rag/llama_index/corpus folder.
+To start the batch processing, simply make an API call:
+```bash
+curl -X POST "http://localhost:5000/llama-index-ingest-corpus"
+```
+The script processes the information in the files, transferring it to the vector and graph database.  
+The file processing and parsing are handled by the  SimpleDirectoryReader provided by the llamaindex library.  
+By default, SimpleDirectoryReader attempts to read any files it encounters, treating them as text. Besides plain text, it explicitly supports the following file types, automatically detected based on their file extensions:
+
+- `.csv`: Comma-Separated Values
+- `.docx`: Microsoft Word
+- `.epub`: EPUB eBook format
+- `.hwp`: Hangul Word Processor
+- `.ipynb`: Jupyter Notebook
+- `.jpeg`, `.jpg`: JPEG image
+- `.mbox`: MBOX email archive
+- `.md`: Markdown
+- `.mp3`, `.mp4`: Audio and video
+- `.pdf`: Portable Document Format
+- `.png`: Portable Network Graphics
+- `.ppt`, `.pptm`, `.pptx`: Microsoft PowerPoint
+
+For more information on supported files, you can refer to the documentation at the following link:  
+[SimpleDirectoryReader Documentation](https://docs.llamaindex.ai/en/stable/module_guides/loading/simpledirectoryreader/)
+
 
 With these RAG techniques, AutoCodeAgent 2.0 transforms the way you interact with data, making it easier than ever to store, retrieve, and analyze information. Whether you're working on simple tasks or tackling complex data challenges, these tools are here to empower your workflow and unlock new possibilities.
 

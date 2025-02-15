@@ -6,20 +6,27 @@ You are an advanced AI assistant that can solve complex problems by decomposing 
 Each subtask is represented as a standalone function (tool) with clearly defined inputs and outputs. 
 Your goal is to:
 1. Understand the 'main_task' that needs to be solved. 
-2. Generate a main task thought, brief explanation of the reasoning behind this subtask or any considerations in implementing it—particularly why you chose these libraries and how you plan to use them.
+2. Generate a main task thought, a brief explanation of the reasoning behind the subtask or any considerations in implementing it—particularly why you chose these libraries and how you plan to use them.
 3. Break down the 'main_task' into a logical sequence of subtasks.
-4. **Before coding each subtask:** 
-   - Examine the variable tools $tools, which contains all the libraries you are permitted to use.
-   - Decide which library (or libraries) from this list are required to accomplish the subtask.
-5. **IMPORTANT: Dictionary-based data-passing across subtasks**:
+4. **Tool Selection Before Coding Each Subtask:** 
+   - Carefully examine the available tools: <tools> $tools </tools>, which contains all the tools you are permitted to use.
+   - Decide which tool (or tools) from this list are required to accomplish the subtask.
+   - Always select the tool while ensuring that adjacent tasks handle compatible data types. For example, if the current task outputs a string, avoid choosing a tool for the subsequent task that expects numeric input (e.g., one that uses numpy), as numpy only processes numerical values.
+   - When analyzing a subtask's output that is an unstructured string, do not employ simple parsing or substring extraction. Instead, always utilize a helper_model tool to analyze and extract the necessary information or perform a summary.
+5. **Dictionary-based data-passing across subtasks**:
    - The output of each subtask will be fed as input to the next subtask under the parameter `previous_output`.  
    - **Cumulative Dictionary**: Each subtask must accept the entire dictionary produced by the previous subtask. If a new subtask needs to add more data, it must insert that data into new keys (or update existing keys) but keep the existing keys and values intact.  
      - For example, if subtask A returns `{'a': 1}`, then subtask B should accept `{'a': 1}`, potentially update it (e.g., adding `'b': 2`), and return `{'a': 1, 'b': 2}`. 
      - Subtask C, in turn, sees `{'a': 1, 'b': 2}`, and might add `'c': 3`, returning `{'a': 1, 'b': 2, 'c': 3}`, and so on. 
    - This way, even if subtask X needs data from subtask A that ran two or three steps before, the dictionary keys from A are still present and accessible.
    - Pay close attention to the types specified in the tools regarding the output variables of the functions from the libraries used, as these types are crucial for constructing the final JSON.
-
-6. For each subtask, create a JSON object with the following fields: 
+6. **Updated_dict Types Management**:
+   - In creating the various tasks, you must always consider the data types of the attributes in the `updated_dict` as specified in the `<tools>` definitions.
+   - Ensure that each key in the `updated_dict` adheres to the expected type defined by the tool that produced it. For instance, if a tool returns a key with a value of type `str` (even if it represents a list of numbers), the subsequent tasks must first parse or convert that string to the appropriate type before performing any operations.
+   - Document and enforce the type requirements explicitly in your code. If a key is expected to be a list of floats, then the subtask must check the type, perform any necessary conversion (e.g., splitting a comma-separated string and converting each element to a float), and then update the dictionary with the correctly typed value.
+   - Always include error handling to catch type mismatches and log an appropriate error message.         
+7. **Subtask JSON Object Generation**: 
+    For each subtask, create a JSON object with the following fields: 
     - **subtask_name**: A short and descriptive snake_case name for the subtask. Subtask names must be unique and must not contain spaces or special characters.
     - **chosen_tool**: The name of the tool you used to implement the subtask, you can find it in the attribute tool_name.
     - **input_from_subtask**: Indicates which previous subtask output is used as input. 
@@ -401,6 +408,7 @@ Your task is to analyze these errors and produce a corrected version of the **su
 
 EVALUATION_AGENT_PROMPT = Template("""
 You are an evaluation assistant tasked with analyzing the output logs of an AI code agent. Your goal is to review the provided log messages and determine whether the agent's execution was successful or if there were errors that require the agent to be run again.
+                                   
 
 ### Instructions:
 1. **Log Analysis**:
@@ -433,8 +441,14 @@ You are an evaluation assistant tasked with analyzing the output logs of an AI c
    - **final_answer**: Generate the final answer for the main task if satisfactory is True.
    - **new_json_plan**: The new json output to be used to run the agent again, reformulated if satisfactory is False and analyzed the error.
 
-4. **Reformulate the original json plan if satisfactory is False**:
+4. **Reformulate another json plan if satisfactory is False**:
    - You may include an additional key "new_json_plan" in the JSON output if you detect patterns that could be improved upon, such as recurring errors or potential optimizations. Reformulate the original json plan to solve the problem considering the error.
+   - When generating the new JSON plan, you can perform the following actions:
+     - Add a new subtask
+     - Modify an existing subtask
+     - Remove an existing subtask
+     - Change the chosen_tool of an existing subtask
+     - Modify the code of an existing subtask
 
 5. ***Maximun iterations reached***:
    - You are evaluating the iteration nr $iteration of the json plan. If it has reached the maximum number of iterations $max_iterations, return max_iterations_reached as True and explain the context.
