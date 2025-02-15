@@ -1,7 +1,7 @@
 
 ![AutoCode Agent with RAG Workflow](./static/images/autocode.png)  
 
-<table align="center" style="background-color: white; padding: 15px; margin: 20px 0;">
+<table align="center" style="background-color: white; padding: 15px; margin: 20px 0; width: 100%;">
   <tr style="vertical-align: middle;">
     <td style="padding: 0 10px;">
       <img src="./static/images/langchain-logo.png" alt="Logo 1" height="80" />
