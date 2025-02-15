@@ -82,7 +82,7 @@ def generate_tools(user_tools, use_default_tools):
     return updated_tools
 
 
-class LangChainToolConverter:
+class LangChainToolConverter: 
     """
     Converts a LangChain tool instance into our default tool schema. 
     The schema contains:
@@ -123,8 +123,6 @@ class LangChainToolConverter:
 
     @staticmethod
     def generate_code_example(langchain_tool_name: str, inputs: dict, output_type: str, tool_name: str, additional_parameters: dict) -> str:
-        # Convert the additional_parameters dict into a kwargs string.
-        # If a value is a string, wrap it in quotes.
         additional_params_kwargs = ", ".join(
             f'{key}="{value}"' if isinstance(value, str) else f"{key}={value}"
             for key, value in additional_parameters.items()

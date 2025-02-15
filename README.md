@@ -367,7 +367,7 @@ Discover the capabilities of AutoCodeAgent with those videos:<br>
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).<br>
 [Integration with SurfAi Video Demo 1](https://youtu.be/b5OPk7-FPrk).<br>
 [Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).<br>
-
+[LangChain Toolbox Video Demo](https://youtu.be/sUKiN_qp750).<br>
 
 ## Application Setup
 Follow the steps below to set up and run the pplication using Docker. This setup ensures that all necessary services are built and started correctly, with session management handled seamlessly via a Redis database.
@@ -452,6 +452,10 @@ SURF_AI_JSON_TASK_MODEL=gpt-4o  # surf ai json task model, important: for surfAi
 SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002  # simple rag embedding model
 HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL="text-embedding-ada-002"  # hybrid vector graph rag embedding vector model
 HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL="gpt-4o"  # hybrid vector graph rag summarization graph node model
+
+ELEVEN_API_KEY=API_KEY
+SERPAPI_API_KEY=API_KEY
+OPENWEATHERMAP_API_KEY=API_KEY
 
 ```
 
