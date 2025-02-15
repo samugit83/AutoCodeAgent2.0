@@ -67,18 +67,19 @@ def run_code_agent():
 
                 """ 
             }, 
-            {   "langchain_tool_name": "serpapi",
-                "type": "langchain_tool"
+            {   "langchain_tool_name": "serpapi", 
+                "type": "langchain_tool" 
             },
             {
                 "langchain_tool_name": "eleven_labs_text2speech",
-                "type": "langchain_tool"
+                "type": "langchain_tool",
+
             },
             {
-                "langchain_tool_name": "openweathermap-api", 
+                "langchain_tool_name": "openweathermap-api",  
                 "type": "langchain_tool"
             }
-        ] 
+        ]  
 
         code_agent = CodeAgent(
             chat_history=chat_history,

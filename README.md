@@ -401,7 +401,7 @@ docker-compose up -d
 
 5. Check the backend logs: 
 ```bash
-docker logs -f flask_app
+docker logs -f flask_app 
 ```
 
 6. Access the AI Agent chat interface: 
