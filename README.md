@@ -1,24 +1,6 @@
 
 ![AutoCode Agent with RAG Workflow](./static/images/autocode.png)  
 
-<table align="center" style="background-color: white; padding: 15px; margin: 20px 0; width: 100%;">
-  <tr style="vertical-align: middle;">
-    <td style="padding: 0 10px;">
-      <img src="./static/images/langchain-logo.png" alt="Logo 1" height="80" />
-    </td>
-    <td style="padding: 0 10px;">
-      <img src="./static/images/llama-logo.png" alt="Logo 2" height="70" />
-    </td>
-    <td style="padding: 0 10px;">
-      <img src="./static/images/neo4j-logo.png" alt="Logo 3" height="50" />
-    </td>
-    <td style="padding: 0 10px;">
-      <img src="./static/images/chroma-logo.svg" alt="Logo 4" height="30" />
-    </td>
-  </tr>
-</table>
-
-
 # AutoCodeAgent - AI Agent for Complex Task Resolution
 ![version](https://img.shields.io/badge/version-1.3.0-blue)
 
