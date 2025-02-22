@@ -14,3 +14,5 @@ Thumbs.db
 
 # Future
 FUTURE.md
+
+tools/rag/database/chroma_db/
