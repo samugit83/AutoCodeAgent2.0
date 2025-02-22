@@ -8,7 +8,7 @@
 AutoCodeAgent fuses IntelliChain’s precise task decomposition with Deep Search’s autonomous web research, remarkably transforming complex challenges into innovative, actionable intellige.
 Discover how this unique Dual-Mode AI agent combines the power of code generation and Web + RAG Search to tackle any challenge with precision and efficiency.
 
-<span style="color:gray; font-weight:bold; font-size:20px;">IntelliChain sections</span>
+## IntelliChain sections
 
 [Introduction to IntelliChain](#introduction-to-intellichain)  
 This section provides a general overview of IntelliChain mode, its goals, and its main features.
@@ -48,7 +48,7 @@ Detailed description of the Hybrid Vector Graph RAG technique.
 Discover how to use the LlamaIndex RAG.  
 
 
-<span style="color:gray; font-weight:bold; font-size:20px;">Deep Search sections</span>
+## Deep Search sections
 
 [Introduction to Deep Search](#introduction-to-deep-search)  
 Deep Search – Dive Deeper, Discover More.
@@ -89,7 +89,7 @@ Together, these two modes enable AutoCodeAgent to tackle any challenge by transf
 
 
 
-<span style="color:blue; font-weight:bold; font-size:30px;">IntelliChain</span>
+# IntelliChain
 
 ## Introduction to IntelliChain
 Welcome to the AutoCodeAgent IntelliChain Mode! This intelligent agent leverages cutting-edge AI techniques to automatically generate, execute, and refine Python code in a modular and iterative way. It is designed to break down complex tasks into manageable subtasks, generate precise code for each, and orchestrate their execution using a variety of tools and libraries.
@@ -689,7 +689,7 @@ For more information on supported files, you can refer to the documentation at t
 With these RAG techniques, AutoCodeAgent 2.0 transforms the way you interact with data, making it easier than ever to store, retrieve, and analyze information. Whether you're working on simple tasks or tackling complex data challenges, these tools are here to empower your workflow and unlock new possibilities.
 
 
-<span style="color:blue; font-weight:bold; font-size:30px;">Deep Search</span>
+# Deep Search
 
 ## Introduction to Deep Search
 Deep Search is the cornerstone of our agent’s advanced analytical capabilities. This mode enables the system to go beyond surface-level queries by combining real-time web data acquisition with local database integrations, such as the Llama Index. It leverages state-of-the-art data extraction techniques and contextual analysis to produce actionable, in-depth reports that transform raw data into operational intelligence.  
