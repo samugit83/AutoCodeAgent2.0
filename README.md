@@ -53,25 +53,25 @@ Discover how to use the LlamaIndex RAG.
 [Introduction to Deep Search](#introduction-to-deep-search)  
 Deep Search – Dive Deeper, Discover More.
 
-[Multiagent collaborative chain](#multiagent-collaborative-chain)
+[Multiagent collaborative chain](#multiagent-collaborative-chain)  
 In these sections, you will understand how the agent planner generates a series of subtasks, each managed by a specialized agent interconnected with other agents in a collaborative network.
 
 [Data Extraction](#data-extraction)  
 Harnessing Real-Time Web Data and Structured Llama Index Local Knowledge.
 
-[Evolving Graph of Thought (EGOT): An Innovative Reasoning System](#evolving-graph-of-thought-egot-an-innovative-reasoning-system)
-Dynamic Knowledge Representation for Adaptive Intelligence.
+[Evolving Graph of Thought (EGOT): An Innovative Reasoning System](#evolving-graph-of-thought-egot-an-innovative-reasoning-system)  
+Dynamic Knowledge Representation for Adaptive Intelligence using an evolving graph of thought.
 
-[Multi-Level Deep Search: 5 Layers of Search Depth](#multi-level-deep-search-5-layers-of-search-depth)
+[Multi-Level Deep Search: 5 Layers of Search Depth](#multi-level-deep-search-5-layers-of-search-depth)  
 A Progressive Approach to In-Depth Information Retrieval.
 
-[Human-in-the-Loop: Collaborative Inquiry and Feedback](#human-in-the-loop-collaborative-inquiry-and-feedback)
+[Human-in-the-Loop: Collaborative Inquiry and Feedback](#human-in-the-loop-collaborative-inquiry-and-feedback)  
 Augmenting AI with Human Expertise for Enhanced Intelligence.
 
-[Video Demo And Prompts Examples](#video-demo-and-prompts-examples)  
+[Video Demo And Prompts Examples](#video-demo-and-prompts-examples)   
 Explore the full potential of Deep Search by watching these demonstration videos.
 
-[Parameters and Configuration](#parameters-and-configuration) 
+[Parameters and Configuration](#parameters-and-configuration)  
 Description of the parameters to use in Deep Search constructor. 
 
 [Application Setup](#application-setup)  
