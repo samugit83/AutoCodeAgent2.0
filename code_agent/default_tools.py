@@ -67,7 +67,7 @@ def retrieve_rag_db(previous_output):
         logger.error(f"Error extracting documents: {e}")
         return previous_output
 """
-    },
+    }, 
     {
         "tool_name": "ingest_hybrid_vector_graph_rag",
         "lib_names": ["tools.rag.hybrid_vector_graph_rag.engine"],

@@ -30,7 +30,7 @@ def substitute_variables_in_value(value, variables):
                 new_list.append(item)
         return new_list
     return value
-
+ 
 
 
 def generate_tools(user_tools, use_default_tools):

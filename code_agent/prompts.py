@@ -403,9 +403,6 @@ Your task is to analyze these errors and produce a corrected version of the **su
 """)
 
 
-
-
-
 EVALUATION_AGENT_PROMPT = Template("""
 You are an evaluation assistant tasked with analyzing the output logs of an AI code agent. Your goal is to review the provided log messages and determine whether the agent's execution was successful or if there were errors that require the agent to be run again.
                                    

@@ -1,7 +1,13 @@
 FROM python:3.11-slim
 
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    python3-dev \
+    graphviz \
+    libgraphviz-dev \
     wget \
     ca-certificates \
     x11vnc \
@@ -9,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fluxbox \
     novnc \
     websockify \
+    wkhtmltopdf \
     libnss3 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
@@ -50,6 +57,4 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 CMD ["/app/entrypoint.sh"]
-
-
 

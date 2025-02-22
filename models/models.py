@@ -77,14 +77,13 @@ def call_model(
             response = client.chat.completions.create( 
                 model=model,
                 messages=chat_history, 
-                temperature=0.0,
                 response_format={"type": output_format}
             )
+         
         else:
             response = client.chat.completions.create( 
                 model=model,
                 messages=chat_history, 
-                temperature=0.0
             )
 
         answer = response.choices[0].message.content.strip() 

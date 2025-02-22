@@ -38,7 +38,7 @@ class HybridVectorGraphRag:
         if not db_path:
             raise EnvironmentError("CHROMA_DB_PATH environment variable not set.")
 
-        try:
+        try: 
             self.client = chromadb.PersistentClient(path=db_path)
             self.logger.debug("ChromaDB client initialized successfully.")
         except TypeError as e:

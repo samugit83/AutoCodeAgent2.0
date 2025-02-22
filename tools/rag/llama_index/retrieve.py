@@ -22,3 +22,4 @@ def retrieve_documents(query, persist_dir="./tools/rag/llama_index/database"):
     response = query_engine.query(query)
     return str(response)
 
+ 

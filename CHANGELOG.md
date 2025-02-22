@@ -60,3 +60,11 @@ All notable changes to this project will be documented in this file.
     - `.png`: Portable Network Graphics
     - `.ppt`, `.pptm`, `.pptx`: Microsoft PowerPoint
 
+[1.4.0] - 2025-02-22
+### Added
+- **Deep Search Integration:**  
+  - Introduced a multi-level deep search mode that adjusts key parameters (token count, scrape length, and search results) based on the specified depth.
+- **EGOT System:**  
+  - Implemented the Evolving Graph of Thought (EGOT) framework to dynamically map and visualize the agent’s reasoning process using Neo4j.
+- **Persistent Memory with Redis:**  
+  - Added persistent session management using Redis, ensuring that session data and memory logs are maintained across interactions with the same user.

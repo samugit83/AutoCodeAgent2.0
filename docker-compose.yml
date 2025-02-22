@@ -16,6 +16,8 @@ services:
     depends_on:
       neo4j:
         condition: service_healthy
+      redis:
+        condition: service_started
 
   neo4j:
     image: neo4j:4.4
@@ -42,8 +44,18 @@ services:
       - neo4j_import:/var/lib/neo4j/import
       - neo4j_plugins:/var/lib/neo4j/plugins
 
+  redis:
+    image: "redis:7.0-alpine"
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
 volumes:
   neo4j_data:
   neo4j_logs:
   neo4j_import:
   neo4j_plugins:
+  redis-data:

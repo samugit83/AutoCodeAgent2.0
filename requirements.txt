@@ -1,6 +1,6 @@
 Flask
 openai
-numpy
+pdfkit
 beautifulsoup4
 requests
 duckduckgo_search
@@ -8,9 +8,12 @@ geopy
 chromadb
 spacy
 neo4j
+numpy
 PyPDF2
 playwright
 python-dotenv
+redis
+pickle-mixin
 llama-index
 llama-index-llms-openai
 llama-index-embeddings-openai

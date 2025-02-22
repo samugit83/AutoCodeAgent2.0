@@ -7,21 +7,25 @@
 </head>
 <body>
     <div class="chat-container">
-        <h1>AutoCodeAgent</h1>
+        <h1 class="chat-title">AutoCodeAgent <span class="version">- v1.4.0</span></h1>
         <div id="chat-box" class="chat-box">
-            <!-- Chat messages will appear here -->
         </div>
         <form id="chat-form">
             <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" required>
-            <button type="submit">Send</button>
+            <select id="depth-select">
+                <option value="1">Depth 1</option>
+                <option value="2">Depth 2</option>
+                <option value="3">Depth 3</option>
+                <option value="4">Depth 4</option>
+                <option value="5" selected>Depth 5</option>
+            </select>
+            <button type="button" id="deep-search-btn">Deep Search</button>
+            <button type="submit" id="send-btn">></button>
         </form>
     </div>
     
-    <!-- Include Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Include DOMPurify -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
-    <!-- Your custom script -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
