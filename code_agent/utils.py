@@ -5,6 +5,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+
 def move_file_to_static(file_path: str) -> str:
     """
     Moves the file from its temporary location to the static/files folder,
@@ -49,3 +51,5 @@ def sanitize_gpt_response(response_str: str) -> str:
     response_str = response_str.replace(": True", ": true")
     
     return response_str.strip()
+
+

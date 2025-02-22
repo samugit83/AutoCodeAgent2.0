@@ -1029,7 +1029,7 @@ Analyze the resulting changes in policy frameworks and economic conditions.
 Develop visual aids and SWOT analyses to propose actionable strategies for stakeholders, focusing on risk management, investment, and policy adaptation.
 Present your findings in a detailed report that synthesizes quantitative data, qualitative insights, and visual comparisons to outline the full impact of the DeepSeek disruption.
  
-**PhD-Level Survey of Cutting-Edge AI and Machine Learning Research**
+**PhD-Level Survey of Cutting-Edge AI and Machine Learning Research**  
 Conduct an in-depth literature review of the most recent peer-reviewed papers and breakthroughs in AI and machine learning. Your analysis should include:
 Identify and critically evaluate the latest research articles, conference proceedings, and preprints from top-tier journals and conferences. Focus on breakthroughs in deep learning architectures, reinforcement learning, unsupervised methods, and explainable AI.
 Analyze novel methodologies and experimental designs. Assess the rigor of statistical validations, the robustness of model architectures, and the reproducibility of experimental results. Examine how recent discoveries advance the theoretical underpinnings of AI and ML. Discuss their implications for real-world applications and potential limitations.
