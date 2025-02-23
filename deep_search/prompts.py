@@ -182,7 +182,6 @@ Your role is crucial in the chain planning strategy. Ensure that your contributi
 
 """)
 
-
 EGOT_GENERATION_PROMPT = Template("""
 You are a world-class expert in analyzing and visualizing evolving chains of thought. Your task is to generate an evolving graph of thought (EGoT Graph) based on the following inputs:
 

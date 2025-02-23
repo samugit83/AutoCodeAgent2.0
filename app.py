@@ -41,7 +41,7 @@ def run_agent():
             user_id = data.get('user_id', None)
             chat_history = data['session_chat_history']
             depth = data.get('depth', 1)
-            data_sources = ['websearch', 'rag']
+            data_sources = ['websearch']
             planner = DeepSearchAgentPlanner(
                 chat_history,
                 is_interactive=True,

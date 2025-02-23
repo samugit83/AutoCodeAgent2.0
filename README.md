@@ -5,8 +5,8 @@
 ![version](https://img.shields.io/badge/version-1.4.0-blue)
 
 [One agent, two faces](#one-agent-two-faces)   
-AutoCodeAgent fuses IntelliChain’s precise task decomposition with Deep Search’s autonomous web research, remarkably transforming complex challenges into innovative, actionable intellige.
-Discover how this unique Dual-Mode AI agent combines the power of code generation and Web + RAG Search to tackle any challenge with precision and efficiency.
+AutoCodeAgent fuses IntelliChain’s precise task decomposition with Deep Search’s autonomous web research, remarkably transforming complex challenges into innovative, actionable intelligence.
+Discover how this unique Dual-Mode AI agent combines the power of code generation and Deep Search to tackle any challenge with precision and efficiency.
 
 ## IntelliChain sections
 
@@ -1003,7 +1003,7 @@ The interation between the user and the agent is powered by an integrated sessio
 
 ## Video Demo And Prompts Examples
 Explore the full potential of Deep Search by watching these demonstration videos.
-**COMING SOON**
+[Deep Search Video Demo and Code Explanation](https://youtu.be/PUtM-9noII8)
 
 Some prompts examples to see the full potential of Deep Search:
 

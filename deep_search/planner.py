@@ -6,7 +6,7 @@ from .prompts import (
     JSON_CHAIN_EXAMPLE, 
     DIPENDENT_AGENT_PROMPT,
     EGOT_GENERATION_PROMPT  
-)
+)  
 from models.models import call_model
 from .agent_session_manager import AgentSessionManager
 from .agent_data_model import AgentDataModel
