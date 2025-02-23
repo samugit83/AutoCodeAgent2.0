@@ -1158,6 +1158,9 @@ CHROMA_DB_PATH=./tools/rag/database/chroma_db
 NEO4J_URI=bolt://neo4j:7687
 NEO4J_USER=neo4j
 NEO4J_PASSWORD=your_password 
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
 
 SIMPLE_RAG_CHUNK_SIZE=1500  # chunk size for simple rag
 SIMPLE_RAG_OVERLAP=200  # overlap for simple rag
@@ -1178,6 +1181,7 @@ TOOL_HELPER_MODEL=gpt-4o  # tool helper model
 JSON_PLAN_MODEL=gpt-4o  # json plan model
 EVALUATION_MODEL=gpt-4o  # evaluation model
 SURF_AI_JSON_TASK_MODEL=gpt-4o  # surf ai json task model, important: for surfAi you must use a multimodal modal with text + vision capabilities
+DEEP_SEARCH_MODEL=o3-mini  # deep search model
 
 SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002  # simple rag embedding model
 HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL="text-embedding-ada-002"  # hybrid vector graph rag embedding vector model
@@ -1185,6 +1189,7 @@ HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL="gpt-4o"  # hybrid vector
 
 ELEVEN_API_KEY=API_KEY
 SERPAPI_API_KEY=API_KEY
+SERPER_API_KEY=API_KEY
 OPENWEATHERMAP_API_KEY=API_KEY
 
 ```
