@@ -8,6 +8,9 @@
 AutoCodeAgent fuses IntelliChain’s precise task decomposition with Deep Search’s autonomous web research, remarkably transforming complex challenges into innovative, actionable intelligence.
 Discover how this unique Dual-Mode AI agent combines the power of code generation and Deep Search to tackle any challenge with precision and efficiency.
 
+[Application Setup](#application-setup)  
+Step-by-step guide to setting up the project for the first time.
+
 ## IntelliChain sections
 
 [Introduction to IntelliChain](#introduction-to-intellichain)  
@@ -74,8 +77,129 @@ Explore the full potential of Deep Search by watching these demonstration videos
 [Parameters and Configuration](#parameters-and-configuration)  
 Description of the parameters to use in Deep Search constructor. 
 
-[Application Setup](#application-setup)  
-Step-by-step guide to setting up the project for the first time.
+
+
+## Application Setup
+Follow the steps below to set up and run the application using Docker.  
+This setup ensures that all necessary services are built and started correctly.
+
+### Prerequisites
+- **Docker**: Ensure that Docker is installed on your system. You can download it from [here](https://www.docker.com/get-started).
+- **Docker Compose**: Typically included with Docker Desktop installations. Verify by running `docker-compose --version`. 
+
+### Steps to Initialize the Application
+
+ 1. Clone the repository:
+
+```bash
+git clone https://github.com/samugit83/AutoCodeAgent2.0
+```
+
+2. Navigate to the project directory:
+```bash
+cd AutoCodeAgent2.0
+```
+
+3. Environment Variables:
+Create a file named .env in the root folder and insert all the following variables to ensure the application functions correctly:
+
+```bash
+OPENAI_API_KEY=your_api_key  
+FLASK_PORT=5000 
+CHROMA_DB_PATH=./tools/rag/database/chroma_db
+NEO4J_URI=bolt://neo4j:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=your_password 
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+
+SIMPLE_RAG_CHUNK_SIZE=1500  # chunk size for simple rag
+SIMPLE_RAG_OVERLAP=200  # overlap for simple rag
+
+HYBRID_VECTOR_GRAPH_RAG_CHUNK_SIZE=1500  # chunk size for hybrid vector graph rag
+HYBRID_VECTOR_GRAPH_RAG_OVERLAP=200  # overlap for hybrid vector graph rag
+HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_LENGTH=100  # summarization graph node length for hybrid vector graph rag
+HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_RETRIEVE_THRESHOLD=0.9  # similarity retrieve threshold for hybrid vector graph rag
+HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_EDGE_THRESHOLD=0.9  # similarity edge threshold for hybrid vector graph rag
+HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_DEPTH=3  # max depth for hybrid vector graph rag
+HYBRID_VECTOR_GRAPH_RAG_QUERY_TOP_K=3  # top k for hybrid vector graph rag
+HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH=10000  # max context length for hybrid vector graph rag
+
+GMAILUSER=your_email@gmail.com
+PASSGMAILAPP=your_password
+
+TOOL_HELPER_MODEL=gpt-4o  # tool helper model
+JSON_PLAN_MODEL=gpt-4o  # json plan model
+EVALUATION_MODEL=gpt-4o  # evaluation model
+SURF_AI_JSON_TASK_MODEL=gpt-4o  # surf ai json task model, important: for surfAi you must use a multimodal modal with text + vision capabilities
+DEEP_SEARCH_MODEL=o3-mini  # deep search model
+
+SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002  # simple rag embedding model
+HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL=text-embedding-ada-002  # hybrid vector graph rag embedding vector model
+HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL=gpt-4o  # hybrid vector graph rag summarization graph node model
+
+ELEVEN_API_KEY=API_KEY # elevenlabs api key for langchain tool
+OPENWEATHERMAP_API_KEY=API_KEY # openweathermap api key for langchain tool
+SERPAPI_API_KEY=API_KEY # serpapi api key for langchain tool and also deep search mode
+SERPER_API_KEY=API_KEY # serpapi api key for deep search mode (optional, the script use serpapi by default)
+```
+
+4. Build the Docker image: 
+```bash
+docker-compose build
+```
+
+5. Run the Docker container:
+```bash
+docker-compose up -d
+```
+
+6. Check the backend logs: 
+```bash
+docker logs -f flask_app 
+```
+If you want to rebuild and restart the application:   
+```bash
+docker-compose down 
+docker-compose build --no-cache
+docker-compose up -d
+docker logs -f flask_app    
+```  
+Is a good idea to always check docker space usage:
+```bash
+docker system df
+```
+
+7. Access the AI Agent chat interface: 
+```bash
+http://localhost:5000  
+
+```
+8. To view the automated browser sessions (powered by SurfAi), open:
+```bash
+http://localhost:6901/vnc.html
+```
+9. To explore and interact with the Neo4j graph database, visit:
+```bash
+http://localhost:7474/browser/
+``` 
+
+### Backend entry point
+The backend logic is managed by a Flask application. The main Flask app is located at:  
+```bash
+/app.py
+```  
+This file orchestrates the interaction between the AI agent, tool execution, and the integration of various services (like Neo4j, Redis, and Docker containers).
+
+### Frontend chat interface
+The frontend static files (HTML, CSS, JavaScript, and images) reside in the folder:
+```bash
+/static
+``` 
+These files serve the user interface for the AI chat and related functionalities.
+
+
 
 
 ## One agent, two faces
@@ -1094,106 +1218,6 @@ planner = DeepSearchAgentPlanner(
 # Start the planner, which will run through the multi-agent planning and deep search process.
 planner.run_planner()
 ```
-
-## Application Setup
-Follow the steps below to set up and run the pplication using Docker. This setup ensures that all necessary services are built and started correctly, with session management handled seamlessly via a Redis database.
-
-### Prerequisites
-- **Docker**: Ensure that Docker is installed on your system. You can download it from [here](https://www.docker.com/get-started).
-- **Docker Compose**: Typically included with Docker Desktop installations. Verify by running `docker-compose --version`. 
-
-### Steps to Initialize the Application
-
- 1. Clone the repository:
-
-```bash
-git clone https://github.com/samugit83/AutoCodeAgent
-```
-
-2. Navigate to the project directory:
-```bash
-cd interactive-multiagent
-```
-
-3. Build the Docker image: 
-```bash
-docker-compose build
-```
-
-4. Run the Docker container:
-```bash
-docker-compose up -d
-```
-
-5. Check the backend logs: 
-```bash
-docker logs -f flask_app 
-```
-
-6. Access the AI Agent chat interface: 
-```bash
-http://localhost:5000  
-```
-
-- if you want to rebuild and restart the application: 
-
-```bash
-docker-compose down 
-docker-compose build --no-cache
-docker-compose up -d
-docker logs -f flask_app    
-```
-Is a good idea to always check docker space usage:
-```bash
-docker system df
-```
-
-7. Environment Variables:
-Create a file named .env in the root folder and insert all the following variables to ensure the application functions correctly:
-
-```bash
-OPENAI_API_KEY=your_api_key  
-FLASK_PORT=5000 
-CHROMA_DB_PATH=./tools/rag/database/chroma_db
-NEO4J_URI=bolt://neo4j:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=your_password 
-REDIS_HOST=redis
-REDIS_PORT=6379
-REDIS_DB=0
-
-SIMPLE_RAG_CHUNK_SIZE=1500  # chunk size for simple rag
-SIMPLE_RAG_OVERLAP=200  # overlap for simple rag
-
-HYBRID_VECTOR_GRAPH_RAG_CHUNK_SIZE=1500  # chunk size for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_OVERLAP=200  # overlap for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_LENGTH=100  # summarization graph node length for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_RETRIEVE_THRESHOLD=0.9  # similarity retrieve threshold for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_EDGE_THRESHOLD=0.9  # similarity edge threshold for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_DEPTH=3  # max depth for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_QUERY_TOP_K=3  # top k for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH=10000  # max context length for hybrid vector graph rag
-
-GMAILUSER=your_email@gmail.com
-PASSGMAILAPP=your_password
-
-TOOL_HELPER_MODEL=gpt-4o  # tool helper model
-JSON_PLAN_MODEL=gpt-4o  # json plan model
-EVALUATION_MODEL=gpt-4o  # evaluation model
-SURF_AI_JSON_TASK_MODEL=gpt-4o  # surf ai json task model, important: for surfAi you must use a multimodal modal with text + vision capabilities
-DEEP_SEARCH_MODEL=o3-mini  # deep search model
-
-SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002  # simple rag embedding model
-HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL="text-embedding-ada-002"  # hybrid vector graph rag embedding vector model
-HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL="gpt-4o"  # hybrid vector graph rag summarization graph node model
-
-ELEVEN_API_KEY=API_KEY
-SERPAPI_API_KEY=API_KEY
-SERPER_API_KEY=API_KEY
-OPENWEATHERMAP_API_KEY=API_KEY
-
-```
-
 
 
 ## Contribution Guidelines 
