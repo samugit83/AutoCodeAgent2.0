@@ -2,6 +2,9 @@ import json
 from .prompts import EVALUATION_AGENT_PROMPT
 from models.models import call_model
 from .utils import sanitize_gpt_response
+import logging
+
+logger = logging.getLogger(__name__)
 
 class PlanEvaluator:
     def __init__(self, evaluation_model):

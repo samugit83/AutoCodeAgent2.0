@@ -4,7 +4,6 @@ import uuid
 import random  
 import json
 import logging
-from dotenv import load_dotenv
 import chromadb
 from uuid import uuid4
 from models.models import create_embeddings, call_model
@@ -30,8 +29,6 @@ class HybridVectorGraphRag:
         self.embedding_vector_model = os.getenv("HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL")
         self.summarization_graph_node_model = os.getenv("HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL")
         self.collection_name = "hybrid_vector_graph_rag"
-
-        load_dotenv()
 
         # Initialize ChromaDB client
         db_path = os.getenv("CHROMA_DB_PATH")

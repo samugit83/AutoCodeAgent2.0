@@ -29,7 +29,7 @@ class CodeAgent:
         self.plan_generator = PlanGenerator(self.chat_history, self.tools, self.models["JSON_PLAN_MODEL"])
         self.plan_evaluator = PlanEvaluator(self.models["EVALUATION_MODEL"])
         self.json_plan = None
-        self.subtask_executor = SubtaskExecutor(self)
+        self.subtask_executor = SubtaskExecutor(self) 
        
 
     def run_agent(self):
@@ -44,7 +44,6 @@ class CodeAgent:
                 extra={'no_memory': True}
             )
             self.json_plan, agent_prompt = self.plan_generator.generate_plan()
-
             self.logger.info(
                 self.enrich_log(f"💡 JSON plan: {json.dumps(self.json_plan, indent=4)}", "add_green_divider"),
                 extra={'no_memory': True}
@@ -89,7 +88,7 @@ class CodeAgent:
                     self.logger.warning("🔴 Max iterations reached without satisfactory evaluation.", extra={'no_memory': True})
                     final = evaluation_output.get("final_answer", "")
                     final = transform_final_answer(final)
-                    return final
+                    return final 
                     
-        except Exception as e:
-            self.logger.error("Error running agent:", exc_info=True)
+        except Exception as e: 
+            self.logger.error("Error running agent:", exc_info=True)  

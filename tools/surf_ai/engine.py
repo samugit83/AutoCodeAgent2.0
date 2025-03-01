@@ -1,7 +1,6 @@
 import os
 import time
 import json
-from dotenv import load_dotenv
 from models.models import call_model
 from .browser_manager import BrowserManager 
 from .command_executor import CommandExecutor 
@@ -13,7 +12,6 @@ from .prompt import GEN_JSON_TASK_PROMPT, GEN_JSON_TASK_LOOP_PROMPT, FINAL_ANSWE
  
 class SurfAiEngine:
     def __init__(self):  
-        load_dotenv()
         self.execution_logs = [] 
         self.logger = LoggingConfigurator.configure_logger(self.execution_logs)
         self.json_task_model = os.getenv("SURF_AI_JSON_TASK_MODEL")

@@ -1,12 +1,9 @@
 import os
 import chromadb
-from dotenv import load_dotenv
 from models.models import create_embeddings
 
-# Load environment variables once when the module is imported
-load_dotenv()
 
-def retrieve_documents(query, model, k=5):
+def retrieve_documents(query, k=5):
     """
     Retrieves the top-k most similar documents from the specified Chroma collection based on the query,
     using OpenAI embeddings and a persistent Chroma client.
@@ -22,6 +19,7 @@ def retrieve_documents(query, model, k=5):
 
     # Use the CHROMA_DB_PATH from environment or default to .chroma
     db_path = os.getenv("CHROMA_DB_PATH") or ".chroma"
+    model = os.getenv("SIMPLE_RAG_EMBEDDING_MODEL")
     
     collection_name = "simple_rag"
 

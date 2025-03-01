@@ -13,7 +13,8 @@ Your goal is to:
    - Decide which tool (or tools) from this list are required to accomplish the subtask.
    - Always select the tool while ensuring that adjacent tasks handle compatible data types. For example, if the current task outputs a string, avoid choosing a tool for the subsequent task that expects numeric input (e.g., one that uses numpy), as numpy only processes numerical values.
    - When analyzing a subtask's output that is an unstructured string, do not employ simple parsing or substring extraction. Instead, always utilize a helper_model tool to analyze and extract the necessary information or perform a summary.
-5. **Dictionary-based data-passing across subtasks**:
+   - When a user explicitly mentions a tool_name (e.g., "use retrieve_simple_rag"), ensure that tool is included in your plan if it's available in the tools list.
+5. **Dictionary-based data-passing across subtasks**: 
    - The output of each subtask will be fed as input to the next subtask under the parameter `previous_output`.  
    - **Cumulative Dictionary**: Each subtask must accept the entire dictionary produced by the previous subtask. If a new subtask needs to add more data, it must insert that data into new keys (or update existing keys) but keep the existing keys and values intact.  
      - For example, if subtask A returns `{'a': 1}`, then subtask B should accept `{'a': 1}`, potentially update it (e.g., adding `'b': 2`), and return `{'a': 1, 'b': 2}`. 
@@ -129,7 +130,7 @@ def example_tool2(previous_output: dict) -> dict:
         updated_dict["processed_status"] = status.upper()
         updated_dict["multiplied_age"] = age * multiplier
 
-        return updated_dict
+        return updated_dict 
     except Exception as e:
         logger.error(f"Error in example_tool2: {e}")
         return {}
@@ -137,7 +138,7 @@ def example_tool2(previous_output: dict) -> dict:
     
 
 7. Additional informations about tools keys:
-    - **tool_name**: The name of the tool. Sometimes the user may explicitly request to use a specific tool by using this name.
+    - **tool_name**: The name of the tool. 
     - **lib_names**: An array of the names of the libraries to import for the function.
     - **instructions**: The instructions to use the library.
     - **code_example**: An example of how to use the library.

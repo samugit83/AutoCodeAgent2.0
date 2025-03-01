@@ -39,7 +39,7 @@ def ingest_rag_db(previous_output):
         updated_dict = previous_output.copy()
         
         text: str = updated_dict.get("text", "")
-        ingest_result: dict = ingest_texts([text], model="$SIMPLE_RAG_EMBEDDING_MODEL")
+        ingest_result: dict = ingest_texts([text])
         updated_dict["ingest_result"] = str(ingest_result)
         return updated_dict
     except Exception as e:
@@ -60,7 +60,7 @@ def retrieve_rag_db(previous_output):
         updated_dict = previous_output.copy()
         
         query = updated_dict.get("query", "")
-        retrieve_result: dict = retrieve_documents(query, model="$SIMPLE_RAG_EMBEDDING_MODEL")
+        retrieve_result: dict = retrieve_documents(query)
         updated_dict["retrieve_result"] = str(retrieve_result)
         return updated_dict
     except Exception as e:

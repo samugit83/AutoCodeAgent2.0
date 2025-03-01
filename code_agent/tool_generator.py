@@ -17,7 +17,7 @@ def substitute_variables_in_value(value, variables):
             logger.error(f"Missing substitution for variable {e} in string value.")
             return tmpl.safe_substitute(variables)
     elif isinstance(value, list):
-        new_list = []
+        new_list = [] 
         for item in value:
             if isinstance(item, str):
                 tmpl = Template(item)
@@ -46,14 +46,13 @@ def generate_tools(user_tools, use_default_tools):
         list: A new list of tools with variables applied or converted from LangChain tools.
     """
     tools = user_tools + DEFAULT_TOOLS if use_default_tools else user_tools
-    updated_tools = []
-     
+    updated_tools = [] 
+      
     # Define variables to substitute.
     variables = {
         "TOOL_HELPER_MODEL": os.getenv("TOOL_HELPER_MODEL", ""),
         "JSON_PLAN_MODEL": os.getenv("JSON_PLAN_MODEL", ""),
         "EVALUATION_MODEL": os.getenv("EVALUATION_MODEL", ""),
-        "SIMPLE_RAG_EMBEDDING_MODEL": os.getenv("SIMPLE_RAG_EMBEDDING_MODEL", ""),
         "GMAILUSER": os.getenv("GMAILUSER", ""),
         "PASSGMAILAPP": os.getenv("PASSGMAILAPP", "")
     }
@@ -79,6 +78,9 @@ def generate_tools(user_tools, use_default_tools):
             for key, value in tool_copy.items():
                 tool_copy[key] = substitute_variables_in_value(value, variables)
             updated_tools.append(tool_copy)
+        else:
+            updated_tools.append(tool) #default tools
+
     return updated_tools
 
 

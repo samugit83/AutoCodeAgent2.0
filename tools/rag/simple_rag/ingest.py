@@ -1,6 +1,5 @@
 import os
 import chromadb
-from dotenv import load_dotenv
 from models.models import create_embeddings
 from uuid import uuid4  # For generating unique IDs
 
@@ -23,13 +22,13 @@ def split_text_into_chunks(text, max_chars, overlap):
     return chunks
 
 
-def ingest_texts(texts, model, collection_name="simple_rag"):
+def ingest_texts(texts, collection_name="simple_rag"):
 
     """
     Ingests a list of text strings into the Chroma vector store using OpenAI embeddings.
     Utilizes a persistent Chroma client to save data across sessions.
     """
-    load_dotenv()
+    model = os.getenv("SIMPLE_RAG_EMBEDDING_MODEL")
     max_chunk_size = int(os.getenv("SIMPLE_RAG_CHUNK_SIZE"))
     overlap = int(os.getenv("SIMPLE_RAG_OVERLAP"))
 
