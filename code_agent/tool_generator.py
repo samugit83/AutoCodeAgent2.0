@@ -3,7 +3,8 @@ import os
 import logging
 from string import Template
 from langchain_community.agent_toolkits.load_tools import load_tools
-from .default_tools import DEFAULT_TOOLS
+from .default_tools import DEFAULT_TOOLS, TOOLS_ACTIVATION
+
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +80,13 @@ def generate_tools(user_tools, use_default_tools):
                 tool_copy[key] = substitute_variables_in_value(value, variables)
             updated_tools.append(tool_copy)
         else:
-            updated_tools.append(tool) #default tools
+            if not TOOLS_ACTIVATION.get(tool.get("tool_name"), True):
+                logger.info(f"Skipping tool {tool.get('tool_name')} due to activation flag being False.")
+                continue
+            tool_copy = copy.deepcopy(tool)
+            for key, value in tool_copy.items():
+                tool_copy[key] = substitute_variables_in_value(value, variables)
+            updated_tools.append(tool_copy)
 
     return updated_tools
 

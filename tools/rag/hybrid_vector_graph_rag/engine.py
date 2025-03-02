@@ -12,8 +12,6 @@ import spacy
 import numpy as np
 
 
-
-
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

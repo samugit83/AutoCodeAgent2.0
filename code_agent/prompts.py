@@ -464,7 +464,10 @@ Example output JSON with satisfactory is True:
 {
     "satisfactory": True,
     "thoughts": "The agent completed its tasks correctly.",
-    "final_answer": "<Generate the final answer for the main task if satisfactory is True, otherwise don't add this key. The final answer must be raw HTML and text content to be processed by Marked.js and DOMPurify.> If there is only a RAG extraction tool, do not over-elaborate the final answer; provide only the requested information extracted from the database.",
+    "final_answer": "Generate the final answer for the main task if satisfactory is True, otherwise don't add this key. The final answer must be in HTML.
+    - Never use html or body tags, the main level should be an div tag.
+    - Construct the HTML using inline CSS styles and common tags to format the text in a clear, professional, and readable manner. Don't apply colors to the text.                
+    - If there is only a RAG extraction tool, provide and elaborate only the requested information extracted from the database. Include all relevant information retrieved from the RAG system that directly addresses the user's query. Make sure to present all extracted facts, details, and context that would help provide a comprehensive response to the user's specific request.",
 }
 
 Example of a max iterations reached:

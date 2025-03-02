@@ -29,6 +29,7 @@ def call_helper_model(previous_output):
     },
     {
         "tool_name": "ingest_simple_rag",
+        "activate": True,
         "lib_names": ["tools.rag.simple_rag.ingest"],
         "instructions": "This is a simple RAG ingestion tool. Ingest the text into the vector database.",
         "use_exactly_code_example": True,
@@ -149,11 +150,77 @@ def retrieve_llama_index(previous_output):
         if not query:
             return updated_dict 
         
-        result: str = retrieve_documents(query) 
+        text_list: list[str] = retrieve_documents(query) 
+        updated_dict["retrieve_result"] = text_list
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error in retrieve_llama_index: {e}") 
+        return previous_output 
+"""
+    }, 
+    {
+    "tool_name": "retrieve_llama_index_context_window",
+    "lib_names": ["tools.rag.llama_index_context_window.retrieve"],
+    "instructions": ("This tool retrieves documents from a persisted LlamaIndex index with context window."),
+    "use_exactly_code_example": True,
+    "code_example": """
+def retrieve_llama_index_context_window(previous_output):
+    from tools.rag.llama_index_context_window.retrieve import retrieve_documents
+    try:
+        updated_dict = previous_output.copy()
+        query: str = updated_dict.get("query", "")
+        if not query:
+            return updated_dict    
+        
+        text_list: list[str] = retrieve_documents(query) 
+        updated_dict["retrieve_result"] = text_list
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error in retrieve_llama_index_context_window: {e}") 
+        return previous_output 
+"""
+    }, 
+    { 
+    "tool_name": "retrieve_hyde_rag",
+    "lib_names": ["tools.rag.hyde_rag.retrieve"],
+    "instructions": ("This tool retrieves documents from vector database using the hyde rag technique."),
+    "use_exactly_code_example": True,
+    "code_example": """
+def retrieve_hyde_rag(previous_output): 
+    from tools.rag.hyde_rag.retrieve import retrieve_hyde_documents
+    try:
+        updated_dict = previous_output.copy()
+        query: str = updated_dict.get("query", "") 
+        if not query:
+            return updated_dict 
+        
+        result: str = retrieve_hyde_documents(query) 
         updated_dict["retrieve_result"] = result
         return updated_dict
     except Exception as e:
-        logger.error(f"Error in retrieve_llama_index: {e}")
+        logger.error(f"Error in retrieve_hyde_rag: {e}")
+        return previous_output 
+""" 
+    }, 
+    { 
+    "tool_name": "retrieve_adaptive_rag",
+    "lib_names": ["tools.rag.adaptive_rag.retrieve"],
+    "instructions": ("This tool retrieves documents from vector database using the adaptive rag technique."),
+    "use_exactly_code_example": True,
+    "code_example": """
+def retrieve_adaptive_rag(previous_output): 
+    from tools.rag.adaptive_rag.retrieve import AdaptiveRAG
+    try:
+        updated_dict = previous_output.copy()
+        query: str = updated_dict.get("query", "") 
+        if not query:
+            return updated_dict 
+        
+        result: str = AdaptiveRAG().answer(query) 
+        updated_dict["retrieve_result"] = result
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error in retrieve_adaptive_rag: {e}")
         return previous_output 
 """
     }, 
@@ -294,3 +361,20 @@ def send_email(previous_output) -> dict:
 """
     }
 ]
+
+
+TOOLS_ACTIVATION = {
+    "helper_model": True,
+    "ingest_simple_rag": True,
+    "retrieve_simple_rag": True,
+    "ingest_hybrid_vector_graph_rag": True,
+    "retrieve_hybrid_vector_graph_rag": True,
+    "ingest_llama_index": True,
+    "retrieve_llama_index": True,
+    "retrieve_llama_index_context_window": True,
+    "retrieve_hyde_rag": True,
+    "retrieve_adaptive_rag": True,
+    "search_web": True,
+    "browser_navigation": True,
+    "send_email": True,
+}

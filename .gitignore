@@ -16,3 +16,5 @@ Thumbs.db
 FUTURE.md
 
 tools/rag/database/chroma_db/
+tools/rag/database/llama_index/
+tools/rag/database/llama_index_context_window/

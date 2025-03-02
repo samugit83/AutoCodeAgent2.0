@@ -8,6 +8,8 @@ import logging
 import traceback
 from tools.rag.hybrid_vector_graph_rag.ingest_corpus import hybrid_vector_graph_rag_ingest_corpus
 from tools.rag.llama_index.ingest_corpus import llama_index_ingest_corpus
+from tools.rag.llama_index_context_window.ingest_corpus import llama_index_context_window_ingest_corpus
+
 
 logging.basicConfig(
     level=logging.DEBUG,  
@@ -138,10 +140,18 @@ def hybrid_vector_graph_rag_ingest():
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500               
      
 #start the acquisition, parsing, and ingestion of all documents present in /tools/rag/llama_index/corpus
+# or /tools/rag/llama_index_context_window/corpus if isContextWindow is true
 @app.route('/llama-index-ingest-corpus', methods=['POST'])
 def llama_index_ingest():
     try:
-        llama_index_ingest_corpus()
+        data = request.get_json()
+        is_context_window = data.get('isContextWindow', False)
+        
+        if is_context_window:
+            llama_index_context_window_ingest_corpus()
+        else:
+            llama_index_ingest_corpus()
+        
         return jsonify({"message": "Script executed successfully"}), 200
     except Exception as e:
         logging.error("Exception occurred in /llama-index-ingest-corpus: %s", str(e))  

@@ -27,9 +27,8 @@ class LoggingConfigurator:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
         
-        logging.getLogger("httpcore").setLevel(logging.WARNING)
-        logging.getLogger("urllib3").setLevel(logging.WARNING)
-        logging.getLogger("geopy").setLevel(logging.WARNING)
+        for logger_name in ["httpcore", "urllib3", "geopy", "llama_index", "fsspec", "httpx"]:
+            logging.getLogger(logger_name).setLevel(logging.WARNING)
 
         logger.handlers = []
         logger.propagate = False

@@ -1,7 +1,7 @@
 import os
 from llama_index.core import VectorStoreIndex, Document, StorageContext, load_index_from_storage
 
-def ingest_texts(texts, db_dir="./tools/rag/llama_index/database"):
+def ingest_texts(texts):
     """
     Ingest a list of raw text strings into a LlamaIndex vector store.
     This function:
@@ -18,7 +18,7 @@ def ingest_texts(texts, db_dir="./tools/rag/llama_index/database"):
     Returns:
       dict: A status message.
     """
-
+    db_dir = os.getenv("LLAMA_INDEX_DB_PATH")
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if not openai_api_key:
         raise ValueError("OPENAI_API_KEY not set in environment. Check your .env file.")

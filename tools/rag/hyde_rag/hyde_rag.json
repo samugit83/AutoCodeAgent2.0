@@ -1,0 +1,184 @@
+{
+    "cells": [
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "# Hypothetical Document Embedding (HyDE) - RAG Retrieval\n",
+       "\n",
+       "This notebook presents a modern approach to document retrieval by expanding short queries into full-length, detailed texts. The method uses the Hypothetical Document Embedding technique to create a better match between the query representation and document embeddings."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## System Introduction\n",
+       "\n",
+       "In this system, a language model transforms a user’s query into an extensive, hypothetical document. This document then serves as an enriched query to search through a vector space, improving the alignment with the stored documents."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## Underlying Concept\n",
+       "\n",
+       "Standard retrieval methods often fail when dealing with the disparity between concise queries and detailed documents. By generating a comprehensive hypothetical document, this method fills the gap and leads to more accurate and context-aware search results. This approach is particularly beneficial for multifaceted or complex queries."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## System Components\n",
+       "\n",
+       "1. **Document Ingestion and Chunking:** Leverage the llama_index RAG approach to ingest and group PDF documents or accept inputs directly from chat windows, splitting content into manageable segments.\n",
+       "2. **Vector Database Management:** Use the llama_index implementation to manage the vector database, enabling efficient indexing and similarity search.\n",
+       "3. **Hypothetical Text Generation:** A language model (like GPT-4o) generates an extensive hypothetical document from the query.\n",
+       "4. **Customized Retrieval Module:** A dedicated module manages the generation of hypothetical texts and retrieves documents based on vector similarity using the llama_index system."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## How It Works\n",
+       "\n",
+       "### Text Preprocessing and Vector Indexing\n",
+       "\n",
+       "- Use llama_index to ingest and chunk the documents. Read all the documentation in the llama_index folder.\n",
+       "\n",
+       "### Creating the Hypothetical Text\n",
+       "\n",
+       "- Use a language model to create an extensive document that responds to the query.\n",
+       "- Employ a prompt template to enforce detailed content with a fixed character length matching the chunks.\n",
+       "\n",
+       "### Retrieval Mechanism\n",
+       "\n",
+       "1. Generate a detailed text from the input query using the language model.\n",
+       "2. Use the generated text as the search key within the vector index.\n",
+       "3. Retrieve the documents that are most similar to this hypothetical text."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## System Advantages\n",
+       "\n",
+       "- **Enhanced Query Representation:** Transforming short queries into detailed texts improves match quality.\n",
+       "- **Customizable Parameters:** Adjust chunk sizes, overlaps, and the number of returned documents based on your needs.\n",
+       "- **Integration with Advanced Models:** Utilizes powerful language models like GPT-4 along with robust vector representations."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## Practical Benefits\n",
+       "\n",
+       "- **Better Result Relevance:** Detailed queries capture the nuances of the search intent, leading to more precise document matches.\n",
+       "- **Complex Query Resolution:** Effective for queries with multiple aspects or in-depth information requirements.\n",
+       "- **Versatility Across Domains:** Suitable for specialized fields such as legal research, academic studies, and other advanced retrieval systems."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## Implementation Insights\n",
+       "\n",
+       "- Uses a ChatGPT-based model for generating the hypothetical text.\n",
+       "- Utilizes the llama_index implementation for vector database management and efficient similarity search, replacing traditional FAISS usage.\n",
+       "- Provides straightforward visualization of both the generated query expansion and the retrieved document set."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## Summary\n",
+       "\n",
+       "This approach rethinks traditional document retrieval by expanding the query into a rich, detailed document. By reducing the semantic gap between queries and documents, the system improves search accuracy and is especially useful for handling intricate queries where context and nuance are critical."
+      ]
+     },
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+       "## Code Implementation"
+      ]
+     },
+     {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "source": [
+       "# retrieve.py\n",
+       "import os\n",
+       "from tools.rag.llama_index.retrieve import retrieve_documents\n",
+       "from models.models import call_model\n",
+       "from .prompts import HYDE_DOCS_PROMPT\n",
+       "\n",
+       "import logging\n",
+       "\n",
+       "logger = logging.getLogger(__name__)\n",
+       "\n",
+       "def generate_hypothetical_document(query):\n",
+       "    chunk_size = os.getenv(\"HYDE_RAG_CHUNK_SIZE\")\n",
+       "    model = os.getenv(\"HYDE_GENERATE_HYPO_DOC_MODEL\") \n",
+       "\n",
+       "    hyde_doc_prompt = HYDE_DOCS_PROMPT.substitute(\n",
+       "        query=query,\n",
+       "        chunk_size=chunk_size\n",
+       "    )\n",
+       "\n",
+       "    hyde_doc = call_model(\n",
+       "        chat_history=[{\"role\": \"user\", \"content\": hyde_doc_prompt}], \n",
+       "        model=model\n",
+       "    )\n",
+       "\n",
+       "    return hyde_doc\n",
+       "\n",
+       "def retrieve_hyde_documents(query):\n",
+       "    hyde_doc = generate_hypothetical_document(query)\n",
+       "    top_k = int(os.getenv(\"HYDE_RAG_QUERY_TOP_K\"))\n",
+       "    results = retrieve_documents(hyde_doc, similarity_top_k=top_k)\n",
+       "    result_string = \"\\n\".join(results)\n",
+       "\n",
+       "    return result_string"
+      ]
+     },
+     {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "source": [
+       "# prompts.py\n",
+       "from string import Template\n",
+       "\n",
+       "HYDE_DOCS_PROMPT = Template(\"\"\"\n",
+       "You are a knowledgeable assistant tasked with generating a comprehensive hypothetical document. Given the query \"$query\", create a detailed and structured document that directly answers the question. Your document must:\n",
+       "- Be exactly $chunk_size characters long.\n",
+       "- Provide an in-depth explanation that bridges the semantic gap between the short query and the longer document representations.\n",
+       "Output only the final text, without any additional commentary.\n",
+       "\"\"\")"
+      ]
+     }
+    ],
+    "metadata": {
+     "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+     },
+     "language_info": {
+      "name": "python",
+      "version": "3.x"
+     }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 2
+   }
+   

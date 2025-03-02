@@ -19,7 +19,7 @@ This section provides a general overview of IntelliChain mode, its goals, and it
 [Features](#features)  
 Here, the main features of the project are listed and described.
 
-[All Ways to Add Tools](#all-ways-to-add-tools)  
+[All Ways to Add Custom Tools](#all-ways-to-add-custom-tools)  
 This section explains the various methods available for adding tools to the project.
 
 [Video Demo](#video-demo)  
@@ -104,18 +104,18 @@ cd AutoCodeAgent2.0
 Create a file named .env in the root folder and insert all the following variables to ensure the application functions correctly:
 
 ```bash
-OPENAI_API_KEY=your_api_key  
+OPENAI_API_KEY=your_api_key 
 FLASK_PORT=5000 
-CHROMA_DB_PATH=./tools/rag/database/chroma_db
 NEO4J_URI=bolt://neo4j:7687
-NEO4J_USER=neo4j
+NEO4J_USER=neo4j 
 NEO4J_PASSWORD=your_password 
 REDIS_HOST=redis
-REDIS_PORT=6379
+REDIS_PORT=6379 
 REDIS_DB=0
 
 SIMPLE_RAG_CHUNK_SIZE=1500  # chunk size for simple rag
 SIMPLE_RAG_OVERLAP=200  # overlap for simple rag
+SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002  # simple rag embedding model
 
 HYBRID_VECTOR_GRAPH_RAG_CHUNK_SIZE=1500  # chunk size for hybrid vector graph rag
 HYBRID_VECTOR_GRAPH_RAG_OVERLAP=200  # overlap for hybrid vector graph rag
@@ -125,19 +125,31 @@ HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_EDGE_THRESHOLD=0.9  # similarity edge thresho
 HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_DEPTH=3  # max depth for hybrid vector graph rag
 HYBRID_VECTOR_GRAPH_RAG_QUERY_TOP_K=3  # top k for hybrid vector graph rag
 HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH=10000  # max context length for hybrid vector graph rag
+HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL=text-embedding-ada-002  # hybrid vector graph rag embedding vector model
+HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL=gpt-4o  # hybrid vector graph rag summarization graph node model
 
-GMAILUSER=your_email@gmail.com
-PASSGMAILAPP=your_password
+CHROMA_DB_PATH=./tools/rag/database/chroma_db # url for chroma db used in simple rag
+LLAMA_INDEX_DB_PATH=./tools/rag/database/llama_index # url for llama index db used in llama index rag tool
+LLAMA_INDEX_CONTEXT_WINDOW_DB_PATH=./tools/rag/database/llama_index_context_window # url for llama index context window db used in llama index context window rag tool
+LLAMA_INDEX_CORPUS_DIR=./tools/rag/llama_index/corpus # url for llama index corpus used in llama index rag tool
+LLAMA_INDEX_CONTEXT_WINDOW_CORPUS_DIR=./tools/rag/llama_index_context_window/corpus # url for llama index context window corpus used in llama index context window rag tool
+
+LLAMA_INDEX_CONTEXT_WINDOW_SIZE_INGEST=30 # sentences for llama index context window ingestion
+LLAMA_INDEX_CONTEXT_WINDOW_MAX_ADJACENT_CHARS_RAG_RETRIEVE=150 # max adjacent characters for llama index context window rag tool
+LLAMA_INDEX_CONTEXT_WINDOW_TOP_K_RAG_RETRIEVE=5 # top k chunks for llama index context window rag tool
+
+HYDE_RAG_CHUNK_SIZE=1500 # chunk size for hyde rag tool
+HYDE_RAG_QUERY_TOP_K=5 # query top k for hyde rag tool
+HYDE_GENERATE_HYPO_DOC_MODEL=gpt-4o # generate hyde rag tool model
+
+GMAILUSER=your_email@gmail.com # gmail user for send email tool
+PASSGMAILAPP=your_password # gmail password for send email tool
 
 TOOL_HELPER_MODEL=gpt-4o  # tool helper model
 JSON_PLAN_MODEL=gpt-4o  # json plan model
 EVALUATION_MODEL=gpt-4o  # evaluation model
 SURF_AI_JSON_TASK_MODEL=gpt-4o  # surf ai json task model, important: for surfAi you must use a multimodal modal with text + vision capabilities
 DEEP_SEARCH_MODEL=o3-mini  # deep search model
-
-SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002  # simple rag embedding model
-HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL=text-embedding-ada-002  # hybrid vector graph rag embedding vector model
-HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL=gpt-4o  # hybrid vector graph rag summarization graph node model
 
 ELEVEN_API_KEY=API_KEY # elevenlabs api key for langchain tool
 OPENWEATHERMAP_API_KEY=API_KEY # openweathermap api key for langchain tool
@@ -159,14 +171,16 @@ docker-compose up -d
 ```bash
 docker logs -f flask_app 
 ```
-If you want to rebuild and restart the application:   
+If you want to rebuild and restart the application, and optimize docker space:    
 ```bash
-docker-compose down 
+docker-compose down
 docker-compose build --no-cache
 docker-compose up -d
+docker system prune -a --volumes -f
+docker builder prune -a -f
 docker logs -f flask_app    
 ```  
-Is a good idea to always check docker space usage:
+Is a good idea to always check docker space usage after building and starting the application:
 ```bash
 docker system df
 ```
@@ -564,12 +578,17 @@ These default tools are listed below and can be found in the file:
   - A tool for ingesting text into a Neo4j database with hybrid vector graph RAG
 - retrieve_hybrid_vector_graph_rag
   - A tool for retrieving the most similar documents to a query from a Neo4j database with hybrid vector graph RAG
+- retrieve_hyde_rag
+  - A tool for retrieving the most similar documents to a with the HyDe RAG technique
+- retrieve_adaptive_rag
+  - A tool for retrieving the most similar documents to a with the Adaptive RAG technique
 - search_web
   - A tool for searching information on the web
 - send_email
   - A tool for sending an email
 
 To include the default tools in the list of tools, set the parameter use_default_tools to True in the CodeAgent constructor.
+If you have set use_default_tools to True, you can enable or disable specific tools by modifying the TOOLS_ACTIVATION variable in the default_tools.py file.
 
 
 ## SurfAi Integration  
@@ -694,7 +713,7 @@ Hybrid Vector Graph RAG takes data retrieval to the next level by combining the 
 You can ingest a corpus by directly uploading files in txt or pdf format to the /tools/rag/hybrid_vector_graph_rag/corpus folder.
 To start the batch processing, simply make an API call:
 ```bash
-curl -X POST "http://localhost:5000/hybrid-vector-graph-rag-ingest-corpus"
+curl -X POST http://localhost:5000/hybrid-vector-graph-rag-ingest-corpus
 ```
 The script will process the information in the files, transferring it to the vector and graph database.
 
@@ -787,7 +806,7 @@ In addition to the techniques above, the agent now integrates the Llama Index fo
 You can ingest a corpus by directly uploading files to the /tools/rag/llama_index/corpus folder.
 To start the batch processing, simply make an API call:
 ```bash
-curl -X POST "http://localhost:5000/llama-index-ingest-corpus"
+curl -X POST http://localhost:5000/llama-index-ingest-corpus
 ```
 The script processes the information in the files, transferring it to the vector and graph database.  
 The file processing and parsing are handled by the  SimpleDirectoryReader provided by the llamaindex library.  
@@ -1245,4 +1264,34 @@ Thank you for helping improve this project! 🚀
 
 
 
+Adaptive RAG
 
+1. Factual Version
+Query:
+"What specific metrics and methodologies do scientists use to evaluate GPT 4.5's completions?" 
+
+Focus: This version seeks clear, verifiable details such as evaluation metrics, experimental setups, or quantitative methods.
+
+2. Analytical Version
+Query:
+"How do scientists integrate quantitative metrics and qualitative assessments to comprehensively evaluate GPT 4.5's completions?"
+
+Focus: This version prompts an in-depth analysis of the evaluation process, exploring the interplay between different evaluation methods and their implications.
+
+3. Opinion Version
+Query:
+"What are the various perspectives among experts regarding the effectiveness and fairness of current evaluation techniques for GPT 4.5's completions?"
+
+Focus: This version targets subjective viewpoints and debates among scientists, inviting a discussion on the strengths and limitations of the evaluation methods.
+
+4. Contextual Version
+Query:
+"Considering the context of advancements in natural language processing and my background in AI research, how do scientists adapt their evaluation strategies for GPT 4.5's completions?"
+
+Focus: This version incorporates user-specific or situational context, encouraging answers that account for recent trends, personal expertise, or specific research contexts.
+
+
+curl -X POST \
+  http://localhost:5000/llama-index-ingest-corpus \
+  -H "Content-Type: application/json" \
+  -d '{"isContextWindow": true}'

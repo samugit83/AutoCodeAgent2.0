@@ -6,7 +6,7 @@ from llama_index.core import (
     SimpleDirectoryReader
 )
 
-def llama_index_ingest_corpus(corpus_dir="./tools/rag/llama_index/corpus", db_dir="./tools/rag/llama_index/database"):
+def llama_index_ingest_corpus():
     """
     Ingest documents from a directory into a LlamaIndex vector store.
     
@@ -25,6 +25,8 @@ def llama_index_ingest_corpus(corpus_dir="./tools/rag/llama_index/corpus", db_di
     Returns:
       dict: A status message.
     """
+    corpus_dir = os.getenv("LLAMA_INDEX_CORPUS_DIR")
+    db_dir = os.getenv("LLAMA_INDEX_DB_PATH")
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if not openai_api_key:
         raise ValueError("OPENAI_API_KEY not set in environment. Check your .env file.")
