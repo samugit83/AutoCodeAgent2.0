@@ -1131,7 +1131,7 @@ Simple RAG is your go-to tool for straightforward data retrieval and ingestion t
 
 
 ### Llama Index RAG (retrieval + ingestion)
-Dive deep into the [notebook](./tools/rag/llama_index_rag/llama_index_rag.ipynb).
+Dive deep into this [notebook](./tools/rag/llama_index/llama_index.ipynb).
 In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.  
 
 It supports bulk ingestion from directories, automatically processing multiple file formats—such as CSV, DOCX, EPUB, PDFs, images, notebooks, and more—to update the vector index. Whether you need to update your database with the latest market trends or extract nuanced insights, Llama Index empowers your agent to tackle diverse data challenges with precision.
@@ -1141,7 +1141,7 @@ It supports bulk ingestion from directories, automatically processing multiple f
 
 
 ### Llama Index Context Window RAG (retrieval + ingestion)
-Dive deep into the [notebook](./tools/rag/llama_index_context_window_rag/llama_index_context_window_rag.ipynb).  
+Dive deep into this [notebook](./tools/rag/llama_index_context_window/llama_index_context_window.ipynb).  
 
 Llama Index Context Window RAG takes document retrieval to the next level by incorporating a dynamic context enrichment window into the Llama Index framework. This advanced tool enhances each text chunk with adjacent sentences, ensuring that retrieval outputs are not only highly relevant but also contextually complete.
 
@@ -1162,7 +1162,7 @@ By fusing robust ingestion methods with a custom context window approach, Llama 
 
 
 ### Hybrid Vector Graph RAG (retrieval + ingestion)
-Dive deep into the [notebook](./tools/rag/hybrid_vector_graph_rag/hybrid_vector_graph_rag.ipynb).  
+Dive deep into this [notebook](./tools/rag/hybrid_vector_graph_rag/hybrid_vector_graph_rag.ipynb).  
 
 Hybrid Vector Graph RAG takes data retrieval to the next level by combining the strengths of vector embeddings and graph databases. This technique not only stores text chunks as vectors but also captures the relationships between them in a graph structure. The result is a powerful tool that can navigate complex data relationships, making it perfect for tasks that require deep contextual understanding.
 
@@ -1184,7 +1184,7 @@ Hybrid Vector Graph RAG takes data retrieval to the next level by combining the 
 
 
 ### HyDE RAG (retrieval)
-Dive deep into the [notebook](./tools/rag/hyde_rag/hyde_rag.ipynb).  
+Dive deep into this [notebook](./tools/rag/hyde_rag/hyde_rag.ipynb).  
 
 Hypothetical Document Embedding (HyDE) - RAG Retrieval revolutionizes document search by transforming concise user queries into detailed, context-rich hypothetical documents. By leveraging advanced language models, HyDE creates an enriched query representation that aligns more closely with complex document embeddings, leading to more precise and insightful search results.
 
@@ -1205,8 +1205,8 @@ Hypothetical Document Embedding (HyDE) - RAG Retrieval revolutionizes document s
 By bridging the gap between concise queries and extensive document representations, HyDE - RAG Retrieval offers a transformative approach to information discovery. Its innovative methodology not only elevates the quality of retrieval but also adapts to complex, multifaceted search challenges across diverse domains.
 
 
-### Adaptive Retrieval-Augmented Generation (RAG)
-Dive deep into the [notebook](./tools/rag/adaptive_rag/adaptive_rag.ipynb).  
+### Adaptive Retrieval-Augmented Generation RAG (retrieval)
+Dive deep into this [notebook](./tools/rag/adaptive_rag/adaptive_rag.ipynb).  
 
 Adaptive Retrieval-Augmented Generation (RAG) is an innovative system that tailors its document retrieval strategy based on the nature of the query. By leveraging advanced language model prompting and dynamic classification, it selects the optimal retrieval method to generate context-aware and precise responses.
 
