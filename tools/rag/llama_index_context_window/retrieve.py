@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.postprocessor import SimilarityPostprocessor, MetadataReplacementPostProcessor
 

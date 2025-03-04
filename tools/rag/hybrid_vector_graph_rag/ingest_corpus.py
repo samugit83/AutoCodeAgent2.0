@@ -1,8 +1,8 @@
 import os
 import re
 import spacy
-from PyPDF2 import PdfReader  # Ensure PyPDF2 is installed
-from .engine import HybridVectorGraphRag  # Import your class from engine.py
+from PyPDF2 import PdfReader 
+from .engine import HybridVectorGraphRag 
 
 def extract_text_from_pdf(pdf_path):
     """
@@ -74,7 +74,6 @@ def load_and_process_file(file_path, nlp):
         formatted_content = ' '.join(sentences)
     except Exception as e:
         print(f"SpaCy processing failed for {file_path}: {e}")
-        # Fallback to the current formatted content if SpaCy fails
         formatted_content = content
 
     print(f"Successfully loaded and formatted corpus from {file_path}.")
@@ -84,9 +83,9 @@ def hybrid_vector_graph_rag_ingest_corpus():
     """
     Ingest all supported files from the corpus directory.
     """
-    # Determine the path to the corpus directory
+
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    corpus_dir = os.path.join(current_dir, 'corpus')  # Ensure 'corpus' is a directory
+    corpus_dir = os.path.join(current_dir, 'corpus') 
 
     if not os.path.isdir(corpus_dir):
         print(f"Corpus directory {corpus_dir} does not exist.")
@@ -99,10 +98,8 @@ def hybrid_vector_graph_rag_ingest_corpus():
         print(f"Failed to load SpaCy model: {e}")
         exit(1)
 
-    # Initialize the HybridVectorGraphRag class
     rag = HybridVectorGraphRag()
 
-    # Iterate over each file in the corpus directory
     for filename in os.listdir(corpus_dir):
         file_path = os.path.join(corpus_dir, filename)
         
@@ -111,9 +108,8 @@ def hybrid_vector_graph_rag_ingest_corpus():
             processed_text = load_and_process_file(file_path, nlp)
             
             if processed_text:
-                texts = [processed_text]  # Wrap in a list as expected by rag.ingest
+                texts = [processed_text] 
                 
-                # Call the ingest method and print the result
                 try:
                     result = rag.ingest(texts)
                     print(f"Ingestion Result for {filename}:")
@@ -123,7 +119,3 @@ def hybrid_vector_graph_rag_ingest_corpus():
         else:
             print(f"Skipping {filename} as it is not a file.")
 
-    print("All eligible files have been processed and ingested.")
-
-if __name__ == "__main__":
-    ingest_corpus()

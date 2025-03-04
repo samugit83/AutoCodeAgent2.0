@@ -1,15 +1,27 @@
 
-![AutoCode Agent with RAG Workflow](./static/images/autocode.png)  
+![AutoCode Agent Global Workflow](./static/images/autocode.png)  
 
-# AutoCodeAgent - An innovative dual-mode AI agent: IntelliChain + Deep Search
+# AutoCodeAgent - An innovative AI agent powered by IntelliChain, Deep Search, and multi-RAG techniques
 ![version](https://img.shields.io/badge/version-1.4.0-blue)
 
-[One agent, two faces](#one-agent-two-faces)   
-AutoCodeAgent fuses IntelliChain’s precise task decomposition with Deep Search’s autonomous web research, remarkably transforming complex challenges into innovative, actionable intelligence.
-Discover how this unique Dual-Mode AI agent combines the power of code generation and Deep Search to tackle any challenge with precision and efficiency.
+## One agent, Infinite possibilities
+AutoCodeAgent redefines AI-powered problem solving by seamlessly integrating three groundbreaking modes:
+
+### IntelliChain
+Break down complex tasks with surgical precision through dynamic task decomposition and on-demand code generation. IntelliChain meticulously plans and executes subtasks, ensuring every step of the process is both targeted and efficient.
+
+### Deep Search
+Harness the power of autonomous, real-time web research to extract the most current and comprehensive information. Deep Search navigates diverse online sources, transforming raw data into actionable intelligence with minimal human intervention.
+
+### Multi-RAG
+Enhance information retrieval through an innovative multi-RAG framework that includes many different RAG techniques. This multi-faceted approach delivers contextually rich, accurate, and coherent results, even when working with varied document types and complex knowledge structures. The incredible innovation is that these RAG techniques have been implemented as tools, so they can be used like any other tool in the project.
+You can also benefit from these techniques for educational purposes, as each one is conceptually well-explained in the .ipynb files located in the folders within /tools/rag.
+
+By fusing these three potent modes, AutoCodeAgent transforms intricate challenges into innovative, actionable solutions, setting a new standard in intelligent automation and advanced research.
 
 [Application Setup](#application-setup)  
 Step-by-step guide to setting up the project for the first time.
+
 
 ## IntelliChain sections
 
@@ -38,18 +50,6 @@ LangChain tools are integrated in the project, in this section you will learn ho
 NEW! Integration of SurfAi as an Automated Web Navigation Tool (local function type)
 We have integrated SurfAi into our suite as a powerful automated web navigation tool. This enhancement enables seamless interaction with web pages, efficient extraction of data and images, and supports the resolution of more complex tasks through intelligent automation.
 
-[All RAG Techniques](#all-rag-techniques)  
-Overview of the different RAG techniques available and how to use them as tools.
-
-[Simple RAG](#simple-rag)  
-Detailed description of the Simple RAG technique.
-
-[Hybrid Vector Graph RAG](#hybrid-vector-graph-rag)  
-Detailed description of the Hybrid Vector Graph RAG technique.
-
-[LlamaIndex RAG](#llama-index-rag)  
-Discover how to use the LlamaIndex RAG.  
-
 
 ## Deep Search sections
 
@@ -76,6 +76,20 @@ Explore the full potential of Deep Search by watching these demonstration videos
 
 [Parameters and Configuration](#parameters-and-configuration)  
 Description of the parameters to use in Deep Search constructor. 
+
+
+## Multi-RAG sections
+
+[All RAG Techniques](#all-rag-techniques)  
+AutoCodeAgent 2.0 dynamically integrates multiple RAG techniques within the Intellichain subtask code generation process. This dynamic integration enables the agent to seamlessly switch between methods tailored for different data ingestion and retrieval challenges—whether it's processing direct chat inputs, executing automated subtasks, or handling batch document uploads.  
+
+By embedding these techniques as dynamic tools, the system automatically selects the most efficient approach based on the specific task, ensuring a streamlined and adaptive workflow. This allows for effective interaction with both structured and unstructured data, optimizing the retrieval process regardless of the data format or complexity.  
+
+In addition to their operational benefits, these RAG techniques serve as valuable educational resources. Detailed Jupyter Notebook (.ipynb) files are provided for each method, offering comprehensive explanations, practical code examples, and insights into the underlying concepts. This didactic component makes it easy for users to learn and experiment with each technique, bridging the gap between theoretical understanding and real-world application.  
+
+In essence, AutoCodeAgent 2.0 not only enhances data processing through its dynamic, integrated RAG tools but also empowers users with the knowledge to master advanced data ingestion and retrieval techniques.  
+
+Dive into this section and explore each technique step by step!  
 
 
 
@@ -213,17 +227,6 @@ The frontend static files (HTML, CSS, JavaScript, and images) reside in the fold
 ``` 
 These files serve the user interface for the AI chat and related functionalities.
 
-
-
-
-## One agent, two faces
-AutoCodeAgent is a unique AI agent that comes with two complementary modes.
-
-With IntelliChain, AutoCodeAgent deconstructs complex tasks into manageable sub-tasks, dynamically generating and executing precise Python code at every step. It employs modular workflows and integrates specialized tools—including various RAG techniques—to retrieve, process, and analyze information from persistent databases. This structured approach ensures robust, secure, and highly customizable task management, perfect for scenarios demanding clarity and precision.
-
-In parallel, Deep Search empowers the agent with an autonomous, in-depth web research capability. Powered by an advanced model optimized for browsing and data analysis, Deep Search can independently explore, interpret, and synthesize data from hundreds of online sources—including texts, images, and PDFs—to produce comprehensive reports akin to those crafted by a seasoned research analyst. This modality dramatically condenses what would normally take hours of human effort into minutes, pushing the boundaries of automated intelligence.
-
-Together, these two modes enable AutoCodeAgent to tackle any challenge by transforming complex data and extensive research into innovative, complete solutions. Whether managing internal tasks with precision through IntelliChain or scouring the digital landscape for actionable insights with Deep Search, AutoCodeAgent stands at the forefront of AI-powered problem solving, marking a significant step toward the realization of true artificial general intelligence (AGI).
 
 
 
@@ -662,176 +665,6 @@ In this example, the system would:
 This demonstrates the flexibility and strength of LangChain's integration capabilities in orchestrating multiple tools to achieve a complex, multi-step task.
 
 
-## All Rag Techniques
-
-Welcome to the heart of AutoCodeAgent 2.0, where the power of Retrieval-Augmented Generation (RAG) is seamlessly integrated into your workflow. Imagine having a suite of advanced RAG techniques at your disposal, each designed to handle specific data retrieval and ingestion tasks with precision and efficiency. These techniques are not just abstract concepts—they are practical tools that you can invoke with a simple prompt, enabling the agent to interact with structured and unstructured data in ways that were previously unimaginable.
-
-In this section, we dive into the diverse RAG techniques that AutoCodeAgent 2.0 offers, each tailored to address unique challenges in data processing and retrieval. Whether you're working with vector databases, graph databases, or a hybrid of both, these tools empower the agent to ingest, retrieve, and analyze data with unparalleled accuracy and speed. From simple RAG for straightforward tasks to the sophisticated Hybrid Vector Graph RAG for complex, multi-layered data relationships, every technique is designed to enhance the agent's capabilities and make your workflow more efficient.
-
-Think of these RAG techniques as your personal data assistants, ready to fetch, store, and process information at your command. With AutoCodeAgent 2.0, you’re not just working with data—you’re orchestrating it. Let’s explore how each RAG technique can transform the way you interact with information, making your tasks smarter, faster, and more intuitive.
-
-
-### Simple RAG
-Simple RAG is your go-to tool for straightforward data retrieval and ingestion tasks. It leverages vector embeddings to store and retrieve text chunks efficiently, making it ideal for scenarios where quick access to relevant information is crucial. Whether you're saving web search results or retrieving documents based on a query, Simple RAG ensures that your data is always within reach.
-
-**Key Features:**
-- **Efficient Text Chunking:** Breaks down large texts into manageable chunks for easy processing.
-- **Vector Embeddings:** Converts text into numerical vectors, enabling fast and accurate similarity searches.
-- **Seamless Integration:** Works seamlessly with ChromaDB, a vector database optimized for high-performance retrieval.
-
-**Use Cases:**
-- Saving web search results for future reference.
-- Retrieving documents based on user queries.
-- Enhancing the agent's ability to recall and utilize previously ingested data.
-
-**Example Prompt:**
-- *"Search for the latest news on AI advancements and save it in the database using the tool: `ingest_simple_rag`."*
-- *"Retrieve information about climate change from the database using the tool: `retrieve_simple_rag`."*
-
-
-### Hybrid Vector Graph RAG
-[Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).
-
-Hybrid Vector Graph RAG takes data retrieval to the next level by combining the strengths of vector embeddings and graph databases. This technique not only stores text chunks as vectors but also captures the relationships between them in a graph structure. The result is a powerful tool that can navigate complex data relationships, making it perfect for tasks that require deep contextual understanding.
-
-**Key Features:**
-- **Graph-Based Relationships:** Captures and leverages relationships between text chunks using Neo4j, a leading graph database.
-- **Summarization and Lemmatization:** Summarizes text chunks and reduces words to their base forms for consistent analysis.
-- **Advanced Retrieval:** Uses Breadth-First Search (BFS) to explore and retrieve related information, ensuring comprehensive context for each query.
-
-**Use Cases:**
-- Building knowledge graphs from ingested data.
-- Retrieving information with deep contextual relevance.
-- Handling complex queries that require understanding of data relationships.
-
-**Example Prompt:**
-- *"Save the latest research papers on quantum computing in the database using the tool: `ingest_hybrid_vector_graph_rag`."*
-- *"Find information about the connections between AI and healthcare using the tool: `retrieve_hybrid_vector_graph_rag`."*
-
-
-**Bulk Ingestion:**
-You can ingest a corpus by directly uploading files in txt or pdf format to the /tools/rag/hybrid_vector_graph_rag/corpus folder.
-To start the batch processing, simply make an API call:
-```bash
-curl -X POST http://localhost:5000/hybrid-vector-graph-rag-ingest-corpus
-```
-The script will process the information in the files, transferring it to the vector and graph database.
-
-**Neo4j Database Browser:**
-Access the Neo4j database browser at http://localhost:7474/browser/ and run all the query to retrieve, delete or modify the data:
-Some query examples:    
-```bash
-MATCH (n:Chunk) RETURN n LIMIT 200
-```
-```bash
-MATCH (n:Chunk) DETACH DELETE n
-```
-
-### Here you can find a workflow that illustrates hybrid vector graph RAG ingestion and retrieval:
-![Hybrid Vector Graph RAG Workflow](./tools/rag/hybrid_vector_graph_rag/hybrid_vectr_graph_rag_workflow.png)
-
-### Ingestion steps:
-
-1. Start Ingestion: 
-Initiates the ingestion process.
-
-2. Split Texts into Chunks
-Breaks down large pieces of text into smaller, manageable sections based on size limits. This makes processing easier and ensures that each segment can be effectively analyzed and stored without overwhelming the system.
-
-3. Create Embeddings for Chunks
-Converts each text chunk into a numerical format (embedding) that captures its meaning. These embeddings allow the system to understand and compare the content of different chunks efficiently.
-
-4. Add Documents to ChromaDB
-Stores the text chunks along with their embeddings and related information in ChromaDB, a specialized database optimized for handling and retrieving these vector representations quickly and accurately.
-
-5. Summarize Each Chunk
-Generates brief summaries of each text chunk using a language model. These summaries distill the main ideas, making it easier to grasp the content without reading the entire text.
-
-6. Lemmatize Summaries
-Simplifies the summaries by reducing words to their base forms (lemmas) using SpaCy. This standardization helps in maintaining consistency and improving the accuracy of text analysis.
-
-7. Create Lemma Embeddings
-Transforms the lemmatized summaries into numerical embeddings. These embeddings represent the core meaning of the summaries, facilitating efficient comparison and retrieval within the system.
-
-8. Create Nodes in Neo4j
-Inserts the summarized and lemmatized information, along with their embeddings and metadata, into Neo4j as nodes. This graph database structure allows for rich relationships and connections between different text chunks.
-
-9. Create Similarity Edges
-Establishes connections between similar text chunks based on the similarity of their embeddings. These relationships help in forming a network of related information, enhancing the system's ability to retrieve and relate relevant data.
-
-10. End Ingestion
-Concludes the ingestion process by finalizing all tasks and ensuring that all data is properly stored and connections are closed. It confirms that the data is ready for use in retrieval and analysis operations.
-
-
-### Retrieval steps:
-
-1. Start Retrieval
-Initiates the retrieval process based on a user's question. This marks the beginning of the system's effort to find and compile relevant information to answer the query.
-
-2. Embed User Query
-Converts the user's question into a numerical vector (embedding) using a specialized embedding model. This transformation allows the system to understand the semantic meaning of the question and compare it effectively with stored data.
-
-3. Query ChromaDB for Top_k Chunks
-Retrieves the top k most similar text chunks from ChromaDB based on the query embedding. These chunks are the most relevant pieces of information that closely match the user's question.
-
-4. Initialize BFS with Retrieved Chunks
-Sets up a Breadth-First Search (BFS) starting with the chunks retrieved from ChromaDB to explore related information in Neo4j. BFS is a method for traversing or searching through the graph database to find additional relevant data.
-
-5. Is Context Enough?
-Checks if the currently gathered context is sufficient to answer the question by prompting a Language Model (LLM). This step determines whether the accumulated information provides a complete and accurate answer.
-
-- Yes: Generate Final Answer Uses the accumulated context to formulate a concise answer to the user's question. The system synthesizes the information to provide a clear and direct response. Return Final Answer Outputs the generated answer to the user, delivering the final response based on the retrieved and processed data.
-End Retrieval Marks the completion of the retrieval process, signaling that the system has successfully answered the user's question.
-
-- No: Expand BFS to Next Depth Continues the BFS to explore more related chunks in Neo4j. This involves searching deeper into the graph database to find additional relevant information. Retrieve Neighbors Above Threshold Fetches neighboring chunks connected via SIMILAR_TO relationships with similarity scores above a defined threshold. Only connections that meet or exceed this similarity level are considered for further exploration. Update Visited and Queue Updates the set of visited chunks and adds new chunks to the BFS queue for further exploration. This ensures that the system efficiently tracks which pieces of information have been examined. Check Max Depth Ensures that the BFS does not exceed the maximum allowed depth. If the maximum depth is reached, the system proceeds to generate the final answer regardless of whether the context is fully sufficient. Loop Back to "Is Context Enough?" Re-evaluates if the newly accumulated context meets the sufficiency criteria. The system checks again whether the gathered information is adequate to answer the question.
- 
-6. Generate Final Answer
-After gathering sufficient context or reaching the maximum BFS depth, the system compiles the final answer using the collected information. This step synthesizes all relevant data into a coherent response.
-
-7. Return Final Answer
-Delivers the generated answer to the user. The system presents the final response based on the comprehensive retrieval and analysis of the data.
-
-8. End Retrieval
-Concludes the retrieval process by finalizing all tasks and ensuring that all data is properly stored and connections are closed. It confirms that the system has successfully processed the user's query.
-
-
-### Llama Index RAG
-In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.  
-
-**Example Prompt for retrieval:** "Find the latest market trends using the Llama Index."  
-
-**Example prompt for ingestion:** "Find the latest market trends from the web and save it in the database using the Llama Index." 
-
-**Bulk Ingestion:**  
-You can ingest a corpus by directly uploading files to the /tools/rag/llama_index/corpus folder.
-To start the batch processing, simply make an API call:
-```bash
-curl -X POST http://localhost:5000/llama-index-ingest-corpus
-```
-The script processes the information in the files, transferring it to the vector and graph database.  
-The file processing and parsing are handled by the  SimpleDirectoryReader provided by the llamaindex library.  
-By default, SimpleDirectoryReader attempts to read any files it encounters, treating them as text. Besides plain text, it explicitly supports the following file types, automatically detected based on their file extensions:
-
-- `.csv`: Comma-Separated Values
-- `.docx`: Microsoft Word
-- `.epub`: EPUB eBook format
-- `.hwp`: Hangul Word Processor
-- `.ipynb`: Jupyter Notebook
-- `.jpeg`, `.jpg`: JPEG image
-- `.mbox`: MBOX email archive
-- `.md`: Markdown
-- `.mp3`, `.mp4`: Audio and video
-- `.pdf`: Portable Document Format
-- `.png`: Portable Network Graphics
-- `.ppt`, `.pptm`, `.pptx`: Microsoft PowerPoint
-
-For more information on supported files, you can refer to the documentation at the following link:  
-[SimpleDirectoryReader Documentation](https://docs.llamaindex.ai/en/stable/module_guides/loading/simpledirectoryreader/)
-
-
-With these RAG techniques, AutoCodeAgent 2.0 transforms the way you interact with data, making it easier than ever to store, retrieve, and analyze information. Whether you're working on simple tasks or tackling complex data challenges, these tools are here to empower your workflow and unlock new possibilities.
-
-
 # Deep Search
 
 ## Introduction to Deep Search
@@ -1239,7 +1072,164 @@ planner.run_planner()
 ```
 
 
-## Contribution Guidelines 
+## All Rag Techniques
+
+Welcome to the heart of AutoCodeAgent 2.0, where the power of Retrieval-Augmented Generation (RAG) is seamlessly integrated into your workflow. Imagine having a suite of advanced RAG techniques at your disposal, each designed to handle specific data retrieval and ingestion tasks with precision and efficiency. These techniques are not just abstract concepts—they are practical tools that you can invoke with a simple prompt, enabling the agent to interact with structured and unstructured data in ways that were previously unimaginable.
+
+In this section, we dive into the diverse RAG techniques that AutoCodeAgent 2.0 offers, each tailored to address unique challenges in data processing and retrieval. Whether you're working with vector databases, graph databases, or a hybrid of both, these tools empower the agent to ingest, retrieve, and analyze data with unparalleled accuracy and speed. From simple RAG for straightforward tasks to the sophisticated Hybrid Vector Graph RAG for complex, multi-layered data relationships, every technique is designed to enhance the agent's capabilities and make your workflow more efficient.
+
+Think of these RAG techniques as your personal data assistants, ready to fetch, store, and process information at your command. With AutoCodeAgent 2.0, you're not just working with data—you're orchestrating it. Let's explore how each RAG technique can transform the way you interact with information, making your tasks smarter, faster, and more intuitive.
+
+Each RAG technique is thoroughly documented in dedicated .ipynb files located in their respective technique folders. These Jupyter notebooks provide detailed explanations, code examples, and implementation details that can be extremely valuable for educational purposes. We encourage you to explore these notebooks to gain a deeper understanding of the concepts and mechanisms behind each technique, making them an excellent resource for learning and experimentation.
+
+
+## How to Use Ingestion and Retrieval
+
+There are 3 primary ways to use the ingestion and retrieval capabilities:
+
+1. **Direct Chat Interaction**: Simply type in the chat to save information using ingestion by pasting content directly. For example: "Save the following information to the database using the ingest_simple_rag tool: '...content here...'".
+
+2. **Automated Subtask Integration**: The tool can be automatically added as a subtask when solving more complex tasks. For example: "Search the web for the latest information about Apple's stock performance and save everything to the Llama Index Context Window database."
+
+3. **Batch corpus ingestion**: The tool can be used to ingest a corpus of documents by uploading files in txt or pdf format to the appropriate corpus folder. To start the batch processing, simply make an API call. Below are some non-exhaustive examples; there may be others available, so please refer to the documentation for additional information:
+
+   - For Hybrid Vector Graph RAG:
+     ```bash
+     curl -X POST http://localhost:5000/hybrid-vector-graph-rag-ingest-corpus
+     ```
+     Upload files to `/tools/rag/hybrid_vector_graph_rag/corpus` folder.
+
+   - For Llama Index RAG:
+     ```bash
+     curl -X POST http://localhost:5000/llama-index-ingest-corpus
+     ```
+     Upload files to `/tools/rag/llama_index/corpus` folder.
+
+   - For Llama Index Context Window RAG:
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"isContextWindow": true}' http://localhost:5000/llama-index-ingest-corpus
+     ```
+     First upload files to all the specific corpus folders depending on the endpoint you want to use.
+
+
+### Simple RAG (retrieval + ingestion)
+Simple RAG is your go-to tool for straightforward data retrieval and ingestion tasks. It leverages vector embeddings to store and retrieve text chunks efficiently, making it ideal for scenarios where quick access to relevant information is crucial. Whether you're saving web search results or retrieving documents based on a query, Simple RAG ensures that your data is always within reach.
+
+**Key Features:**
+- **Efficient Text Chunking:** Breaks down large texts into manageable chunks for easy processing.
+- **Vector Embeddings:** Converts text into numerical vectors, enabling fast and accurate similarity searches.
+- **Seamless Integration:** Works seamlessly with ChromaDB, a vector database optimized for high-performance retrieval.
+
+**Use Cases:**
+- Saving web search results for future reference.
+- Retrieving documents based on user queries.
+- Enhancing the agent's ability to recall and utilize previously ingested data.
+
+**Example Prompt:**
+- *"Search for the latest news on AI advancements and save it in the database using the tool: `ingest_simple_rag`."*
+- *"Retrieve information about climate change from the database using the tool: `retrieve_simple_rag`."*
+
+
+### Llama Index RAG (retrieval + ingestion)
+Dive deep into the [notebook](./tools/rag/llama_index_rag/llama_index_rag.ipynb).
+In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.  
+
+It supports bulk ingestion from directories, automatically processing multiple file formats—such as CSV, DOCX, EPUB, PDFs, images, notebooks, and more—to update the vector index. Whether you need to update your database with the latest market trends or extract nuanced insights, Llama Index empowers your agent to tackle diverse data challenges with precision.
+
+**Example Prompt for retrieval:** "Find the latest market trends from the Llama Index db."  
+**Example prompt for ingestion:** "Find the latest market trends from the web and save it in the database using the Llama Index." 
+
+
+### Llama Index Context Window RAG (retrieval + ingestion)
+Dive deep into the [notebook](./tools/rag/llama_index_context_window_rag/llama_index_context_window_rag.ipynb).  
+
+Llama Index Context Window RAG takes document retrieval to the next level by incorporating a dynamic context enrichment window into the Llama Index framework. This advanced tool enhances each text chunk with adjacent sentences, ensuring that retrieval outputs are not only highly relevant but also contextually complete.
+
+**Key Features:**
+- **Dynamic Context Enrichment:** Enriches document chunks by adding a configurable window of neighboring sentences for richer, coherent retrievals.
+- **Enhanced Retrieval Pipeline:** Utilizes custom postprocessing to stitch together context, preventing isolated text fragments and ensuring comprehensive outputs.
+- **Robust Ingestion & Integration:** Seamlessly ingests diverse file formats—from CSV and DOCX to PDFs and notebooks—automatically updating the vector index with enriched content.
+
+**Use Cases:**
+- Retrieving market trends, research insights, or legal documents with added contextual clarity.
+- Ingesting a corpus of mixed-format files and building a vector index that captures complete narratives around query matches.
+- Enhancing question-answering systems by delivering responses that reflect both relevance and sufficient background information.
+
+**Example Prompt:**
+- *"Retrieve the latest market insights using the llama_index_context_window_rag tool."*
+
+By fusing robust ingestion methods with a custom context window approach, Llama Index Context Window RAG overcomes common vector search limitations, delivering retrieval outputs that capture the full essence of source materials.
+
+
+### Hybrid Vector Graph RAG (retrieval + ingestion)
+Dive deep into the [notebook](./tools/rag/hybrid_vector_graph_rag/hybrid_vector_graph_rag.ipynb).  
+
+Hybrid Vector Graph RAG takes data retrieval to the next level by combining the strengths of vector embeddings and graph databases. This technique not only stores text chunks as vectors but also captures the relationships between them in a graph structure. The result is a powerful tool that can navigate complex data relationships, making it perfect for tasks that require deep contextual understanding.
+
+**Key Features:**
+- **Graph-Based Relationships:** Captures and leverages relationships between text chunks using Neo4j, a leading graph database.
+- **Summarization and Lemmatization:** Summarizes text chunks and reduces words to their base forms for consistent analysis.
+- **Advanced Retrieval:** Uses Breadth-First Search (BFS) to explore and retrieve related information, ensuring comprehensive context for each query.
+
+**Use Cases:**
+- Building knowledge graphs from ingested data.
+- Retrieving information with deep contextual relevance.
+- Handling complex queries that require understanding of data relationships.
+
+**Example Prompt:**
+- *"Save the latest research papers on quantum computing in the database using the tool: `ingest_hybrid_vector_graph_rag`."*
+- *"Find information about the connections between AI and healthcare using the tool: `retrieve_hybrid_vector_graph_rag`."*
+
+[Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM)
+
+
+### HyDE RAG (retrieval)
+Dive deep into the [notebook](./tools/rag/hyde_rag/hyde_rag.ipynb).  
+
+Hypothetical Document Embedding (HyDE) - RAG Retrieval revolutionizes document search by transforming concise user queries into detailed, context-rich hypothetical documents. By leveraging advanced language models, HyDE creates an enriched query representation that aligns more closely with complex document embeddings, leading to more precise and insightful search results.
+
+**Key Features:**
+- **Expanded Query Representation:** Converts short queries into comprehensive hypothetical texts that capture nuanced details.
+- **Improved Vector Matching:** Enhances the alignment between query embeddings and stored document vectors, resulting in higher retrieval accuracy.
+- **Seamless Integration:** Combines with the llama_index framework for robust document ingestion, chunking, and vector database management.
+- **Customizable Pipeline:** Offers adjustable parameters for chunk sizes, prompt templates, and retrieval thresholds to suit various domains.
+
+**Use Cases:**
+- Transforming brief queries into detailed search keys for academic research, legal case studies, or technical documentation.
+- Enhancing customer support and knowledge management systems with context-aware document retrieval.
+- Empowering business intelligence tools to extract precise insights from large, multifaceted document corpora.
+
+**Example Prompt:**
+- *"Retrieve comprehensive market analysis documents using the tool: `retrieve_hyde_rag`."*
+
+By bridging the gap between concise queries and extensive document representations, HyDE - RAG Retrieval offers a transformative approach to information discovery. Its innovative methodology not only elevates the quality of retrieval but also adapts to complex, multifaceted search challenges across diverse domains.
+
+
+### Adaptive Retrieval-Augmented Generation (RAG)
+Dive deep into the [notebook](./tools/rag/adaptive_rag/adaptive_rag.ipynb).  
+
+Adaptive Retrieval-Augmented Generation (RAG) is an innovative system that tailors its document retrieval strategy based on the nature of the query. By leveraging advanced language model prompting and dynamic classification, it selects the optimal retrieval method to generate context-aware and precise responses.
+
+**Key Features:**
+- **Dynamic Query Classification:** Utilizes LLM-powered prompts to categorize queries as factual, analytical, opinion, or contextual, ensuring that the retrieval strategy is tailored to the query's requirements.
+- **Adaptive Retrieval Strategies:** Implements specialized techniques for each query type—enhancing and reformulating queries, generating sub-questions, and integrating user context—to retrieve and rank documents effectively.
+- **LLM-Enhanced Ranking:** Applies dedicated ranking prompts to score and prioritize documents based on relevance and context, guaranteeing that the final output is both accurate and comprehensive.
+- **Seamless Llama Index Integration:** Leverages the robust capabilities of Llama Index for document ingestion, vector indexing, and efficient similarity searches, forming the backbone of the retrieval process.
+
+**Use Cases:**
+- Handling diverse query types—from straightforward factual inquiries to complex analytical or opinion-based questions—by adapting the retrieval approach dynamically.
+- Enhancing personalized search results by incorporating user-specific context for contextual queries.
+- Supporting sectors like academic research, legal analysis, and business intelligence where nuanced and context-rich responses are crucial.
+
+**Example Prompts:**
+- *"Generate a comprehensive analysis of GPT 4.5's performance using the tool: `retrieve_adaptive_rag`."*
+
+By dynamically adjusting its retrieval methods based on the query's nature, Adaptive RAG overcomes the limitations of traditional one-size-fits-all approaches. Its robust framework—integrating query classification, adaptive strategies, and LLM-based ranking—ensures that each search returns results that are both contextually rich and precisely aligned with user intent.
+
+
+With these RAG techniques, AutoCodeAgent 2.0 transforms the way you interact with data, making it easier than ever to store, retrieve, and analyze information. Whether you're working on simple tasks or tackling complex data challenges, these tools are here to empower your workflow and unlock new possibilities.
+
+
 
 We welcome contributions from the community! If you'd like to contribute, please follow these guidelines:
 
@@ -1263,35 +1253,3 @@ By contributing, you agree that your changes will be licensed under the same lic
 Thank you for helping improve this project! 🚀
 
 
-
-Adaptive RAG
-
-1. Factual Version
-Query:
-"What specific metrics and methodologies do scientists use to evaluate GPT 4.5's completions?" 
-
-Focus: This version seeks clear, verifiable details such as evaluation metrics, experimental setups, or quantitative methods.
-
-2. Analytical Version
-Query:
-"How do scientists integrate quantitative metrics and qualitative assessments to comprehensively evaluate GPT 4.5's completions?"
-
-Focus: This version prompts an in-depth analysis of the evaluation process, exploring the interplay between different evaluation methods and their implications.
-
-3. Opinion Version
-Query:
-"What are the various perspectives among experts regarding the effectiveness and fairness of current evaluation techniques for GPT 4.5's completions?"
-
-Focus: This version targets subjective viewpoints and debates among scientists, inviting a discussion on the strengths and limitations of the evaluation methods.
-
-4. Contextual Version
-Query:
-"Considering the context of advancements in natural language processing and my background in AI research, how do scientists adapt their evaluation strategies for GPT 4.5's completions?"
-
-Focus: This version incorporates user-specific or situational context, encouraging answers that account for recent trends, personal expertise, or specific research contexts.
-
-
-curl -X POST \
-  http://localhost:5000/llama-index-ingest-corpus \
-  -H "Content-Type: application/json" \
-  -d '{"isContextWindow": true}'

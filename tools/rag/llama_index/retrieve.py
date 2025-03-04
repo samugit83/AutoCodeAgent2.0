@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def retrieve_documents(query, similarity_top_k=5, similarity_cutoff=None):
+def retrieve_documents(query, similarity_cutoff=None):
     """
     Retrieves the most relevant documents from a persisted LlamaIndex index using the provided query.
     
@@ -28,6 +28,7 @@ def retrieve_documents(query, similarity_top_k=5, similarity_cutoff=None):
     Returns:  
       str: A string representation of the retrieved documents.
     """
+    similarity_top_k = int(os.getenv("LLAMA_INDEX_TOP_K_RAG_RETRIEVE", '5'))
     persist_dir = os.getenv("LLAMA_INDEX_DB_PATH")
     storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
     index = load_index_from_storage(storage_context)
