@@ -1131,7 +1131,8 @@ Simple RAG is your go-to tool for straightforward data retrieval and ingestion t
 
 
 ## Llama Index RAG (retrieval + ingestion)
-Dive deep into this [notebook](./tools/rag/llama_index/llama_index.ipynb).
+Dive deep into this [notebook](./tools/rag/llama_index/llama_index.ipynb).  
+
 In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.  
 
 It supports bulk ingestion from directories, automatically processing multiple file formats—such as CSV, DOCX, EPUB, PDFs, images, notebooks, and more—to update the vector index. Whether you need to update your database with the latest market trends or extract nuanced insights, Llama Index empowers your agent to tackle diverse data challenges with precision.
@@ -1141,7 +1142,7 @@ It supports bulk ingestion from directories, automatically processing multiple f
 
 
 ## Llama Index Context Window RAG (retrieval + ingestion)
-Dive deep into this [notebook](./tools/rag/llama_index_context_window/llama_index_context_window.ipynb).  
+Dive deep into this [notebook](./tools/rag/llama_index_context_window/llama_index_context_window.ipynb).   
 
 Llama Index Context Window RAG takes document retrieval to the next level by incorporating a dynamic context enrichment window into the Llama Index framework. This advanced tool enhances each text chunk with adjacent sentences, ensuring that retrieval outputs are not only highly relevant but also contextually complete.
 
