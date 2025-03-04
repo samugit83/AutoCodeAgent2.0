@@ -68,3 +68,12 @@ All notable changes to this project will be documented in this file.
   - Implemented the Evolving Graph of Thought (EGOT) framework to dynamically map and visualize the agent’s reasoning process using Neo4j.
 - **Persistent Memory with Redis:**  
   - Added persistent session management using Redis, ensuring that session data and memory logs are maintained across interactions with the same user.
+
+[1.5.0] - 2025-03-04
+### Added
+- **New RAG Tools Integration:**  
+  - **Llama Index Context Window RAG:** Supports both retrieval and ingestion.
+  - **HyDE RAG:** Focused on retrieval.
+  - **Adaptive Retrieval-Augmented Generation RAG:** Focused on retrieval.
+- **Notebooks for RAG Techniques:**  
+  - Organized all the RAG techniques into dedicated notebooks, each containing detailed explanations aimed at didactic purposes.
