@@ -2,7 +2,7 @@
 ![AutoCode Agent Global Workflow](./static/images/autocode.png)  
 
 # AutoCodeAgent - An innovative AI agent powered by IntelliChain, Deep Search, and multi-RAG techniques
-![version](https://img.shields.io/badge/version-1.4.0-blue)
+![version](https://img.shields.io/badge/version-1.5.0-blue)
 
 ## One agent, Infinite possibilities
 AutoCodeAgent redefines AI-powered problem solving by seamlessly integrating three groundbreaking modes:
