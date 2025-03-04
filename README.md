@@ -1072,7 +1072,7 @@ planner.run_planner()
 ```
 
 
-## All Rag Techniques
+# All Rag Techniques
 
 Welcome to the heart of AutoCodeAgent 2.0, where the power of Retrieval-Augmented Generation (RAG) is seamlessly integrated into your workflow. Imagine having a suite of advanced RAG techniques at your disposal, each designed to handle specific data retrieval and ingestion tasks with precision and efficiency. These techniques are not just abstract concepts—they are practical tools that you can invoke with a simple prompt, enabling the agent to interact with structured and unstructured data in ways that were previously unimaginable.
 
@@ -1112,7 +1112,7 @@ There are 3 primary ways to use the ingestion and retrieval capabilities:
      First upload files to all the specific corpus folders depending on the endpoint you want to use.
 
 
-### Simple RAG (retrieval + ingestion)
+## Simple RAG (retrieval + ingestion)
 Simple RAG is your go-to tool for straightforward data retrieval and ingestion tasks. It leverages vector embeddings to store and retrieve text chunks efficiently, making it ideal for scenarios where quick access to relevant information is crucial. Whether you're saving web search results or retrieving documents based on a query, Simple RAG ensures that your data is always within reach.
 
 **Key Features:**
@@ -1130,7 +1130,7 @@ Simple RAG is your go-to tool for straightforward data retrieval and ingestion t
 - *"Retrieve information about climate change from the database using the tool: `retrieve_simple_rag`."*
 
 
-### Llama Index RAG (retrieval + ingestion)
+## Llama Index RAG (retrieval + ingestion)
 Dive deep into this [notebook](./tools/rag/llama_index/llama_index.ipynb).
 In addition to the techniques above, the agent now integrates the Llama Index for even more advanced data retrieval and ingestion, enhancing its ability to work with complex datasets. Llama Index has been added as a default tool, so it is possible to customize the execution of ingestion and retrieval code by adding other parameters provided by the Llama Index documentation.  
 
@@ -1140,7 +1140,7 @@ It supports bulk ingestion from directories, automatically processing multiple f
 **Example prompt for ingestion:** "Find the latest market trends from the web and save it in the database using the Llama Index." 
 
 
-### Llama Index Context Window RAG (retrieval + ingestion)
+## Llama Index Context Window RAG (retrieval + ingestion)
 Dive deep into this [notebook](./tools/rag/llama_index_context_window/llama_index_context_window.ipynb).  
 
 Llama Index Context Window RAG takes document retrieval to the next level by incorporating a dynamic context enrichment window into the Llama Index framework. This advanced tool enhances each text chunk with adjacent sentences, ensuring that retrieval outputs are not only highly relevant but also contextually complete.
@@ -1161,7 +1161,7 @@ Llama Index Context Window RAG takes document retrieval to the next level by inc
 By fusing robust ingestion methods with a custom context window approach, Llama Index Context Window RAG overcomes common vector search limitations, delivering retrieval outputs that capture the full essence of source materials.
 
 
-### Hybrid Vector Graph RAG (retrieval + ingestion)
+## Hybrid Vector Graph RAG (retrieval + ingestion)
 Dive deep into this [notebook](./tools/rag/hybrid_vector_graph_rag/hybrid_vector_graph_rag.ipynb).  
 
 Hybrid Vector Graph RAG takes data retrieval to the next level by combining the strengths of vector embeddings and graph databases. This technique not only stores text chunks as vectors but also captures the relationships between them in a graph structure. The result is a powerful tool that can navigate complex data relationships, making it perfect for tasks that require deep contextual understanding.
@@ -1183,7 +1183,7 @@ Hybrid Vector Graph RAG takes data retrieval to the next level by combining the 
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM)
 
 
-### HyDE RAG (retrieval)
+## HyDE RAG (retrieval)
 Dive deep into this [notebook](./tools/rag/hyde_rag/hyde_rag.ipynb).  
 
 Hypothetical Document Embedding (HyDE) - RAG Retrieval revolutionizes document search by transforming concise user queries into detailed, context-rich hypothetical documents. By leveraging advanced language models, HyDE creates an enriched query representation that aligns more closely with complex document embeddings, leading to more precise and insightful search results.
@@ -1205,7 +1205,7 @@ Hypothetical Document Embedding (HyDE) - RAG Retrieval revolutionizes document s
 By bridging the gap between concise queries and extensive document representations, HyDE - RAG Retrieval offers a transformative approach to information discovery. Its innovative methodology not only elevates the quality of retrieval but also adapts to complex, multifaceted search challenges across diverse domains.
 
 
-### Adaptive Retrieval-Augmented Generation RAG (retrieval)
+## Adaptive Retrieval-Augmented Generation RAG (retrieval)
 Dive deep into this [notebook](./tools/rag/adaptive_rag/adaptive_rag.ipynb).  
 
 Adaptive Retrieval-Augmented Generation (RAG) is an innovative system that tailors its document retrieval strategy based on the nature of the query. By leveraging advanced language model prompting and dynamic classification, it selects the optimal retrieval method to generate context-aware and precise responses.
