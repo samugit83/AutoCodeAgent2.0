@@ -65,6 +65,7 @@ ADAPTIVE_FINAL_ANSWER_PROMPT = Template(
 Context:
 $context
 
-Question: $question
+Question: 
+$question
 Answer:"""
 )
