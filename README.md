@@ -27,7 +27,7 @@ Our agentic framework can communicate with LLM models in two ways:
 
 1. **Local Integration**: Using Ollama to run models directly on your machine using our prebuilt Docker container. 
    - Supports running LLM models locally through Ollama integration
-   - Pull and run models directly on your machine by prefixing model names with `local_` in configuration (e.g., `local_deepseek-r1`, `local_llama3.3`, `local_phi4`)
+   - Pull and run models directly on your machine by prefixing model names with `local_` in params.py (e.g., `local_deepseek-r1`, `local_llama3.3`, `local_phi4`)
    - Automatically handles model downloading and initialization when specified models aren't already active
    - Supports running models even without GPU by switching to CPU (with reduced performance)
    - Customize parameters like temperature, top_p, top_k, and other inference settings on a per-model basis
