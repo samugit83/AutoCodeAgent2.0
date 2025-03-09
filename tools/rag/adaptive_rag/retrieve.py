@@ -15,6 +15,7 @@ from .prompts import (
     ADAPTIVE_CONTEXTUAL_RANK_PROMPT,
     ADAPTIVE_FINAL_ANSWER_PROMPT
 )
+from params import PARAMS
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +35,7 @@ class QueryClassifier:
 class BaseRetrievalStrategy:
     def __init__(self, model: str):
         self.model = model
-        self.top_k = int(os.getenv("ADAPTIVE_RAG_QUERY_TOP_K"))
-
+        self.top_k = PARAMS["ADAPTIVE_RAG_QUERY_TOP_K"]
 
 class FactualRetrievalStrategy(BaseRetrievalStrategy):
     def __init__(self, model: str):
@@ -221,7 +221,7 @@ class AdaptiveRetriever:
 
 class AdaptiveRAG:
     def __init__(self):
-        self.model = os.getenv("ADAPTIVE_RAG_MODEL")
+        self.model = PARAMS["ADAPTIVE_RAG_MODEL"]
         self.retriever = AdaptiveRetriever(self.model)
     
     def answer(self, query: str, user_context: str = None) -> str:

@@ -2,7 +2,7 @@
 ![AutoCode Agent Global Workflow](./static/images/autocode.png)  
 
 # AutoCodeAgent - An innovative AI agent powered by IntelliChain, Deep Search, and multi-RAG techniques
-![version](https://img.shields.io/badge/version-1.5.0-blue)
+![version](https://img.shields.io/badge/version-1.6.0-blue)
 
 ## One agent, Infinite possibilities
 AutoCodeAgent redefines AI-powered problem solving by seamlessly integrating three groundbreaking modes:
@@ -20,7 +20,22 @@ You can also benefit from these techniques for educational purposes, as each one
 By fusing these three potent modes, AutoCodeAgent transforms intricate challenges into innovative, actionable solutions, setting a new standard in intelligent automation and advanced research.
 
 [Application Setup](#application-setup)  
-Step-by-step guide to setting up the project for the first time.
+Step-by-step guide to setting up the project for the first time. 
+
+AutoCodeAgent provides flexible integration with Large Language Models (LLMs) through both local and cloud-based solutions.
+Our agentic framework can communicate with LLM models in two ways:
+
+1. **Local Integration**: Using Ollama to run models directly on your machine using our prebuilt Docker container. 
+   - Supports running LLM models locally through Ollama integration
+   - Pull and run models directly on your machine by prefixing model names with `local_` in configuration (e.g., `local_deepseek-r1`, `local_llama3.3`, `local_phi4`)
+   - Automatically handles model downloading and initialization when specified models aren't already active
+   - Supports running models even without GPU by switching to CPU (with reduced performance)
+   - Customize parameters like temperature, top_p, top_k, and other inference settings on a per-model basis
+   
+For detailed information about local model management and Ollama integration, please refer to the complete documentation at [models/README.md](models/README.md)
+
+2. **Cloud Services**: Connecting to OpenAI's API for access to their hosted models
+
 
 
 ## IntelliChain sections
@@ -127,43 +142,8 @@ REDIS_HOST=redis
 REDIS_PORT=6379 
 REDIS_DB=0
 
-SIMPLE_RAG_CHUNK_SIZE=1500  # chunk size for simple rag
-SIMPLE_RAG_OVERLAP=200  # overlap for simple rag
-SIMPLE_RAG_EMBEDDING_MODEL=text-embedding-ada-002  # simple rag embedding model
-
-HYBRID_VECTOR_GRAPH_RAG_CHUNK_SIZE=1500  # chunk size for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_OVERLAP=200  # overlap for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_LENGTH=100  # summarization graph node length for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_RETRIEVE_THRESHOLD=0.9  # similarity retrieve threshold for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_EDGE_THRESHOLD=0.9  # similarity edge threshold for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_DEPTH=3  # max depth for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_QUERY_TOP_K=3  # top k for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH=10000  # max context length for hybrid vector graph rag
-HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL=text-embedding-ada-002  # hybrid vector graph rag embedding vector model
-HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL=gpt-4o  # hybrid vector graph rag summarization graph node model
-
-CHROMA_DB_PATH=./tools/rag/database/chroma_db # url for chroma db used in simple rag
-LLAMA_INDEX_DB_PATH=./tools/rag/database/llama_index # url for llama index db used in llama index rag tool
-LLAMA_INDEX_CONTEXT_WINDOW_DB_PATH=./tools/rag/database/llama_index_context_window # url for llama index context window db used in llama index context window rag tool
-LLAMA_INDEX_CORPUS_DIR=./tools/rag/llama_index/corpus # url for llama index corpus used in llama index rag tool
-LLAMA_INDEX_CONTEXT_WINDOW_CORPUS_DIR=./tools/rag/llama_index_context_window/corpus # url for llama index context window corpus used in llama index context window rag tool
-
-LLAMA_INDEX_CONTEXT_WINDOW_SIZE_INGEST=30 # sentences for llama index context window ingestion
-LLAMA_INDEX_CONTEXT_WINDOW_MAX_ADJACENT_CHARS_RAG_RETRIEVE=150 # max adjacent characters for llama index context window rag tool
-LLAMA_INDEX_CONTEXT_WINDOW_TOP_K_RAG_RETRIEVE=5 # top k chunks for llama index context window rag tool
-
-HYDE_RAG_CHUNK_SIZE=1500 # chunk size for hyde rag tool
-HYDE_RAG_QUERY_TOP_K=5 # query top k for hyde rag tool
-HYDE_GENERATE_HYPO_DOC_MODEL=gpt-4o # generate hyde rag tool model
-
-GMAILUSER=your_email@gmail.com # gmail user for send email tool
-PASSGMAILAPP=your_password # gmail password for send email tool
-
-TOOL_HELPER_MODEL=gpt-4o  # tool helper model
-JSON_PLAN_MODEL=gpt-4o  # json plan model
-EVALUATION_MODEL=gpt-4o  # evaluation model
-SURF_AI_JSON_TASK_MODEL=gpt-4o  # surf ai json task model, important: for surfAi you must use a multimodal modal with text + vision capabilities
-DEEP_SEARCH_MODEL=o3-mini  # deep search model
+GMAILUSER=your_email@gmail.com # Gmail user for default tool send_email 
+PASSGMAILAPP=your_password # Gmail app password for default tool send_email
 
 ELEVEN_API_KEY=API_KEY # elevenlabs api key for langchain tool
 OPENWEATHERMAP_API_KEY=API_KEY # openweathermap api key for langchain tool
@@ -171,17 +151,23 @@ SERPAPI_API_KEY=API_KEY # serpapi api key for langchain tool and also deep searc
 SERPER_API_KEY=API_KEY # serpapi api key for deep search mode (optional, the script use serpapi by default)
 ```
 
-4. Build the Docker image: 
+4. File params.py
+The `params.py` file contains a comprehensive configuration dictionary that controls the behavior of AutoCodeAgent 2.0's various RAG (Retrieval-Augmented Generation) systems and tools. This configuration file centralizes all adjustable parameters, making the system highly customizable.
+Additionally, it configures database paths for various vector stores (ChromaDB, LlamaIndex), email functionality credentials, and specifies which AI models to use for different components of the system (tool assistance, planning, evaluation, web automation, and search).
+You can set which models to use throughout the system - whether cloud-based models from OpenAI or local models running through Ollama or any other API-compatible service. Models can be specified by prefixing with "local_" for local models (e.g., "local_llama3") or using the standard model name for cloud services (e.g., "gpt-4o").
+This centralized configuration allows users to set the system's behavior by adjusting parameters without modifying core code.
+
+5. Build the Docker image: 
 ```bash
 docker-compose build
 ```
 
-5. Run the Docker container:
+6. Run the Docker container:
 ```bash
 docker-compose up -d
 ```
 
-6. Check the backend logs: 
+7. Check the backend logs: 
 ```bash
 docker logs -f flask_app 
 ```
@@ -190,7 +176,6 @@ If you want to rebuild and restart the application, and optimize docker space:
 docker-compose down
 docker-compose build --no-cache
 docker-compose up -d
-docker system prune -a --volumes -f
 docker builder prune -a -f
 docker logs -f flask_app    
 ```  
@@ -199,16 +184,16 @@ Is a good idea to always check docker space usage after building and starting th
 docker system df
 ```
 
-7. Access the AI Agent chat interface: 
+8. Access the AI Agent chat interface: 
 ```bash
 http://localhost:5000  
 
 ```
-8. To view the automated browser sessions (powered by SurfAi), open:
+9. To view the automated browser sessions (powered by SurfAi), open:
 ```bash
 http://localhost:6901/vnc.html
 ```
-9. To explore and interact with the Neo4j graph database, visit:
+10. To explore and interact with the Neo4j graph database, visit:
 ```bash
 http://localhost:7474/browser/
 ``` 
@@ -1255,5 +1240,4 @@ We welcome contributions from the community! If you'd like to contribute, please
 By contributing, you agree that your changes will be licensed under the same license as the project.
 
 Thank you for helping improve this project! 🚀
-
 

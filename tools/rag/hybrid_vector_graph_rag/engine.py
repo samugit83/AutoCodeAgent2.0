@@ -10,7 +10,7 @@ from models.models import create_embeddings, call_model
 from neo4j import GraphDatabase, exceptions
 import spacy
 import numpy as np
-
+from params import PARAMS
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -24,12 +24,12 @@ class HybridVectorGraphRag:
         Constructor: Initializes ChromaDB client, Neo4j driver, loads SpaCy, and sets up logging.
         """
         self.logger = logging.getLogger(__name__)
-        self.embedding_vector_model = os.getenv("HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL")
-        self.summarization_graph_node_model = os.getenv("HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL")
+        self.embedding_vector_model = PARAMS["HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL"]
+        self.summarization_graph_node_model = PARAMS["HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL"]
         self.collection_name = "hybrid_vector_graph_rag"
 
         # Initialize ChromaDB client
-        db_path = os.getenv("CHROMA_DB_PATH")
+        db_path = PARAMS["CHROMA_DB_PATH"]
         if not db_path:
             raise EnvironmentError("CHROMA_DB_PATH environment variable not set.")
 
@@ -127,7 +127,7 @@ class HybridVectorGraphRag:
         """
         Summarizes the given text using the custom call_model function.
         """
-        summ_length = int(os.getenv("HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_LENGTH")) 
+        summ_length = PARAMS["HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_LENGTH"] 
         prompt = f"Summarize the following text in {summ_length} words: {text}"
         try:
             summary = call_model(
@@ -161,8 +161,8 @@ class HybridVectorGraphRag:
           5) Create a node for each chunk in Neo4j storing summary + embedding + color + Corpus_<id> label,
           6) Create similarity edges to existing nodes in Neo4j.
         """
-        max_chars = int(os.getenv("HYBRID_VECTOR_GRAPH_RAG_CHUNK_SIZE"))
-        overlap = int(os.getenv("HYBRID_VECTOR_GRAPH_RAG_OVERLAP"))
+        max_chars = PARAMS["HYBRID_VECTOR_GRAPH_RAG_CHUNK_SIZE"]
+        overlap = PARAMS["HYBRID_VECTOR_GRAPH_RAG_OVERLAP"]
 
         if not texts:
             raise ValueError("No texts provided for ingestion.")
@@ -300,7 +300,7 @@ class HybridVectorGraphRag:
         existing chunks in Neo4j if the cosine similarity of embeddings > threshold.
         """
 
-        threshold = float(os.getenv("HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_EDGE_THRESHOLD"))
+        threshold = PARAMS["HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_EDGE_THRESHOLD"]
 
         with self.neo4j_driver.session() as session:
             try:
@@ -396,10 +396,10 @@ class HybridVectorGraphRag:
         5) Return final answer after BFS stops or max_depth is reached.
         """
 
-        threshold = float(os.getenv("HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_RETRIEVE_THRESHOLD"))
-        max_depth = int(os.getenv("HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_DEPTH"))
-        top_k = int(os.getenv("HYBRID_VECTOR_GRAPH_RAG_QUERY_TOP_K"))
-        max_context_length = int(os.getenv("HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH"))
+        threshold = PARAMS["HYBRID_VECTOR_GRAPH_RAG_SIMILARITY_RETRIEVE_THRESHOLD"]
+        max_depth = PARAMS["HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_DEPTH"]
+        top_k = PARAMS["HYBRID_VECTOR_GRAPH_RAG_QUERY_TOP_K"]
+        max_context_length = PARAMS["HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH"]
 
         # ----------------------------------------------------------------------------
         # Step 1) Embed the user query and retrieve top_k relevant chunks from ChromaDB

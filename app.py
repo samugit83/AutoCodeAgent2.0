@@ -9,7 +9,7 @@ import traceback
 from tools.rag.hybrid_vector_graph_rag.ingest_corpus import hybrid_vector_graph_rag_ingest_corpus
 from tools.rag.llama_index.ingest_corpus import llama_index_ingest_corpus
 from tools.rag.llama_index_context_window.ingest_corpus import llama_index_context_window_ingest_corpus
-
+from models.models import call_model
 
 logging.basicConfig(
     level=logging.DEBUG,  
@@ -139,6 +139,7 @@ def hybrid_vector_graph_rag_ingest():
         logging.error(traceback.format_exc())
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500               
      
+
 #start the acquisition, parsing, and ingestion of all documents present in /tools/rag/llama_index/corpus
 # or /tools/rag/llama_index_context_window/corpus if isContextWindow is true
 @app.route('/llama-index-ingest-corpus', methods=['POST'])
@@ -159,10 +160,20 @@ def llama_index_ingest():
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500     
 
 
+
+@app.route('/call-test-model', methods=['GET'])
+def call_test_model():
+    response = call_model(
+        chat_history=[{"role": "user", "content": "Tell me a story about a cat and a dog."}], 
+        model="local_llama3.2:1b"
+    )
+    return jsonify({"response": response}), 200
+
+
 if __name__ == '__main__':
     app.run(
         host='0.0.0.0',
         port=int(os.getenv('FLASK_PORT', 5000)),
         debug=True
-    )
+    ) 
 

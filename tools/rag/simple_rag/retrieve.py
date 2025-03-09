@@ -1,7 +1,6 @@
-import os
 import chromadb
 from models.models import create_embeddings
-
+from params import PARAMS
 
 def retrieve_documents(query, k=5):
     """
@@ -18,8 +17,8 @@ def retrieve_documents(query, k=5):
     """
 
     # Use the CHROMA_DB_PATH from environment or default to .chroma
-    db_path = os.getenv("CHROMA_DB_PATH") or ".chroma"
-    model = os.getenv("SIMPLE_RAG_EMBEDDING_MODEL")
+    db_path = PARAMS["CHROMA_DB_PATH"] or ".chroma"
+    model = PARAMS["SIMPLE_RAG_EMBEDDING_MODEL"]
     
     collection_name = "simple_rag"
 

@@ -5,6 +5,7 @@ from llama_index.core import (
     load_index_from_storage,
     SimpleDirectoryReader
 )
+from params import PARAMS
 
 def llama_index_ingest_corpus():
     """
@@ -25,9 +26,9 @@ def llama_index_ingest_corpus():
     Returns:
       dict: A status message.
     """
-    corpus_dir = os.getenv("LLAMA_INDEX_CORPUS_DIR")
-    db_dir = os.getenv("LLAMA_INDEX_DB_PATH")
-    openai_api_key = os.getenv("OPENAI_API_KEY")
+    corpus_dir = PARAMS["LLAMA_INDEX_CORPUS_DIR"]
+    db_dir = PARAMS["LLAMA_INDEX_DB_PATH"]
+    openai_api_key = PARAMS["OPENAI_API_KEY"]
     if not openai_api_key:
         raise ValueError("OPENAI_API_KEY not set in environment. Check your .env file.")
 

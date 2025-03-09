@@ -2,7 +2,7 @@ import os
 import chromadb
 from models.models import create_embeddings
 from uuid import uuid4  # For generating unique IDs
-
+from params import PARAMS
 
 def split_text_into_chunks(text, max_chars, overlap):
     """
@@ -28,11 +28,10 @@ def ingest_texts(texts, collection_name="simple_rag"):
     Ingests a list of text strings into the Chroma vector store using OpenAI embeddings.
     Utilizes a persistent Chroma client to save data across sessions.
     """
-    model = os.getenv("SIMPLE_RAG_EMBEDDING_MODEL")
-    max_chunk_size = int(os.getenv("SIMPLE_RAG_CHUNK_SIZE"))
-    overlap = int(os.getenv("SIMPLE_RAG_OVERLAP"))
-
-    db_path = os.getenv("CHROMA_DB_PATH") or ".chroma" 
+    model = PARAMS["SIMPLE_RAG_EMBEDDING_MODEL"]
+    max_chunk_size = PARAMS["SIMPLE_RAG_CHUNK_SIZE"]
+    overlap = PARAMS["SIMPLE_RAG_OVERLAP"]
+    db_path = PARAMS["CHROMA_DB_PATH"]
     
     if not texts:
         raise ValueError("No texts provided for ingestion.")

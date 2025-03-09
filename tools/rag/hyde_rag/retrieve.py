@@ -2,14 +2,14 @@ import os
 from tools.rag.llama_index.retrieve import retrieve_documents
 from models.models import call_model
 from .prompts import HYDE_DOCS_PROMPT
-
+from params import PARAMS
 import logging
 
 logger = logging.getLogger(__name__)
 
 def generate_hypothetical_document(query):
-    chunk_size = os.getenv("HYDE_RAG_CHUNK_SIZE")
-    model = os.getenv("HYDE_GENERATE_HYPO_DOC_MODEL") 
+    chunk_size = PARAMS["HYDE_RAG_CHUNK_SIZE"]
+    model = PARAMS["HYDE_GENERATE_HYPO_DOC_MODEL"]
 
     hyde_doc_prompt = HYDE_DOCS_PROMPT.substitute(  
         query=query,
@@ -25,7 +25,7 @@ def generate_hypothetical_document(query):
 
 def retrieve_hyde_documents(query):
     hyde_doc = generate_hypothetical_document(query)
-    top_k = int(os.getenv("HYDE_RAG_QUERY_TOP_K"))
+    top_k = PARAMS["HYDE_RAG_QUERY_TOP_K"]
     results = retrieve_documents(hyde_doc, similarity_top_k=top_k)
     result_string = "\n".join(results)
 

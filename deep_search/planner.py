@@ -16,6 +16,7 @@ from .web_search import WebSearchAgent
 from .egot_engine import EGoTEngine 
 from .utils import apply_depth_settings 
 from tools.rag.llama_index.retrieve import retrieve_documents
+from params import PARAMS
 
 class DeepSearchAgentPlanner:
     def __init__(self, chat_history: List[Dict], **kwargs):
@@ -28,7 +29,7 @@ class DeepSearchAgentPlanner:
         self.data.memory_logs = []
         self.logger = LoggingConfigurator.configure_logger(self.data.memory_logs)
         self.enrich_log = LoggingConfigurator.enrich_log
-        self.deep_search_model = os.getenv("DEEP_SEARCH_MODEL")
+        self.deep_search_model = PARAMS["DEEP_SEARCH_MODEL"]
 
         neo4j_uri = os.getenv("NEO4J_URI")
         neo4j_user = os.getenv("NEO4J_USER")

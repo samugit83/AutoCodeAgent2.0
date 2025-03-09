@@ -9,12 +9,13 @@ from .screenshot_manager import ScreenshotManager
 from .json_handler import JsonResponseHandler 
 from .logging_handler import LoggingConfigurator
 from .prompt import GEN_JSON_TASK_PROMPT, GEN_JSON_TASK_LOOP_PROMPT, FINAL_ANSWER_PROMPT
+from params import PARAMS
  
 class SurfAiEngine:
     def __init__(self):  
         self.execution_logs = [] 
         self.logger = LoggingConfigurator.configure_logger(self.execution_logs)
-        self.json_task_model = os.getenv("SURF_AI_JSON_TASK_MODEL")
+        self.json_task_model = PARAMS["SURF_AI_JSON_TASK_MODEL"]
         self.command_executor = CommandExecutor(self.logger)
         self.highlighter = ElementHighlighter(self.logger)
         self.screenshot_manager = ScreenshotManager(truncation_length=400000)

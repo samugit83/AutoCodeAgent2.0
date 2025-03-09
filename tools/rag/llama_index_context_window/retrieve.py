@@ -2,6 +2,7 @@ import logging
 import os
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.postprocessor import SimilarityPostprocessor, MetadataReplacementPostProcessor
+from params import PARAMS
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class CustomMetadataReplacementPostProcessor(MetadataReplacementPostProcessor):
         the original full text.
         """
  
-        max_adjacent_chars = int(os.getenv("LLAMA_INDEX_CONTEXT_WINDOW_MAX_ADJACENT_CHARS_RAG_RETRIEVE"))
+        max_adjacent_chars = PARAMS["LLAMA_INDEX_CONTEXT_WINDOW_MAX_ADJACENT_CHARS_RAG_RETRIEVE"]
         full_text = getattr(node, "text", "")
         window_data = node.metadata.get(self.target_metadata_key)
         original_sentence = node.metadata.get("original_sentence")
@@ -43,8 +44,8 @@ class CustomMetadataReplacementPostProcessor(MetadataReplacementPostProcessor):
         return full_text
 
 def retrieve_documents(query, similarity_cutoff=None):
-    similarity_top_k = int(os.getenv("LLAMA_INDEX_CONTEXT_WINDOW_TOP_K_RAG_RETRIEVE"))
-    persist_dir = os.getenv("LLAMA_INDEX_CONTEXT_WINDOW_DB_PATH")
+    similarity_top_k = PARAMS["LLAMA_INDEX_CONTEXT_WINDOW_TOP_K_RAG_RETRIEVE"]
+    persist_dir = PARAMS["LLAMA_INDEX_CONTEXT_WINDOW_DB_PATH"]
     storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
     index = load_index_from_storage(storage_context)
     

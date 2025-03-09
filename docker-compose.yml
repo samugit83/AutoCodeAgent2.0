@@ -19,6 +19,15 @@ services:
       redis:
         condition: service_started
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_server
+    restart: unless-stopped
+    ports:
+      - "11434:11434"  
+    volumes:
+      - ollama_data:/data 
+
   neo4j:
     image: neo4j:4.4
     container_name: neo4j_db
@@ -59,3 +68,4 @@ volumes:
   neo4j_import:
   neo4j_plugins:
   redis-data:
+  ollama_data:

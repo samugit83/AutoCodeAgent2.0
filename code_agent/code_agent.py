@@ -1,5 +1,4 @@
 import json
-import os
 from typing import List, Dict
 from .tool_generator import generate_tools
 from .logging_handler import LoggingConfigurator
@@ -7,6 +6,7 @@ from .agent_plan_generator import PlanGenerator
 from .agent_plan_evaluator import PlanEvaluator
 from .agent_subtask_executor import SubtaskExecutor
 from .utils import transform_final_answer
+from params import PARAMS
 
 class CodeAgent:
     def __init__(self, chat_history: List[Dict], tools: List[str], use_default_tools: bool = True): 
@@ -20,10 +20,10 @@ class CodeAgent:
         self.logger = LoggingConfigurator.configure_logger(self.execution_logs)
         self.enrich_log = LoggingConfigurator.enrich_log
         self.models = {
-            "TOOL_HELPER_MODEL": os.getenv("TOOL_HELPER_MODEL"), 
-            "JSON_PLAN_MODEL": os.getenv("JSON_PLAN_MODEL"),
-            "EVALUATION_MODEL": os.getenv("EVALUATION_MODEL"),
-            "SIMPLE_RAG_EMBEDDING_MODEL": os.getenv("SIMPLE_RAG_EMBEDDING_MODEL")
+            "TOOL_HELPER_MODEL": PARAMS["TOOL_HELPER_MODEL"], 
+            "JSON_PLAN_MODEL": PARAMS["JSON_PLAN_MODEL"],
+            "EVALUATION_MODEL": PARAMS["EVALUATION_MODEL"],
+            "SIMPLE_RAG_EMBEDDING_MODEL": PARAMS["SIMPLE_RAG_EMBEDDING_MODEL"]
         }
         # Instantiate helper components.
         self.plan_generator = PlanGenerator(self.chat_history, self.tools, self.models["JSON_PLAN_MODEL"])

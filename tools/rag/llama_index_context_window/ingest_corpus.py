@@ -7,6 +7,7 @@ from llama_index.core import (
 )
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.node_parser import SentenceWindowNodeParser
+from params import PARAMS
 
 def llama_index_context_window_ingest_corpus():
     """
@@ -27,8 +28,8 @@ def llama_index_context_window_ingest_corpus():
     Returns:
       dict: A status message.
     """
-    db_dir = os.getenv("LLAMA_INDEX_CONTEXT_WINDOW_DB_PATH")
-    corpus_dir = os.getenv("LLAMA_INDEX_CONTEXT_WINDOW_CORPUS_DIR")
+    db_dir = PARAMS["LLAMA_INDEX_CONTEXT_WINDOW_DB_PATH"]
+    corpus_dir = PARAMS["LLAMA_INDEX_CONTEXT_WINDOW_CORPUS_DIR"]
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if not openai_api_key:
         raise ValueError("OPENAI_API_KEY not set in environment. Check your .env file.")
@@ -44,7 +45,7 @@ def llama_index_context_window_ingest_corpus():
         raise ValueError("No documents loaded from the corpus directory.")
 
     os.makedirs(db_dir, exist_ok=True)
-    window_size = int(os.getenv("LLAMA_INDEX_CONTEXT_WINDOW_SIZE_INGEST"))
+    window_size = PARAMS["LLAMA_INDEX_CONTEXT_WINDOW_SIZE_INGEST"]
 
     # Enrich documents with context using SentenceWindowNodeParser.
     try:

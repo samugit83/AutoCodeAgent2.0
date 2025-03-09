@@ -4,6 +4,7 @@ import logging
 from string import Template
 from langchain_community.agent_toolkits.load_tools import load_tools
 from .default_tools import DEFAULT_TOOLS, TOOLS_ACTIVATION
+from params import PARAMS
 
 
 logger = logging.getLogger(__name__)
@@ -51,9 +52,9 @@ def generate_tools(user_tools, use_default_tools):
       
     # Define variables to substitute.
     variables = {
-        "TOOL_HELPER_MODEL": os.getenv("TOOL_HELPER_MODEL", ""),
-        "JSON_PLAN_MODEL": os.getenv("JSON_PLAN_MODEL", ""),
-        "EVALUATION_MODEL": os.getenv("EVALUATION_MODEL", ""),
+        "TOOL_HELPER_MODEL": PARAMS["TOOL_HELPER_MODEL"],
+        "JSON_PLAN_MODEL": PARAMS["JSON_PLAN_MODEL"],
+        "EVALUATION_MODEL": PARAMS["EVALUATION_MODEL"],
         "GMAILUSER": os.getenv("GMAILUSER", ""),
         "PASSGMAILAPP": os.getenv("PASSGMAILAPP", "")
     }

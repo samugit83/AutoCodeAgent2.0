@@ -77,3 +77,18 @@ All notable changes to this project will be documented in this file.
   - **Adaptive Retrieval-Augmented Generation RAG:** Focused on retrieval.
 - **Notebooks for RAG Techniques:**  
   - Organized all the RAG techniques into dedicated notebooks, each containing detailed explanations aimed at didactic purposes.
+
+[1.6.0] - 2025-03-09
+### Added
+- **Ollama Integration for Local LLM Models:**  
+  - Added support for running LLM models locally through Ollama integration.
+  - Users can now pull and run models directly on their machines by prefixing model names with `local_` in configuration (e.g., `local_deepseek-r1`, `local_llama3.3`, `local_phi4`).
+  - Provides data privacy, cost efficiency, and offline capability for sensitive applications.
+  - Automatically handles model downloading and initialization when specified models aren't already active.
+  - Supports running models even without GPU by switching to CPU (with reduced performance).
+- **Model-Specific Options Configuration:**  
+  - Added capability to set specific options for each Ollama model.
+  - Users can now customize parameters like temperature, top_p, top_k, and other inference settings on a per-model basis.
+  - Supports all Ollama model configuration options including context size, repetition penalties, and sampling parameters.
+  - Enables fine-tuned control over model behavior while maintaining the simplicity of the local integration.
+  - Configuration options can be set through the API for advanced model tuning.
