@@ -31,10 +31,10 @@ Our agentic framework can communicate with LLM models in two ways:
    - Automatically handles model downloading and initialization when specified models aren't already active
    - Supports running models even without GPU by switching to CPU (with reduced performance)
    - Customize parameters like temperature, top_p, top_k, and other inference settings on a per-model basis
-   
-For detailed information about local model management and Ollama integration, please refer to the complete documentation at [models/README.md](models/README.md)
 
 2. **Cloud Services**: Connecting to OpenAI's API for access to their hosted models
+
+For detailed information about cloud and local model management, please refer to the complete documentation at [models/README.md](models/README.md)
 
 
 
