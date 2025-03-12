@@ -281,7 +281,7 @@ class DangerousCallVisitor(ast.NodeVisitor):
             if full_name in self.dangerous_full_names:
                 self.dangerous_calls.add(full_name)
         self.generic_visit(node)
-    
+     
     def _get_full_attr_name(self, node):
         if isinstance(node, ast.Attribute):
             value = self._get_full_attr_name(node.value)

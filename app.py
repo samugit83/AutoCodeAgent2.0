@@ -98,7 +98,7 @@ def get_coordinates(previous_output):
         logger.error(f"Error retrieving coordinates: {error}")
         return previous_output
                     """ 
-                }, 
+                },   
                 {   
                     "langchain_tool_name": "serpapi", 
                     "type": "langchain_tool" 

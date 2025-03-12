@@ -162,6 +162,7 @@ def call_model(
 
     if client_type == "cloud":
         client = CloudClient(api_key=OPENAI_API_KEY)
+        logger.info(f"Calling cloud model image_url: {image_url}")
         return client.call(
             chat_history,
             image_url,

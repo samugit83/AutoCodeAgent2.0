@@ -195,7 +195,7 @@ http://localhost:6901/vnc.html
 ```
 10. To explore and interact with the Neo4j graph database, visit:
 ```bash
-http://localhost:7474/browser/
+http://localhost:7474/browser/  
 ``` 
 
 ### Backend entry point
@@ -1096,7 +1096,7 @@ There are 3 primary ways to use the ingestion and retrieval capabilities:
      ```
      First upload files to all the specific corpus folders depending on the endpoint you want to use.
 
-
+ 
 ## Simple RAG (retrieval + ingestion)
 Simple RAG is your go-to tool for straightforward data retrieval and ingestion tasks. It leverages vector embeddings to store and retrieve text chunks efficiently, making it ideal for scenarios where quick access to relevant information is crucial. Whether you're saving web search results or retrieving documents based on a query, Simple RAG ensures that your data is always within reach.
 

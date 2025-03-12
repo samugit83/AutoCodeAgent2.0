@@ -36,7 +36,7 @@ class SurfAiEngine:
             self.logger.exception(f"Critical error: {str(e)}")    
             raise
 
-    def _call_model_with_retry(self, messages, model, **kwargs):      
+    def _call_model_with_retry(self, chat_history, model, **kwargs):      
         """
         Helper method that wraps the call_model function in a retry loop.
         It retries if the response is None, if it doesn't have the expected attribute,
@@ -45,13 +45,18 @@ class SurfAiEngine:
         attempts = 0 
         while attempts <= self.max_retries:      
             try:
-                response = call_model(messages, model, **kwargs, output_format="json_object")
+                response = call_model(
+                    chat_history=chat_history,
+                    model=model,
+                    **kwargs,
+                    output_format="json_object"
+                )
                 if response is None:
                     raise ValueError("Received None as response from call_model")
                 sanitized = JsonResponseHandler.sanitize_response(response)
                 json.loads(sanitized)
                 return response
-            except (AttributeError, ValueError, json.JSONDecodeError) as e:
+            except (AttributeError, ValueError, json.JSONDecodeError) as e: 
                 attempts += 1
                 self.logger.warning( 
                     "Received invalid response from call_model (attempt %d/%d) due to error: %s. Retrying in %dms...",
@@ -66,8 +71,8 @@ class SurfAiEngine:
     def _initialize_task(self, prompt: str):
         json_task_prompt = GEN_JSON_TASK_PROMPT.substitute(user_message=prompt)
         response = self._call_model_with_retry(
-            [{"role": "user", "content": json_task_prompt}],
-            self.json_task_model
+            chat_history=[{"role": "user", "content": json_task_prompt}],
+            model=self.json_task_model
         )
         self.json_task = json.loads(JsonResponseHandler.sanitize_response(response))
         self.logger.debug( 
@@ -88,8 +93,8 @@ class SurfAiEngine:
                     user_message=prompt
                 )
                 response = call_model(
-                    [{"role": "user", "content": final_answer_prompt}],
-                    self.json_task_model,
+                    chat_history=[{"role": "user", "content": final_answer_prompt}],
+                    model=self.json_task_model,
                     output_format="text"
                 )
                 self.logger.debug("Final task completed")
@@ -126,8 +131,8 @@ class SurfAiEngine:
         ) 
         
         response = self._call_model_with_retry(
-            [{"role": "user", "content": loop_prompt}],
-            self.json_task_model,
+            chat_history=[{"role": "user", "content": loop_prompt}],
+            model=self.json_task_model,
             image_base64=self.screenshot_manager.screenshot_base64,
             image_extension="png"
         ) 

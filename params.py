@@ -13,7 +13,7 @@ PARAMS = {
     "HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_DEPTH": 3,  # Maximum depth for graph traversal during queries
     "HYBRID_VECTOR_GRAPH_RAG_QUERY_TOP_K": 3,  # Number of top results to return in hybrid RAG queries
     "HYBRID_VECTOR_GRAPH_RAG_QUERY_MAX_CONTEXT_LENGTH": 10000,  # Maximum context length for hybrid RAG queries
-    "HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL": "text-embedding-ada-002",  # Model for vector embeddings
+    "HYBRID_VECTOR_GRAPH_RAG_EMBEDDING_VECTOR_MODEL": "text-embedding-ada-002",  # Model for vector embeddings, use only open ai embedding service
     "HYBRID_VECTOR_GRAPH_RAG_SUMMARIZATION_GRAPH_NODE_MODEL": "gpt-4o",  # Model for summarizing graph nodes
     
     # Database paths
@@ -38,12 +38,14 @@ PARAMS = {
     "ADAPTIVE_RAG_MODEL": "gpt-4o",  # Model used for adaptive RAG processing
     "ADAPTIVE_RAG_QUERY_TOP_K": 5,  # Number of top results to return in adaptive RAG queries
     
-    # Other parameters
+    # Intellichain parameters
     "TOOL_HELPER_MODEL": "gpt-4o",  # Model used for default tool helper_model
     "JSON_PLAN_MODEL": "gpt-4o",  # Model used for JSON planning
     "EVALUATION_MODEL": "gpt-4o",  # Model used for evaluation tasks
     "SURF_AI_JSON_TASK_MODEL": "gpt-4o",  # Model for SurfAI JSON tasks (requires multimodal capabilities)
+
+    # Deep Search parameters
     "DEEP_SEARCH_MODEL": "o3-mini",  # Model used for deep search functionality
 
     "APPLY_MODEL_OPTIONS": True, # Apply options to the model, from the /models/models_options.py file
-}
+} 

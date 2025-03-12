@@ -41,6 +41,7 @@ Your goal is to:
       - IMPORTANT: If use_exactly_code_example is True, use EXACTLY the code_example as is and don't change it, otherwise use it as a guide to write the code.
       - If the json plan has only a subtask, dont put previous_output as parameter.
       - Function name must be the same as subtask_name.
+      - Always declare a variable before using it.
       - Each function should merge new results into the existing dictionary, returning the updated dictionary so that all keys persist.  
       - Use only libraries from the specified tools.  
       - Properly handle errors with try/except blocks and log messages using the indicated logging format.
