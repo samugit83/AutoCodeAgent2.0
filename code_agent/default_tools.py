@@ -1,3 +1,24 @@
+
+TOOLS_ACTIVATION = { 
+    "helper_model": True,
+    "helper_model_web_search": True,
+    "ingest_simple_rag": True,
+    "retrieve_simple_rag": True,
+    "ingest_hybrid_vector_graph_rag": True,
+    "retrieve_hybrid_vector_graph_rag": True,
+    "ingest_llama_index": True,
+    "retrieve_llama_index": True,
+    "retrieve_llama_index_context_window": True,
+    "retrieve_hyde_rag": True,
+    "retrieve_adaptive_rag": True,
+    "web_search": True,
+    "browser_navigation_surf_ai": False, 
+    "browser_navigation_cua": True,
+    "send_email": True, 
+}
+ 
+  
+
 DEFAULT_TOOLS = [
     {
         "tool_name": "helper_model",
@@ -20,6 +41,38 @@ def call_helper_model(previous_output):
             chat_history=[{"role": "user", "content": prompt}],
             model="$TOOL_HELPER_MODEL"
         )
+        updated_dict["elaborated_output"] = llm_response
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error calling helper model: {e}")
+        return previous_output
+"""
+    },
+    {
+        "tool_name": "helper_model_web_search",
+        "lib_names": ["models.models"],
+        "instructions": """"An LLM useful to elaborate any output from previous steps with additional web search capabilities. 
+This tool combines the helper model with web search functionality to provide more comprehensive and up-to-date information. 
+Don't create loops, just use the LLM to elaborate the output for a single step.""",
+        "use_exactly_code_example": True,
+        "code_example": """
+def call_helper_model_web_search(previous_output):
+    from models.models import call_model
+    try:
+        updated_dict = previous_output.copy()
+
+        message = updated_dict.get('message', '')
+        if len(message) > 350000:
+            message: str = message[:350000]
+        updated_dict['message'] = message
+         
+        prompt = f"here you describe how to elaborate the previous output: {updated_dict.get('message','')}"
+
+        llm_response: str = call_model(
+            chat_history=[{"role": "user", "content": prompt}],
+            model="$TOOL_HELPER_MODEL_WEB_SEARCH"
+        )
+
         updated_dict["elaborated_output"] = llm_response
         return updated_dict
     except Exception as e:
@@ -225,13 +278,13 @@ def retrieve_adaptive_rag(previous_output):
 """
     }, 
     { 
-        "tool_name": "search_web",
+        "tool_name": "web_search",
         "lib_names": ["duckduckgo_search", "bs4", "requests"],
         "instructions": ("A library to scrape the web. Never use the regex or other specific method to extract the data, always output the whole page. "
                          "The data must be extracted or summarized from the page using the models library. Never perform searches in a loop, if you need to make more research, create a new subtask."),
         "use_exactly_code_example": True,
         "code_example": """
-def search_web(previous_output, max_results=3, max_chars=10000):
+def web_search(previous_output, max_results=3, max_chars=10000):
     from duckduckgo_search import DDGS
     import requests
     from bs4 import BeautifulSoup
@@ -280,13 +333,13 @@ def search_web(previous_output, max_results=3, max_chars=10000):
         updated_dict["html_content"] = html_content
         return updated_dict
     except Exception as e:
-        logger.error(f"Error in search_web: {e}")
+        logger.error(f"Error in web_search: {e}")
         return previous_output
 """
     },
     {
-        "tool_name": "browser_navigation",  
-        "lib_names": ["tools.surf_ai.engine"],
+        "tool_name": "browser_navigation_surf_ai",  
+        "lib_names": ["tools.surf_ai.engine", "asyncio"],
         "instructions": ("This is an agent that automates browser navigation. Use it to interact with the browser and extract data during navigation.\n"
                          "From the original prompt, reformulate it with input containing only the instructions for navigation, vision capablity and text data extraction.\n"
                          "It also has visual capabilities, so it can be used to analyze the graphics of the web page and images.\n"
@@ -296,18 +349,48 @@ def search_web(previous_output, max_results=3, max_chars=10000):
                          "**Never forget important instructions on navigation and data extraction.**"),
         "use_exactly_code_example": True,
         "code_example": """
-def browser_navigation(previous_output):
+def browser_navigation_surf_ai(previous_output):
+    import asyncio
     from tools.surf_ai.engine import SurfAiEngine 
     try:
-        updated_dict = previous_output.copy()
+        updated_dict = previous_output.copy() 
         
         prompt: str = updated_dict.get("prompt", "")
         surf_ai_engine = SurfAiEngine() 
-        final_answer_message: str = surf_ai_engine.go_surf(prompt)
+        final_answer_message: str = asyncio.run(surf_ai_engine.go_surf(prompt))
+        updated_dict["result"] = final_answer_message #this is a string!
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error browser navigation: {e}")  
+        return previous_output
+"""
+    },
+    {
+        "tool_name": "browser_navigation_cua",     
+        "lib_names": ["tools.cua.engine", "asyncio"],
+        "instructions": ("This is an agent that automates browser navigation. Use it to interact with the browser and extract data during navigation.\n"
+                         "From the original prompt, reformulate it with input containing only the instructions for navigation, vision capablity and text data extraction.\n"
+                         "It also has visual capabilities, so it can be used to analyze the graphics of the web page and images.\n"
+                         "For example: \n"
+                         "Initial user prompt: use the browser navigator to go to Wikipedia, search for Elon Musk, extract all the information from the page, and analyze with your vision capability his image, and send a summary of the extracted information via email to someone@example.com\n"
+                         "Input prompt for browser navigation: go to Wikipedia, search for Elon Musk, extract all the information from the page, and analyze with your vision capability his image.\n"
+                         "**Never forget important instructions on navigation and data extraction.**"),
+        "use_exactly_code_example": True,
+        "code_example": """
+def browser_navigation_cua(previous_output):   
+    import asyncio
+    from tools.cua.engine import CUAEngine  
+    
+    try:
+        updated_dict = previous_output.copy() 
+        
+        prompt: str = updated_dict.get("prompt", "")
+        cua_engine = CUAEngine(prompt, session_id, socketio) 
+        final_answer_message: str = asyncio.run(cua_engine.run())  # the output is a string!
         updated_dict["result"] = final_answer_message
         return updated_dict
     except Exception as e:
-        logger.error(f"Error browser navigation: {e}")
+        logger.error(f"Error browser navigation: {e}")  
         return previous_output
 """
     },
@@ -362,19 +445,3 @@ def send_email(previous_output) -> dict:
     }
 ]
 
-
-TOOLS_ACTIVATION = {
-    "helper_model": True,
-    "ingest_simple_rag": True,
-    "retrieve_simple_rag": True,
-    "ingest_hybrid_vector_graph_rag": True,
-    "retrieve_hybrid_vector_graph_rag": True,
-    "ingest_llama_index": True,
-    "retrieve_llama_index": True,
-    "retrieve_llama_index_context_window": True,
-    "retrieve_hyde_rag": True,
-    "retrieve_adaptive_rag": True,
-    "search_web": True,
-    "browser_navigation": True,
-    "send_email": True,
-}

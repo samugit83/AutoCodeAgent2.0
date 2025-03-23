@@ -283,16 +283,16 @@ class DangerousCallVisitor(ast.NodeVisitor):
         self.generic_visit(node)
      
     def _get_full_attr_name(self, node):
-        if isinstance(node, ast.Attribute):
+        if isinstance(node, ast.Attribute):  
             value = self._get_full_attr_name(node.value)
             return f"{value}.{node.attr}" if value else node.attr
         elif isinstance(node, ast.Name):
             return node.id
-        return ""
-
-
+        return ""  
+      
+  
 # -------------------------------
-# Main FunctionValidator Class
+# Main FunctionValidator Class  
 # -------------------------------
  
 class FunctionValidator: 
@@ -315,14 +315,14 @@ class FunctionValidator:
     def validate(self, code_string: str) -> dict:
         """
         Validates the given code by:
-         1. Checking for syntax errors.
+         1. Checking for syntax errors.  
          2. Ensuring that only allowed libraries are imported.
          3. Checking that all used names are defined.
          4. Validating the function parameter signature based on the subtask index.
          5. For subtask indices > 0, verifying that the function includes the assignment
             'updated_dict = previous_output.copy()'.
          6. If previous_output is provided, ensuring that any calls to updated_dict.get(...)
-            use keys that are present in previous_output.
+            use keys that are present in previous_output.  
          7. Validating that there is only one level of function nesting.
          8. Ensuring that dangerous function calls are not used.
          9. Renaming the function to match the expected subtask name if no errors occur.
@@ -407,18 +407,18 @@ class FunctionValidator:
                 assigned_visitor.visit(function_def)
                 allowed_names |= assigned_visitor.assigned
 
-                for node in ast.walk(tree):
+                for node in ast.walk(tree):      
                     if isinstance(node, ast.Import):
-                        for alias in node.names:
+                        for alias in node.names:     
                             allowed_names.add(alias.asname if alias.asname else alias.name)
                     elif isinstance(node, ast.ImportFrom):
                         for alias in node.names:
                             allowed_names.add(alias.asname if alias.asname else alias.name)
 
-                allowed_names.update({"error", "logger"})
-
-                undefined_visitor = UndefinedNameVisitor(allowed_names)
-                undefined_visitor.visit(function_def)
+                allowed_names.update({"error", "logger", "session_id", "socketio"})
+ 
+                undefined_visitor = UndefinedNameVisitor(allowed_names)  
+                undefined_visitor.visit(function_def) 
                 if undefined_visitor.undefined_names:
                     for name in sorted(undefined_visitor.undefined_names):
                         self.errors_for_regeneration.append(

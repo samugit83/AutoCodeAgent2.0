@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxtst6 \
     fonts-noto \
     x11-apps \
+    portaudio19-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

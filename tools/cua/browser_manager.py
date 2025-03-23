@@ -1,3 +1,6 @@
+# browser_manager.py
+
+
 from playwright.async_api import async_playwright
 
 class BrowserManager:
@@ -8,6 +11,7 @@ class BrowserManager:
 
     async def __aenter__(self):
         self.playwright = await async_playwright().start()
+        # You can set headless=True if you prefer a headless browser:
         self.browser = await self.playwright.chromium.launch(
             headless=False,
             args=["--disable-blink-features=AutomationControlled"]
@@ -28,9 +32,10 @@ class BrowserManager:
                 "Chrome/98.0.4758.102 Safari/537.36"
             )
         )
+        # Override navigator properties
         await context.add_init_script("""
-            Object.defineProperty(navigator, 'platform', {get: () => 'Win32'});
-            Object.defineProperty(navigator, 'vendor', {get: () => 'Google Inc.'});
+            Object.defineProperty(navigator, 'platform', { get: () => 'Win32' });
+            Object.defineProperty(navigator, 'vendor', { get: () => 'Google Inc.' });
         """)
         return context
 

@@ -2,20 +2,18 @@ class ElementHighlighter:
     def __init__(self, logger):
         self.logger = logger
 
-    def apply_highlight(self, page):
+    async def apply_highlight(self, page):
         try:
-            page.wait_for_timeout(2000)
-            page.evaluate(self._highlight_script())
+            await page.wait_for_timeout(2000)
+            await page.evaluate(self._highlight_script())
         except Exception as e:
             self.logger.debug(f"Highlight failed: {str(e)}")
 
-    def remove_highlight(self, page):
+    async def remove_highlight(self, page):
         try:
-            page.evaluate(self._remove_highlight_script())
+            await page.evaluate(self._remove_highlight_script())
         except Exception as e:
             self.logger.debug(f"Remove highlight failed: {str(e)}") 
-
-
 
     def _highlight_script(self):
         return """
@@ -75,8 +73,8 @@ class ElementHighlighter:
                     overlay.style.height = rect.height + 'px';
                     overlay.style.border = '2px solid ' + color;
                     overlay.style.boxSizing = 'border-box';
-                    overlay.style.pointerEvents = 'none';  // so the overlay doesn't block interactions
-                    overlay.style.zIndex = '10000';  // high enough to be visible 
+                    overlay.style.pointerEvents = 'none';
+                    overlay.style.zIndex = '10000';
 
                     // Create and style the label.
                     const label = document.createElement('span');
@@ -103,7 +101,6 @@ class ElementHighlighter:
             })();
         """
 
-    
     def _remove_highlight_script(self):
         return """
             (function() {
@@ -114,4 +111,4 @@ class ElementHighlighter:
                     delete el.dataset.highlightNumber;
                 });
             })();
-        """  
+        """

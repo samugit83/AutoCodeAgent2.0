@@ -53,6 +53,7 @@ def generate_tools(user_tools, use_default_tools):
     # Define variables to substitute.
     variables = {
         "TOOL_HELPER_MODEL": PARAMS["TOOL_HELPER_MODEL"],
+        "TOOL_HELPER_MODEL_WEB_SEARCH": PARAMS["TOOL_HELPER_MODEL_WEB_SEARCH"],
         "JSON_PLAN_MODEL": PARAMS["JSON_PLAN_MODEL"],
         "EVALUATION_MODEL": PARAMS["EVALUATION_MODEL"],
         "GMAILUSER": os.getenv("GMAILUSER", ""),
@@ -81,13 +82,15 @@ def generate_tools(user_tools, use_default_tools):
                 tool_copy[key] = substitute_variables_in_value(value, variables)
             updated_tools.append(tool_copy)
         else:
-            if not TOOLS_ACTIVATION.get(tool.get("tool_name"), True):
+            if not TOOLS_ACTIVATION.get(tool.get("tool_name"), False):
                 logger.info(f"Skipping tool {tool.get('tool_name')} due to activation flag being False.")
                 continue
             tool_copy = copy.deepcopy(tool)
             for key, value in tool_copy.items():
                 tool_copy[key] = substitute_variables_in_value(value, variables)
             updated_tools.append(tool_copy)
+
+    logger.info(f"Updated tools: {updated_tools}")
 
     return updated_tools
 

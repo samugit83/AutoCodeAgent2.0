@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <title>Chat Interface</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 </head>
 <body>
     <div class="chat-container">
-        <h1 class="chat-title">AutoCodeAgent <span class="version">- v1.6.0</span></h1>
-        <div id="chat-box" class="chat-box">
-        </div>
+        <h1 class="chat-title">AutoCodeAgent <span class="version">- v1.7.0</span></h1>
+        <div id="chat-box" class="chat-box"></div>
         <form id="chat-form">
             <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" required>
             <select id="depth-select">

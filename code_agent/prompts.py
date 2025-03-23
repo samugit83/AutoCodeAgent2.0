@@ -42,6 +42,7 @@ Your goal is to:
       - If the json plan has only a subtask, dont put previous_output as parameter.
       - Function name must be the same as subtask_name.
       - Always declare a variable before using it.
+      - The only variables no need to declare are session_id and socketio because they are from the namespace.
       - Each function should merge new results into the existing dictionary, returning the updated dictionary so that all keys persist.  
       - Use only libraries from the specified tools.  
       - Properly handle errors with try/except blocks and log messages using the indicated logging format.
@@ -215,7 +216,7 @@ Below is an example illustrating how to format one main task, two subtasks, and 
     "subtasks": [
         {
             "subtask_name": "search_amazon",
-            "chosen_tool": "search_web",
+            "chosen_tool": "web_search",
             "description": "Perform a search on Amazon using the specified query, scrape the result page, and return a list of product prices.",
             "imports": ["requests", "beautifulsoup4"],
             "thought": "We need to send an HTTP request, parse HTML with BeautifulSoup, and collect all prices.",
@@ -296,7 +297,7 @@ def calculate_average_price(previous_output):
             "chosen_tool": "search_and_elaborate",
             "description": "Search for vendor information based on the vendor list in the dictionary, then create a final Pandas-based summary.",
             "imports": ["pandas", "duckduckgo_search", "beautifulsoup4"],
-            "thought": "We can use the vendor_list to drive searches with the 'search_web' tool, store the combined HTML results, and create a small Pandas DataFrame with the average price.",
+            "thought": "We can use the vendor_list to drive searches with the 'web_search' tool, store the combined HTML results, and create a small Pandas DataFrame with the average price.",
             "code": "
 def search_vendor_info(previous_output):
     '''

@@ -39,10 +39,14 @@ PARAMS = {
     "ADAPTIVE_RAG_QUERY_TOP_K": 5,  # Number of top results to return in adaptive RAG queries
     
     # Intellichain parameters
+    "MAX_ITERATIONS_AFTER_EVALUATION": 1,  # Maximum number of iterations after not satisfactory evaluation
     "TOOL_HELPER_MODEL": "gpt-4o",  # Model used for default tool helper_model
+    "TOOL_HELPER_MODEL_WEB_SEARCH": "gpt-4o-search-preview",  # Model used for default tool helper_model_with_web_search, only 2 values are allowed: gpt-4o-search-preview or gpt-4o-mini-search-preview
     "JSON_PLAN_MODEL": "gpt-4o",  # Model used for JSON planning
     "EVALUATION_MODEL": "gpt-4o",  # Model used for evaluation tasks
     "SURF_AI_JSON_TASK_MODEL": "gpt-4o",  # Model for SurfAI JSON tasks (requires multimodal capabilities)
+
+    "CUA_FIRST_URL_MODEL": "gpt-4o",  # Model used to generate the first url for CUA 
 
     # Deep Search parameters
     "DEEP_SEARCH_MODEL": "o3-mini",  # Model used for deep search functionality

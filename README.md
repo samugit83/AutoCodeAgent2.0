@@ -2,7 +2,7 @@
 ![AutoCode Agent Global Workflow](./static/images/autocode.png)  
 
 # AutoCodeAgent - An innovative AI agent powered by IntelliChain, Deep Search, and multi-RAG techniques
-![version](https://img.shields.io/badge/version-1.6.0-blue)
+![version](https://img.shields.io/badge/version-1.7.0-blue)
 
 ## One agent, Infinite possibilities
 AutoCodeAgent redefines AI-powered problem solving by seamlessly integrating three groundbreaking modes:
@@ -12,7 +12,7 @@ Break down complex tasks with surgical precision through dynamic task decomposit
 
 ### Deep Search
 Harness the power of autonomous, real-time web research to extract the most current and comprehensive information. Deep Search navigates diverse online sources, transforming raw data into actionable intelligence with minimal human intervention.
-
+ 
 ### Multi-RAG
 Enhance information retrieval through an innovative multi-RAG framework that includes many different RAG techniques. This multi-faceted approach delivers contextually rich, accurate, and coherent results, even when working with varied document types and complex knowledge structures. The incredible innovation is that these RAG techniques have been implemented as tools, so they can be used like any other tool in the project.
 You can also benefit from these techniques for educational purposes, as each one is conceptually well-explained in the .ipynb files located in the folders within /tools/rag.
@@ -62,8 +62,12 @@ Description of the tools that are included by default in the project.
 LangChain tools are integrated in the project, in this section you will learn how to add them easily.
 
 [SurfAi Integration](#surfai-integration)  
-NEW! Integration of SurfAi as an Automated Web Navigation Tool (local function type)
+Integration of SurfAi as an Automated Web Navigation Tool (local function type)
 We have integrated SurfAi into our suite as a powerful automated web navigation tool. This enhancement enables seamless interaction with web pages, efficient extraction of data and images, and supports the resolution of more complex tasks through intelligent automation.
+
+[Computer use OpenAi integration](#computer-use-openai-integration)  
+We integrated a Computer-Using Agent (CUA) tool in Intellichain to automate computer interactions such as clicking, typing, and scrolling. The tool leverages OpenAI’s visual understanding and decision-making to navigate browsers or virtual machines, extract and analyze data and images. It provides real-time updates and screenshots via WebSocket, streamlining web navigation and data extraction tasks. This integration enhances workflow efficiency significantly.
+It operates similarly to Surf-ai but offers enhanced capabilities with a higher success rate for completing tasks.
 
 
 ## Deep Search sections
@@ -176,12 +180,12 @@ If you want to rebuild and restart the application, and optimize docker space:
 docker-compose down
 docker-compose build --no-cache
 docker-compose up -d
-docker builder prune -a -f
+docker builder prune -a -f 
 docker logs -f flask_app    
 ```  
 Is a good idea to always check docker space usage after building and starting the application:
 ```bash
-docker system df
+docker system df  
 ```
 
 8. Access the AI Agent chat interface: 
@@ -202,7 +206,7 @@ http://localhost:7474/browser/
 The backend logic is managed by a Flask application. The main Flask app is located at:  
 ```bash
 /app.py
-```  
+```   
 This file orchestrates the interaction between the AI agent, tool execution, and the integration of various services (like Neo4j, Redis, and Docker containers).
 
 ### Frontend chat interface
@@ -310,6 +314,7 @@ A function validator inspects each subtask’s code (via AST analysis) for synta
 
 ## All Ways to Add Custom Tools
 In addition to the default tools, users can create custom tools by describing the function and specifying the libraries to be used.
+You can manage custom tools in the file `/tools/custom_tools.py`.
 There are several ways to create custom tools:
 
 1) **ONLY LIBRARY NAME**:  
@@ -524,6 +529,7 @@ Discover the capabilities of AutoCodeAgent with those videos:<br>
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).<br>
 [Integration with SurfAi Video Demo 1](https://youtu.be/b5OPk7-FPrk).<br>
 [Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).<br>
+[Integration Open AI Computer use automation](https://youtu.be/A5pjtwJrZx0).<br>
 [LangChain Toolbox Video Demo](https://youtu.be/sUKiN_qp750).<br>
 
 
@@ -550,10 +556,14 @@ The default tools are pre-implemented and fully functional, supporting the agent
 These default tools are listed below and can be found in the file: 
 /code_agent/default_tools.py
 
-- browser_navigation
+- browser_navigation_surf_ai
   - integration of SurfAi for web navigation, data and image extraction, with multimodal text + vision capabilities
+- browser_navigation_cua
+  - Computer-Using Agent (CUA) that automates computer interactions like clicking, typing, and scrolling. Leverages OpenAI's visual capabilities to navigate interfaces, extract data, and provide real-time feedback.
 - helper_model
   - An LLM useful for processing the output of a subtask
+- helper_model_web_search
+  - This new tool provided by OpenAI responds to your requests with information retrieved from the web in real-time.
 - ingest_simple_rag
   - A tool for ingesting text into a ChromaDB Vector database with simple RAG
 - retrieve_simple_rag
@@ -570,7 +580,7 @@ These default tools are listed below and can be found in the file:
   - A tool for retrieving the most similar documents to a with the HyDe RAG technique
 - retrieve_adaptive_rag
   - A tool for retrieving the most similar documents to a with the Adaptive RAG technique
-- search_web
+- web_search
   - A tool for searching information on the web
 - send_email
   - A tool for sending an email
@@ -608,6 +618,89 @@ If the tool is invoked, you can view the navigation by accessing:
 http://localhost:6901/vnc.html
 ```
 You can find the screenshots generated during navigation at the following path: /tools/surf_ai/screenshots  
+
+Important: To avoid confusion for the planner agent in Intellichain, activate only one browser automation tool at a time.
+In the default_tools.py file, set these parameters:
+```json
+    "browser_navigation_surf_ai": True, 
+    "browser_navigation_cua": False,
+```
+  
+## Computer use OpenAi integration  s
+
+OpenAI's Computer-Using Agent (CUA) automates computer interactions like clicking, typing, and scrolling. It leverages visual understanding and intelligent decision-making to efficiently handle tasks typically performed manually.
+The tool doesn't just navigate and interact with web pages, but also engages with the user through chat, requesting additional instructions whenever it encounters problems or uncertainties during navigation.
+
+### Integration Overview
+
+CUA integration involves a feedback loop:
+
+1. Setup the Environment (Browser or Virtual Machine).
+2. Send Initial Instructions to the CUA model.
+3. Process Model Responses for suggested actions.
+4. Execute Actions within your environment.
+5. Capture Screenshots after actions.
+6. Repeat until task completion.
+
+![CUA Workflow](./static/images/cua_diagram.png)  
+
+### Video Demo
+[Open Ai Computer use automation](https://youtu.be/A5pjtwJrZx0).
+
+For CUA integration, we've implemented a default tool called `browser_navigation_cua` which is available in the `default_tools.py` file. This tool enables automated browser navigation and interaction with web content through OpenAI's Computer-Using Agent capabilities.
+
+```json
+    {
+        "tool_name": "browser_navigation_cua",     
+        "lib_names": ["tools.cua.engine", "asyncio"],
+        "instructions": ("This is an agent that automates browser navigation. Use it to interact with the browser and extract data during navigation.\n"
+                         "From the original prompt, reformulate it with input containing only the instructions for navigation, vision capablity and text data extraction.\n"
+                         "It also has visual capabilities, so it can be used to analyze the graphics of the web page and images.\n"
+                         "For example: \n"
+                         "Initial user prompt: use the browser navigator to go to Wikipedia, search for Elon Musk, extract all the information from the page, and analyze with your vision capability his image, and send a summary of the extracted information via email to someone@example.com\n"
+                         "Input prompt for browser navigation: go to Wikipedia, search for Elon Musk, extract all the information from the page, and analyze with your vision capability his image.\n"
+                         "**Never forget important instructions on navigation and data extraction.**"),
+        "use_exactly_code_example": True,
+        "code_example": """
+def browser_navigation_cua(previous_output):   
+    import asyncio
+    from tools.cua.engine import CUAEngine  
+  
+    try:
+        updated_dict = previous_output.copy() 
+        
+        prompt: str = updated_dict.get("prompt", "")
+        cua_engine = CUAEngine(prompt, session_id, socketio) 
+        final_answer_message: str = asyncio.run(cua_engine.run())
+        updated_dict["result"] = final_answer_message
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error browser navigation: {e}")  
+        return previous_output
+"""
+    },
+```
+
+Important: To avoid confusion for the planner agent in Intellichain, activate only one browser automation tool at a time.
+In the default_tools.py file, set these parameters:
+```json
+    "browser_navigation_surf_ai": False, 
+    "browser_navigation_cua": True,
+```
+
+Thanks to the integrated WebSocket, during navigation phases you'll see real-time updates in the chat with all actions performed by the agent on web pages.
+The agent thinks intelligently and critically about various pages, and if it encounters problems, it communicates in the chat requesting clarification or additional information to complete a navigation task.
+
+If the tool is invoked, you can view the navigation by accessing:
+```bash
+http://localhost:6901/vnc.html
+```
+You can find the screenshots generated during navigation at the following path: /tools/cua/screenshots  
+To use this tool, make sure you have added your OPENAI_API_KEY in the .env file
+
+For technical documentation on OpenAI's API integration, please refer to:
+https://platform.openai.com/docs/guides/tools-computer-use  
+
 
 
 ## LangChain Tools
@@ -648,6 +741,7 @@ In this example, the system would:
 3. Utilize **eleven_labs_text2speech** to convert the script into a cohesive audio file, perfect for a TV broadcast simulation.
 
 This demonstrates the flexibility and strength of LangChain's integration capabilities in orchestrating multiple tools to achieve a complex, multi-step task.
+
 
 
 # Deep Search

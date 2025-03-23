@@ -218,7 +218,7 @@ class SubtaskExecutor:
         return output_validator, subtask
 
     def _execute_subtask_code(self, subtask, code_string, index):
-        temp_namespace = {"logger": self.agent.logger}
+        temp_namespace = {"logger": self.agent.logger, "session_id": self.agent.session_id, "socketio": self.agent.socketio}
         self.agent.logger.info(
             self.agent.enrich_log(
                 f"⌛ Executing subtask nr.{index + 1} of {len(self.agent.json_plan.get('subtasks', []))}: {subtask['subtask_name']}",

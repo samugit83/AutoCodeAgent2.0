@@ -92,3 +92,15 @@ All notable changes to this project will be documented in this file.
   - Supports all Ollama model configuration options including context size, repetition penalties, and sampling parameters.
   - Enables fine-tuned control over model behavior while maintaining the simplicity of the local integration.
   - Configuration options can be set through the API for advanced model tuning.
+
+## [1.7.0] - 2025-03-23
+### Added
+- **OpenAI Computer Use Integration:**  
+  - Integrated a new tool for browser automation, OpenAI Computer Use, which mirrors the capabilities of the OpenAI Operator. This tool is designed to execute advanced browser automation tasks with enhanced efficiency. You can find the new tool in default_tools.py under the name browser_navigation_cua.
+
+- **WebSocket Integration:**  
+  - Added a WebSocket module to provide real-time updates to the frontend. This integration continuously streams all reasoning steps and backend operations, improving transparency and user interaction.
+
+- **OpenAI Web Search Tool Integration:**  
+  - Integrated a new web search tool that utilizes the Chat Completions API. With this integration, the model retrieves information from the web before responding to queries, leveraging fine-tuned models and tools similar to those used in Search in ChatGPT. You can find the new tool in default_tools.py under the name helper_model_web_search.
+

@@ -31,11 +31,11 @@ class CloudClient:
     def call(
         self,
         chat_history: List[Dict[str, any]],
-        image_url: Optional[str],
-        image_base64: Optional[str],
-        image_extension: Optional[str],
-        model: str,
-        output_format: Optional[str]
+        image_url: Optional[str] = None,
+        image_base64: Optional[str] = None,
+        image_extension: Optional[str] = None,
+        model: str = "gpt-4-turbo",
+        output_format: Optional[str] = None
     ) -> str:
         try:
             content_list = []
@@ -49,8 +49,7 @@ class CloudClient:
                     'webp': 'image/webp'
                 }
                 mime_type = mime_types.get(
-                    image_extension.lower() if image_extension else '',
-                    'image/png'
+                    (image_extension or '').lower(), 'image/png'
                 )
                 content_list.append({
                     "type": "image_url",
@@ -71,26 +70,24 @@ class CloudClient:
                     "content": content_list
                 })
 
+            request_params = {
+                "model": model, 
+                "messages": chat_history
+            }
+
             if output_format:
-                response = self.client.chat.completions.create(
-                    model=model,
-                    messages=chat_history,
-                    response_format={"type": output_format}
-                )
-            else:
-                response = self.client.chat.completions.create(
-                    model=model,
-                    messages=chat_history,
-                )
+                request_params["response_format"] = {"type": output_format}
+
+            response = self.client.chat.completions.create(**request_params)
 
             answer = response.choices[0].message.content.strip()
             return answer
 
         except Exception as e:
-            logger.error(f"OpenAI API error: {str(e)}")
+            logger.error(f"OpenAI API error: {e}")
             logger.error(traceback.format_exc())
             raise e
-
+        
 
 class LocalClient:
     """
@@ -162,7 +159,6 @@ def call_model(
 
     if client_type == "cloud":
         client = CloudClient(api_key=OPENAI_API_KEY)
-        logger.info(f"Calling cloud model image_url: {image_url}")
         return client.call(
             chat_history,
             image_url,
