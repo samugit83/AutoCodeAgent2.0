@@ -65,7 +65,7 @@ LangChain tools are integrated in the project, in this section you will learn ho
 Integration of SurfAi as an Automated Web Navigation Tool (local function type)
 We have integrated SurfAi into our suite as a powerful automated web navigation tool. This enhancement enables seamless interaction with web pages, efficient extraction of data and images, and supports the resolution of more complex tasks through intelligent automation.
 
-[Computer use OpenAi integration](#computer-use-openai-integration)  
+[Computer use openAi integration](#computer-use-openai-integration)  
 We integrated a Computer-Using Agent (CUA) tool in Intellichain to automate computer interactions such as clicking, typing, and scrolling. The tool leverages OpenAI’s visual understanding and decision-making to navigate browsers or virtual machines, extract and analyze data and images. It provides real-time updates and screenshots via WebSocket, streamlining web navigation and data extraction tasks. This integration enhances workflow efficiency significantly.
 It operates similarly to Surf-ai but offers enhanced capabilities with a higher success rate for completing tasks.
 
@@ -626,7 +626,7 @@ In the default_tools.py file, set these parameters:
     "browser_navigation_cua": False,
 ```
   
-## Computer use OpenAi integration
+## Computer use openai integration
 
 OpenAI's Computer-Using Agent (CUA) automates computer interactions like clicking, typing, and scrolling. It leverages visual understanding and intelligent decision-making to efficiently handle tasks typically performed manually.
 The tool doesn't just navigate and interact with web pages, but also engages with the user through chat, requesting additional instructions whenever it encounters problems or uncertainties during navigation.
