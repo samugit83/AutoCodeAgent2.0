@@ -649,7 +649,7 @@ CUA integration involves a feedback loop:
 
 For CUA integration, we've implemented a default tool called `browser_navigation_cua` which is available in the `default_tools.py` file. This tool enables automated browser navigation and interaction with web content through OpenAI's Computer-Using Agent capabilities.
 
-```json
+```python
     {
         "tool_name": "browser_navigation_cua",     
         "lib_names": ["tools.cua.engine", "asyncio"],
@@ -683,7 +683,7 @@ def browser_navigation_cua(previous_output):
 
 Important: To avoid confusion for the planner agent in Intellichain, activate only one browser automation tool at a time.
 In the default_tools.py file, set these parameters:
-```json
+```python
     "browser_navigation_surf_ai": False, 
     "browser_navigation_cua": True,
 ```
