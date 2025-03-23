@@ -529,7 +529,7 @@ Discover the capabilities of AutoCodeAgent with those videos:<br>
 [Hybrid Vector Graph RAG Video Demo](https://youtu.be/a9Ul6CxYsFM).<br>
 [Integration with SurfAi Video Demo 1](https://youtu.be/b5OPk7-FPrk).<br>
 [Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).<br>
-[Integration Open AI Computer use automation](https://youtu.be/A5pjtwJrZx0).<br>
+[Integration Open AI Computer use automation](https://youtu.be/wUI14lj8SFM).<br>
 [LangChain Toolbox Video Demo](https://youtu.be/sUKiN_qp750).<br>
 
 
@@ -645,7 +645,7 @@ CUA integration involves a feedback loop:
 ![CUA Workflow](./static/images/cua_diagram.png)  
 
 ### Video Demo
-[Open Ai Computer use automation](https://youtu.be/A5pjtwJrZx0).
+[Open Ai Computer use automation](https://youtu.be/wUI14lj8SFM).
 
 For CUA integration, we've implemented a default tool called `browser_navigation_cua` which is available in the `default_tools.py` file. This tool enables automated browser navigation and interaction with web content through OpenAI's Computer-Using Agent capabilities.
 
