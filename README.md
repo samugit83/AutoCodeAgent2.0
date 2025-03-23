@@ -626,7 +626,7 @@ In the default_tools.py file, set these parameters:
     "browser_navigation_cua": False,
 ```
   
-## Computer use OpenAi integration  s
+## Computer use OpenAi integration
 
 OpenAI's Computer-Using Agent (CUA) automates computer interactions like clicking, typing, and scrolling. It leverages visual understanding and intelligent decision-making to efficiently handle tasks typically performed manually.
 The tool doesn't just navigate and interact with web pages, but also engages with the user through chat, requesting additional instructions whenever it encounters problems or uncertainties during navigation.
