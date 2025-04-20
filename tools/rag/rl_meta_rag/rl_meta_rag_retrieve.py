@@ -11,7 +11,6 @@ from code_agent.utils import sanitize_gpt_response
 # Helper function to extract categories from prompt template
 def _extract_categories_from_prompt(prompt_template, feature_name):
     """Extracts list items for a given feature from the prompt template."""
-    # Find the line describing the feature
     match = re.search(rf"- {feature_name}:.*?\[(.*?)\]", prompt_template.template, re.DOTALL)
     if match:
         # Extract the content within the brackets and split into items
@@ -131,11 +130,6 @@ class RlMetaRag:
             # Adjust query length specifically if needed
             features[5] = len(query.split()) # A reasonable default for query_length
 
-        # Note: The original code appended query_length again here.
-        # This was likely a bug as query_length is already included in the 9 features.
-        # query_length_calc = len(query.split())
-        # features.append(query_length_calc) # REMOVED THIS LINE
-
         self.socketio.emit('reasoning_update', {
             "message": f"Extracted query features: {features}"
         })
@@ -240,7 +234,6 @@ class RlMetaRag:
         if technique_id in self.rag_techniques:
             result = self.rag_techniques[technique_id](query)
         else:
-            # Default or fallback technique
             self.socketio.emit('reasoning_update', {
                 "message": f"Warning: Selected technique ID {technique_id} not found. Defaulting to technique 0."
             })
@@ -262,12 +255,12 @@ class RlMetaRag:
             redis_client = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
             # Store the original feature list before tuple conversion if needed
             data_to_store = {
-                "state": state_features, # Store the raw feature list
+                "state": state_features,
                 "action": technique_id,
                 "query": query
             }
             redis_key = f"rl_update:{session_id}"
-            # Use json.dumps with a handler for non-serializable types if necessary, though list should be fine
+
             try:
                 redis_client.set(redis_key, json.dumps(data_to_store))
                 self.socketio.emit('reasoning_update', {

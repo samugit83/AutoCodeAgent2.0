@@ -1,12 +1,11 @@
 import os
 import pickle
 import numpy as np
-# Added imports for the neural network mode
 import tensorflow as tf
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
-import logging # Added for cleaner messages
+import logging 
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -67,7 +66,7 @@ class QLearningAgent:
         self.error_list = []
         self.load_data()
 
-    # +++ Added: Helper to build the neural network +++
+
     def _build_model(self):
         """Builds the neural network model for DQN."""
     
@@ -83,7 +82,6 @@ class QLearningAgent:
         logging.info("Built neural network model.")
         # model.summary() # Optional: print model summary
         return model
-    # +++ End Added +++
 
     def load_data(self):
         """
