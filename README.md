@@ -1,7 +1,7 @@
 ![AutoCode Agent Global Workflow](./static/images/autocode.png)  
 
 # AutoCodeAgent - An innovative AI agent powered by IntelliChain, Deep Search, multi-RAG and Reinforcement Learning.
-![version](https://img.shields.io/badge/version-1.7.0-blue)
+![version](https://img.shields.io/badge/version-1.8.0-blue)
 
 ## Learn by Doing: Bridging Theory and Practice
 This repository was primarily created as a learning tool. It allows you to explore and understand the core concepts behind advanced AI features like IntelliChain, Deep Search, and Multi-RAG through dedicated Jupyter Notebook files (`.ipynb`). These notebooks clearly explain the underlying theory. You can then see these very concepts applied directly within the working code of the AutoCodeAgent project. This approach is highly effective for learning because it bridges the gap between theoretical understanding and practical implementation, enabling you to see *how* and *why* things work in a real-world application context.
