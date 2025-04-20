@@ -555,6 +555,8 @@ Discover the capabilities of AutoCodeAgent with those videos:<br>
 [Integration with SurfAi Video Demo 2](https://youtu.be/zpTthh2wKds).<br>
 [Integration Open AI Computer use automation](https://youtu.be/wUI14lj8SFM).<br>
 [LangChain Toolbox Video Demo](https://youtu.be/sUKiN_qp750).<br>
+[Reinforcement Learning and RL Meta RAG](https://youtu.be/hvm13n3xVHY)
+
 
 
 ## Parameters
@@ -1334,6 +1336,7 @@ Adaptive Retrieval-Augmented Generation (RAG) is an innovative system that tailo
 By dynamically adjusting its retrieval methods based on the query's nature, Adaptive RAG overcomes the limitations of traditional one-size-fits-all approaches. Its robust framework—integrating query classification, adaptive strategies, and LLM-based ranking—ensures that each search returns results that are both contextually rich and precisely aligned with user intent.
 
 ## RL Meta RAG (retrieval)
+[RL Meta RAG video Demo](https://youtu.be/hvm13n3xVHY)
 Dive deep into this [notebook](./tools/rag/rl_meta_rag/rl_meta_rag.ipynb).  
 
 RL Meta RAG introduces a higher level of abstraction by employing Reinforcement Learning (specifically a QLearningAgent in neural mode) to dynamically select the most suitable underlying RAG technique (e.g., Llama Index, HyDE, Adaptive RAG) for a given user query. The goal is to learn an optimal policy over time that maximizes retrieval effectiveness based on query characteristics and feedback.
