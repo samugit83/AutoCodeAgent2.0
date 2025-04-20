@@ -37,6 +37,16 @@ PARAMS = {
     # Adaptive RAG parameters
     "ADAPTIVE_RAG_MODEL": "gpt-4o",  # Model used for adaptive RAG processing
     "ADAPTIVE_RAG_QUERY_TOP_K": 5,  # Number of top results to return in adaptive RAG queries
+
+    # RL Meta RAG defaults
+    "RAG_Q_DATA_FILE": "tools/rag/rl_meta_rag/rag_q_data.pkl",  # Filename used to persist Q-learning data (e.g., stored as a pickle file)
+    "RL_N_RECENT": 50,                   # Number of recent episodes considered when computing the average prediction error
+    "RL_ERROR_THRESHOLD": 0.5,           # Error threshold above which the system may fall back to LLM suggestions instead of relying on Q-learning
+    "RL_ALPHA": 0.8,                     # Learning rate for Q-learning; controls how quickly new information overrides old Q-values
+    "RL_GAMMA": 0.95,                    # Discount factor for Q-learning; determines the importance of future rewards compared to immediate rewards
+    "RL_EPSILON": 0.1,                   # Exploration rate for epsilon-greedy strategy; probability of choosing a random action versus the best-known action
+    "RL_META_RAG_MODEL": "gpt-4o",       # Model used for RL Meta RAG
+    "RL_REQUEST_HUMAN_EVALUATION": True, # Model used for request evaluation
     
     # Intellichain parameters
     "MAX_ITERATIONS_AFTER_EVALUATION": 1,  # Maximum number of iterations after not satisfactory evaluation

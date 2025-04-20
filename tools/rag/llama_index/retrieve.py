@@ -2,11 +2,9 @@ from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from params import PARAMS
-import logging
 
-logger = logging.getLogger(__name__)
 
-def retrieve_documents(query, similarity_cutoff=None):
+def retrieve_documents(query, similarity_cutoff=None, similarity_top_k=None):
     """
     Retrieves the most relevant documents from a persisted LlamaIndex index using the provided query.
     
@@ -27,7 +25,8 @@ def retrieve_documents(query, similarity_cutoff=None):
     Returns:  
       str: A string representation of the retrieved documents.
     """
-    similarity_top_k = PARAMS["LLAMA_INDEX_TOP_K_RAG_RETRIEVE"]
+    if similarity_top_k is None:
+      similarity_top_k = PARAMS["LLAMA_INDEX_TOP_K_RAG_RETRIEVE"]
     persist_dir = PARAMS["LLAMA_INDEX_DB_PATH"]
     storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
     index = load_index_from_storage(storage_context)

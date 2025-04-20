@@ -11,12 +11,13 @@ TOOLS_ACTIVATION = {
     "retrieve_llama_index_context_window": True,
     "retrieve_hyde_rag": True,
     "retrieve_adaptive_rag": True,
+    "retrieve_rl_meta_rag": True,
     "web_search": True,
     "browser_navigation_surf_ai": False, 
     "browser_navigation_cua": True,
     "send_email": True, 
 }
- 
+  
   
 
 DEFAULT_TOOLS = [
@@ -276,6 +277,28 @@ def retrieve_adaptive_rag(previous_output):
         logger.error(f"Error in retrieve_adaptive_rag: {e}")
         return previous_output 
 """
+    }, 
+    { 
+    "tool_name": "retrieve_rl_meta_rag",
+    "lib_names": ["tools.rag.rl_meta_rag.rl_meta_rag_retrieve"],
+    "instructions": ("This tool retrieves documents from vector database using the rl meta rag technique."),
+    "use_exactly_code_example": True,
+    "code_example": """
+def retrieve_rl_meta_rag(previous_output): 
+    from tools.rag.rl_meta_rag.rl_meta_rag_retrieve import RlMetaRag
+    try:
+        updated_dict = previous_output.copy()
+        query: str = updated_dict.get("query", "") 
+        if not query:
+            return updated_dict 
+        
+        result: str = RlMetaRag(socketio=socketio).retrieve(query, session_id) 
+        updated_dict["retrieve_result"] = result
+        return updated_dict
+    except Exception as e:
+        logger.error(f"Error in retrieve_rl_meta_rag: {e}")
+        return previous_output 
+""" 
     }, 
     { 
         "tool_name": "web_search",

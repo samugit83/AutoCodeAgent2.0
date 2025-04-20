@@ -16,7 +16,8 @@ from tools.rag.llama_index_context_window.ingest_corpus import llama_index_conte
 from models.models import call_model
 from tools.custom_tools import CUSTOM_TOOLS
 import redis
-
+import json
+from tools.rag.rl_meta_rag.rl_meta_rag_retrieve import RlMetaRag
 
 logging.basicConfig(
     level=logging.DEBUG,  
@@ -138,6 +139,48 @@ def handle_follow_up_response(data):
     if session_id and message:
         redis_key = f"followup:{session_id}"
         redis_client.set(redis_key, message)
+
+
+@socketio.on('submit_evaluation')
+def handle_submit_evaluation(data):
+    """
+    Receives evaluation feedback from the frontend (a rating between 1 and 5),
+    retrieves stored RL update data from Redis, updates the Q-learning agent, and
+    deletes the stored data.
+    """
+    meta_rag = RlMetaRag()
+    session_id = data.get('session_id')
+    rating = data.get('rating')  # Expected to be a number between 1 and 5
+
+    if not session_id or rating is None:
+        emit('evaluation_ack', {'status': 'error', 'message': 'session_id and rating are required.'})
+        return
+
+    redis_client = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
+    redis_key = f"rl_update:{session_id}"
+    stored_data = redis_client.get(redis_key)
+
+    if stored_data:
+        try:
+            data_dict = json.loads(stored_data)
+            state = data_dict.get('state')
+            action = data_dict.get('action')
+
+            # Convert state and action to tuples if they are lists, ensuring they are hashable.
+            if isinstance(state, list):
+                state = tuple(state)
+            if isinstance(action, list):
+                action = tuple(action)
+
+            reward = float(rating)
+            meta_rag.agent.update_q_value(state, action, reward, use_next_state=False)
+            redis_client.delete(redis_key)
+        except Exception as e:
+            logging.error("Error processing evaluation: %s", str(e))
+    else:
+        logging.error("No stored evaluation data found for this session.")
+
+
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=int(os.getenv('FLASK_PORT', 5000)), debug=True)

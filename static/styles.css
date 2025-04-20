@@ -218,3 +218,39 @@ h1 {
 #send-btn:hover {
     background: #546e7a;
 }
+
+
+#rating-container {
+    display: flex;
+    flex-direction: column;  /* Stack items vertically */
+    align-items: center;
+    margin: 10px 0;
+}
+
+#star-row {
+    display: flex;           /* Keep the stars in one horizontal row */
+    justify-content: center;
+}
+
+.star {
+    font-size: 30px;
+    cursor: pointer;
+    color: #ccc;
+    margin: 0 5px;
+    transition: color 0.2s;
+}
+
+.star:hover,
+.star:hover ~ .star {
+    color: gold;
+}
+
+.star.selected {
+    color: gold;
+}
+
+.rating-message {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #888;
+}

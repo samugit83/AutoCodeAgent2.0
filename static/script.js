@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     const socket = io();
     const sessionId = generateSessionId();
     let followUpNeeded = null;
@@ -14,10 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
         appendReasoning(data.message);
     });  
       
- 
     socket.on("agent_response", function(data) {
         if (data.session_id === sessionId) {
-     
             if (data.content_type && data.content_type === "application/pdf") {
                 const byteCharacters = atob(data.assistant);
                 const byteNumbers = new Array(byteCharacters.length);
@@ -37,6 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 appendMessage('assistant', data.assistant);
             }
+        }
+    });
+
+    // Listen for evaluation request event from the backend.
+    socket.on("request_evaluation", function(data) {
+        if (data.session_id === sessionId) {
+            // Display the star rating UI.
+            displayRatingUI(data);
         }
     });
 
@@ -133,13 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function appendReasoning(message) {
-
         let reasoningDiv = document.getElementById('reasoning-div');
         if (!reasoningDiv) {
             reasoningDiv = document.createElement('div');
             reasoningDiv.id = 'reasoning-div';
             reasoningDiv.classList.add('reasoning');
-            
             const chatBox = document.getElementById('chat-box');
             chatBox.appendChild(reasoningDiv);
         }
@@ -153,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
     
-
     function getChatHistory() {
         const messages = document.getElementById('chat-box').querySelectorAll('.message');
         const history = [];
@@ -171,5 +173,65 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateSessionId() {
         return 'session_' + Math.random().toString(36).substr(2, 9);
     }
+
+    // Create and display the star rating UI.
+    function displayRatingUI(data) {
+     
+        if (document.getElementById('rating-container')) return;
+        
+        const ratingContainer = document.createElement('div');
+        ratingContainer.id = 'rating-container';
+        
+        const reviewText = document.createElement('div');
+        reviewText.textContent = "Please rate the answer";
+        reviewText.style.textAlign = 'center';
+        reviewText.style.marginBottom = '5px';
+        ratingContainer.appendChild(reviewText);
+     
+        const starRow = document.createElement('div');
+        starRow.id = 'star-row';
+        starRow.style.display = 'flex';
+        starRow.style.justifyContent = 'center';
+        starRow.style.marginBottom = '5px';
+        
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('span');
+            star.classList.add('star');
+            star.dataset.rating = i;
+            star.innerHTML = '☆';  // empty star
+    
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.dataset.rating, 10);
+                socket.emit('submit_evaluation', {
+                    session_id: sessionId,
+                    rating: rating
+                });
+          
+                document.querySelectorAll('#rating-container .star').forEach(s => {
+                    s.innerHTML = '☆';
+                });
+                for (let j = 1; j <= rating; j++) {
+                    document.querySelector(`#rating-container .star[data-rating="${j}"]`).innerHTML = '★';
+                }
+      
+                setTimeout(() => {
+                    ratingContainer.remove();
+                }, 500);
+            });
+            starRow.appendChild(star);
+        }
+        ratingContainer.appendChild(starRow);
+    
+        // Append the assistant's message below the stars, if provided
+        if (data && data.assistant) {
+            const messageText = document.createElement('div');
+            messageText.classList.add('rating-message');
+            messageText.textContent = data.assistant;
+            ratingContainer.appendChild(messageText);
+        }
+        
+
+        document.getElementById('chat-box').appendChild(ratingContainer);
+    }
+    
 });
-  

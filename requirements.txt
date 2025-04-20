@@ -25,3 +25,4 @@ langchain_community
 google-search-results
 pyowm
 elevenlabs==0.2.27
+tensorflow

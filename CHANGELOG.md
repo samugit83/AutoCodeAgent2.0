@@ -65,7 +65,7 @@ All notable changes to this project will be documented in this file.
 - **Deep Search Integration:**  
   - Introduced a multi-level deep search mode that adjusts key parameters (token count, scrape length, and search results) based on the specified depth.
 - **EGOT System:**  
-  - Implemented the Evolving Graph of Thought (EGOT) framework to dynamically map and visualize the agent’s reasoning process using Neo4j.
+  - Implemented the Evolving Graph of Thought (EGOT) framework to dynamically map and visualize the agent's reasoning process using Neo4j.
 - **Persistent Memory with Redis:**  
   - Added persistent session management using Redis, ensuring that session data and memory logs are maintained across interactions with the same user.
 
@@ -103,4 +103,19 @@ All notable changes to this project will be documented in this file.
 
 - **OpenAI Web Search Tool Integration:**  
   - Integrated a new web search tool that utilizes the Chat Completions API. With this integration, the model retrieves information from the web before responding to queries, leveraging fine-tuned models and tools similar to those used in Search in ChatGPT. You can find the new tool in default_tools.py under the name helper_model_web_search.
+
+## [1.8.0] - 2025-04-20
+### Added
+- **Dual-Mode Reinforcement Learning Agent:**
+  - Implemented a versatile Q-Learning agent (`reinforcement_learning/qlearn_agent.py`) designed to learn optimal policies through experience.
+  - Supports two operational modes:
+    - **`simple` (Tabular Q-Learning):** Uses a traditional Q-table (dictionary) to store state-action values. Ideal for problems with small, discrete state spaces where direct value lookup is feasible.
+    - **`neural` (Deep Q-Network - DQN):** Employs a neural network to approximate Q-values. This approach overcomes the "curse of dimensionality" and enables learning in environments with large or continuous state spaces by generalizing from experienced states to unseen ones.
+  - Integrated with Redis and WebSockets to potentially allow for human feedback to refine the agent's policy, particularly for the DQN mode.
+- **Reinforcement Learning for RAG Selection (RL Meta RAG as default tool):**
+  - Introduced an RL-based system (`RlMetaRag`) that utilizes the Q-Learning agent to dynamically select the optimal RAG technique (LlamaIndex, HyDE, Adaptive RAG) based on query characteristics.
+  - Uses an LLM to extract features from the user query (e.g., type, domain, complexity, ambiguity) to inform the RL agent's state specifically for RAG selection.
+  - Includes a mechanism to switch between the learned RL policy and direct LLM suggestion based on the agent's recent performance (prediction error) when selecting a RAG technique.
+
+
 

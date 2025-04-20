@@ -1,4 +1,3 @@
-import os
 import logging
 import re
 from tools.rag.llama_index.retrieve import retrieve_documents

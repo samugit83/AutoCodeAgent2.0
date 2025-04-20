@@ -1,11 +1,18 @@
-
 ![AutoCode Agent Global Workflow](./static/images/autocode.png)  
 
-# AutoCodeAgent - An innovative AI agent powered by IntelliChain, Deep Search, and multi-RAG techniques
+# AutoCodeAgent - An innovative AI agent powered by IntelliChain, Deep Search, multi-RAG and Reinforcement Learning.
 ![version](https://img.shields.io/badge/version-1.7.0-blue)
 
-## One agent, Infinite possibilities
-AutoCodeAgent redefines AI-powered problem solving by seamlessly integrating three groundbreaking modes:
+## Learn by Doing: Bridging Theory and Practice
+This repository was primarily created as a learning tool. It allows you to explore and understand the core concepts behind advanced AI features like IntelliChain, Deep Search, and Multi-RAG through dedicated Jupyter Notebook files (`.ipynb`). These notebooks clearly explain the underlying theory. You can then see these very concepts applied directly within the working code of the AutoCodeAgent project. This approach is highly effective for learning because it bridges the gap between theoretical understanding and practical implementation, enabling you to see *how* and *why* things work in a real-world application context.
+
+### From the Creator
+I'm Samuele Giampieri, an AI Engineer captivated by the frontier of agentic AI. Why this repository? Because I believe the best way to truly grasp the power of technologies like IntelliChain, Deep Search, and Multi-RAG is to *build* with them. AutoCodeAgent is my personal deep dive—a place where I transform complex theory into tangible, working code.
+
+But this journey isn't just for me. I've crafted this project as an open resource, hoping it serves as both a practical guide and a source of inspiration for fellow developers navigating the exciting landscape of AI. My goal is to contribute something valuable back to the community that fuels my passion.
+
+I genuinely hope AutoCodeAgent proves useful in your own development adventures. Please feel free to connect—I'm always eager to discuss ideas, share insights, and learn alongside you!
+
 
 ### IntelliChain
 Break down complex tasks with surgical precision through dynamic task decomposition and on-demand code generation. IntelliChain meticulously plans and executes subtasks, ensuring every step of the process is both targeted and efficient.
@@ -17,7 +24,17 @@ Harness the power of autonomous, real-time web research to extract the most curr
 Enhance information retrieval through an innovative multi-RAG framework that includes many different RAG techniques. This multi-faceted approach delivers contextually rich, accurate, and coherent results, even when working with varied document types and complex knowledge structures. The incredible innovation is that these RAG techniques have been implemented as tools, so they can be used like any other tool in the project.
 You can also benefit from these techniques for educational purposes, as each one is conceptually well-explained in the .ipynb files located in the folders within /tools/rag.
 
-By fusing these three potent modes, AutoCodeAgent transforms intricate challenges into innovative, actionable solutions, setting a new standard in intelligent automation and advanced research.
+### Deep Q-Network (DQN) Learning from Experience
+For those interested in Reinforcement Learning, the project also includes an implementation of a QLearningAgent, detailed in [notebook](./reinforcement_learning/qlearn_agent.ipynb). This agent can operate in two modes:
+1.  **Simple Mode:** Uses a traditional Q-table, suitable for problems with small, discrete state spaces.
+2.  **Neural Mode (DQN):** Employs a Deep Q-Network (a neural network) to approximate Q-values. This approach overcomes the "curse of dimensionality" inherent in tabular methods, allowing the agent to handle large or continuous state spaces by learning a *function* that estimates Q-values. The DQN takes a numerical representation of the state as input and outputs estimated values for each possible action.
+
+The key advantage of DQN is its ability to **generalize**: it can estimate values for states it hasn't seen before based on similarity to experienced states. However, it requires careful state preprocessing (converting raw state information into numerical vectors) and can be more complex to train and tune compared to the simple tabular method. The notebook provides a thorough explanation of both modes, their trade-offs, and a practical example, serving as another valuable educational resource within this repository.
+
+To bridge theory and practice, we've implemented the DQN within a sophisticated system called RL Meta RAG (detailed in [notebook](./tools/rag/rl_meta_rag/rl_meta_rag.ipynb)). This system acts as an intelligent orchestrator, using the DQN agent to dynamically choose the most suitable RAG technique (like Llama Index, HyDE, Adaptive RAG and more...) for any given user query. The agent's 'state' is derived from features extracted from the query itself using an LLM, allowing it to learn an optimal selection policy over time. This practical application demonstrates how DQN can optimize complex decision-making processes, such as selecting the best information retrieval strategy based on experience.
+
+
+By fusing these potent fetaures, AutoCodeAgent transforms intricate challenges into innovative, actionable solutions, setting a new standard in intelligent automation and advanced research.
 
 [Application Setup](#application-setup)  
 Step-by-step guide to setting up the project for the first time. 
@@ -66,7 +83,7 @@ Integration of SurfAi as an Automated Web Navigation Tool (local function type)
 We have integrated SurfAi into our suite as a powerful automated web navigation tool. This enhancement enables seamless interaction with web pages, efficient extraction of data and images, and supports the resolution of more complex tasks through intelligent automation.
 
 [Computer use openAi integration](#computer-use-openai-integration)  
-We integrated a Computer-Using Agent (CUA) tool in Intellichain to automate computer interactions such as clicking, typing, and scrolling. The tool leverages OpenAI’s visual understanding and decision-making to navigate browsers or virtual machines, extract and analyze data and images. It provides real-time updates and screenshots via WebSocket, streamlining web navigation and data extraction tasks. This integration enhances workflow efficiency significantly.
+We integrated a Computer-Using Agent (CUA) tool in Intellichain to automate computer interactions such as clicking, typing, and scrolling. The tool leverages OpenAI's visual understanding and decision-making to navigate browsers or virtual machines, extract and analyze data and images. It provides real-time updates and screenshots via WebSocket, streamlining web navigation and data extraction tasks. This integration enhances workflow efficiency significantly.
 It operates similarly to Surf-ai but offers enhanced capabilities with a higher success rate for completing tasks.
 
 
@@ -183,6 +200,13 @@ docker-compose up -d
 docker builder prune -a -f 
 docker logs -f flask_app    
 ```  
+If your goal is to recover disk space completely, you might consider removing all stopped containers, unused images, and unused volumes.
+Be careful with these commands, as they will remove data that isn't currently in use.
+```bash
+docker system prune -a
+docker volume prune
+``` 
+
 Is a good idea to always check docker space usage after building and starting the application:
 ```bash
 docker system df  
@@ -296,7 +320,7 @@ Designed to integrate seamlessly with various Python libraries, allowing for fle
 Uses controlled namespaces and captures standard output to prevent unintended side effects.
 
 ### Python Function Validation & Task Regeneration:
-A function validator inspects each subtask’s code (via AST analysis) for syntax, dangerous constructs, parameter correctness, allowed libraries and other issues *before execution*. If validation or execution errors occur, the agent automatically regenerates the subtask to ensure successful task completion.
+A function validator inspects each subtask's code (via AST analysis) for syntax, dangerous constructs, parameter correctness, allowed libraries and other issues *before execution*. If validation or execution errors occur, the agent automatically regenerates the subtask to ensure successful task completion.
 
 ### RAG retrieval / ingestion
 - The agent now uses a vector database (ChromaDB) to store and retrieve information.
@@ -747,19 +771,19 @@ This demonstrates the flexibility and strength of LangChain's integration capabi
 # Deep Search
 
 ## Introduction to Deep Search
-Deep Search is the cornerstone of our agent’s advanced analytical capabilities. This mode enables the system to go beyond surface-level queries by combining real-time web data acquisition with local database integrations, such as the Llama Index. It leverages state-of-the-art data extraction techniques and contextual analysis to produce actionable, in-depth reports that transform raw data into operational intelligence.  
+Deep Search is the cornerstone of our agent's advanced analytical capabilities. This mode enables the system to go beyond surface-level queries by combining real-time web data acquisition with local database integrations, such as the Llama Index. It leverages state-of-the-art data extraction techniques and contextual analysis to produce actionable, in-depth reports that transform raw data into operational intelligence.  
 Deep Research accomplishes in minutes what would typically require hours of human effort. By providing a simple prompt, users can unleash an autonomous agent that searches, analyzes, and synthesizes information from hundreds of online sources, creating comprehensive reports at the caliber of a seasoned research analyst.
 Deep Search employs advanced reasoning to interpret massive volumes of text, images, and PDFs. This enables the system to dynamically pivot its search strategy based on newly discovered data, ensuring that every facet of a query is thoroughly explored. At its core, Deep Search integrates multiple sources of information through a robust agent chain that coordinates tasks using innovative methods like the Evolving Graph of Thought (EGOT). This system not only captures the relationships between data points in a dynamic graph but also continuously refines its search strategy by incorporating feedback from both automated processes and human oversight. The multi-agent planner orchestrates a series of subtasks—from web scraping and RAG-based document retrieval to comprehensive data synthesis—ensuring that the final report is coherent, detailed, and scientifically grounded.  
 In summary, Deep Search represents a significant leap toward the development of Artificial General Intelligence (AGI), with its ability to synthesize existing knowledge to create new insights. It empowers users by transforming the exhaustive process of online research into a streamlined, efficient, and reliable workflow, ultimately providing actionable intelligence that supports strategic decision-making.
 
 
 ## Multiagent collaborative chain
-The Multiagent Collaborative Chain is the backbone of our system’s approach to tackling complex research and problem-solving tasks. It orchestrates a group of autonomous AI agents, each responsible for a distinct subtask, that collaboratively work together to produce a comprehensive final output. In this section, we will explain in detail how the JSON chain is created, how each agent in the chain collaborates with one another, and the inner workings of the multiagent system as implemented in our DeepSearchAgentPlanner class.  
+The Multiagent Collaborative Chain is the backbone of our system's approach to tackling complex research and problem-solving tasks. It orchestrates a group of autonomous AI agents, each responsible for a distinct subtask, that collaboratively work together to produce a comprehensive final output. In this section, we will explain in detail how the JSON chain is created, how each agent in the chain collaborates with one another, and the inner workings of the multiagent system as implemented in our DeepSearchAgentPlanner class.  
 
 At its core, the multiagent collaborative chain divides a complex user prompt into smaller, manageable subtasks. Each subtask is assigned to a dedicated AI agent. These agents generate outputs based on a well-defined JSON chain that acts as a blueprint for the entire process. The JSON chain contains key attributes for each agent such as:  
 
 - agent_nickname: A unique identifier for the agent.  
-- agent_llm_prompt: The detailed prompt that guides the agent’s specific subtask.  
+- agent_llm_prompt: The detailed prompt that guides the agent's specific subtask.  
 - input_from_agents: An array listing the nicknames of other agents whose outputs are needed as inputs.
 - user_questions: A list of clarifying questions for the user to ensure that the generated output is accurate and contextually relevant.
 - external_search_query: (Optional) A specific query designed to fetch real-time or specialized information from external sources.
@@ -768,7 +792,7 @@ At its core, the multiagent collaborative chain divides a complex user prompt in
 This structure ensures that each agent works in a coordinated manner, with outputs from one agent feeding into another when necessary, culminating in a well-structured, aggregated final result.
 
 ### How the Collaborative System Works
-The multiagent collaborative chain is not a linear pipeline; it is a dynamic and interactive system where agents communicate, share information, and build upon each other’s work. Here’s a step-by-step explanation of how this collaboration unfolds:
+The multiagent collaborative chain is not a linear pipeline; it is a dynamic and interactive system where agents communicate, share information, and build upon each other's work. Here's a step-by-step explanation of how this collaboration unfolds:
 
 ### Initial Prompt and JSON Chain Generation:
 The process begins with a user prompt. The system uses the SYSTEM_PROMPT_AGENT_PLANNER to instruct the language model on how to decompose this prompt into a series of subtasks. The output is a JSON chain that clearly defines the roles and responsibilities of each agent.
@@ -777,10 +801,10 @@ The process begins with a user prompt. The system uses the SYSTEM_PROMPT_AGENT_P
 Each agent receives a unique prompt tailored to its task. For instance, one agent might focus on market analysis while another concentrates on operational planning. The key here is that the output of one agent can serve as a crucial input for another. This dependency is explicitly defined in the input_from_agents field.
 
 ### Incorporating External and Local Data:
-As agents execute their tasks, they may require additional context. The system dynamically fetches external data via web searches or local database queries (using the Llama Index) and incorporates this information into the agent’s prompt. This ensures that every agent operates with the most relevant and up-to-date data available.
+As agents execute their tasks, they may require additional context. The system dynamically fetches external data via web searches or local database queries (using the Llama Index) and incorporates this information into the agent's prompt. This ensures that every agent operates with the most relevant and up-to-date data available.
 
 ### Inter-Agent Communication via Observations:
-Each agent’s output is stored in the JSON chain under the observation attribute. Subsequent agents can access these observations, which serve as the foundational context for their own analysis. For example, if the Market Analysis agent produces a detailed report on competitor trends, the Marketing Strategy agent can leverage this output to develop targeted promotional plans.
+Each agent's output is stored in the JSON chain under the observation attribute. Subsequent agents can access these observations, which serve as the foundational context for their own analysis. For example, if the Market Analysis agent produces a detailed report on competitor trends, the Marketing Strategy agent can leverage this output to develop targeted promotional plans.
 
 ### Dynamic Graph of Thought (EGOT) Integration:
 The integration of the EGOT (Evolving Graph of Thought) framework represents a fundamental feature that allows the system to generate more articulate and intelligent responses. When an agent completes its subtask, its output is used to update an evolving graph that maps not only the logical connections between various concepts, but also deeper contextual relationships. This dynamic graph serves as a "working memory" for the system, allowing it to:
@@ -794,7 +818,7 @@ The integration of the EGOT (Evolving Graph of Thought) framework represents a f
 In this way, EGOT enables the model to process responses that go beyond simple information aggregation, producing deeper analyses and more articulate conclusions that reflect true understanding of the domain being examined.
 
 ### User Interaction and Feedback:
-Throughout the chain execution, the system may pause to collect additional input from the user. This “human in the loop” mechanism ensures that if any ambiguities arise or if additional clarifications are needed, the process can incorporate human feedback before proceeding further. This interactive element is vital for ensuring accuracy and contextual relevance in the final output.
+Throughout the chain execution, the system may pause to collect additional input from the user. This "human in the loop" mechanism ensures that if any ambiguities arise or if additional clarifications are needed, the process can incorporate human feedback before proceeding further. This interactive element is vital for ensuring accuracy and contextual relevance in the final output.
 
 Here you can find an example of the JSON chain in JSON format.
 With a user prompt example like this: 'I want to start an e-commerce business. Can you help me structure all aspects of the company, including operational, marketing, and growth strategies to break even within 1 year and achieve at least $1,000,000 in revenue within 2 years? I would also like a detailed plan with market analysis, expense forecasts, customer acquisition strategies, and cost optimization.'
@@ -1029,7 +1053,7 @@ The Deep Search mode is organized into five distinct layers that represent progr
 
 
 ## Human-in-the-Loop: Collaborative Inquiry and Feedback
-The Deep Search process incorporates a “human in the loop” approach to ensure that the final output is not only technically precise but also contextually relevant. This model introduces strategic human intervention at critical junctures to answer key questions, validate the collected information, and steer the search process towards specific objectives.
+The Deep Search process incorporates a "human in the loop" approach to ensure that the final output is not only technically precise but also contextually relevant. This model introduces strategic human intervention at critical junctures to answer key questions, validate the collected information, and steer the search process towards specific objectives.
 
 **Continuous Interaction:** Users are prompted to provide feedback and respond to targeted questions from the agent, allowing for ongoing refinement.
 **Data Validation:** Human oversight helps verify and confirm the extracted data, reducing errors and enhancing overall data quality.
@@ -1308,6 +1332,28 @@ Adaptive Retrieval-Augmented Generation (RAG) is an innovative system that tailo
 - *"Generate a comprehensive analysis of GPT 4.5's performance using the tool: `retrieve_adaptive_rag`."*
 
 By dynamically adjusting its retrieval methods based on the query's nature, Adaptive RAG overcomes the limitations of traditional one-size-fits-all approaches. Its robust framework—integrating query classification, adaptive strategies, and LLM-based ranking—ensures that each search returns results that are both contextually rich and precisely aligned with user intent.
+
+## RL Meta RAG (retrieval)
+Dive deep into this [notebook](./tools/rag/rl_meta_rag/rl_meta_rag.ipynb).  
+
+RL Meta RAG introduces a higher level of abstraction by employing Reinforcement Learning (specifically a QLearningAgent in neural mode) to dynamically select the most suitable underlying RAG technique (e.g., Llama Index, HyDE, Adaptive RAG) for a given user query. The goal is to learn an optimal policy over time that maximizes retrieval effectiveness based on query characteristics and feedback.
+
+**Key Features:**
+- **Dynamic RAG Selection:** Utilizes a Deep Q-Network (DQN) agent to choose the best RAG method based on learned Q-values for the current query's features.
+- **LLM-Powered Feature Extraction:** Leverages an LLM to analyze the input query and extract numerical features (e.g., query type, complexity, length) that form the state representation for the RL agent.
+- **Adaptive Strategy (RL vs. LLM Suggestion):** Monitors the RL agent's recent performance (average TD error). If the error is low, it trusts the agent's learned policy (epsilon-greedy selection). If the error is high or there's insufficient data, it falls back to an LLM-based suggestion for the RAG technique.
+- **Human-in-the-Loop Feedback:** Optionally stores the state, chosen action (RAG technique), and query in Redis. It can then request human evaluation via Socket.IO to provide a reward signal, allowing the Q-learning agent to be updated and improve its policy based on real user feedback.
+- **Real-time Reasoning Updates:** Uses Socket.IO to provide frontend visibility into the feature extraction, decision-making (RL vs. LLM), and RAG selection process.
+
+**Use Cases:**
+- Automatically optimizing RAG performance across diverse and unpredictable query types.
+- Building systems that continuously learn and adapt their retrieval strategy based on implicit or explicit user feedback.
+- Creating an intelligent orchestration layer that selects the best tool from a suite of RAG implementations.
+
+**Example Prompt:**
+- *"Using the `retrieve_rl_meta_rag` tool, find the latest advancements in quantum computing."* (The tool automatically selects the underlying RAG technique).
+
+This meta-approach allows the system to leverage the strengths of different RAG methods and adapt its strategy intelligently, moving towards a more robust and self-improving information retrieval system.
 
 
 With these RAG techniques, AutoCodeAgent 2.0 transforms the way you interact with data, making it easier than ever to store, retrieve, and analyze information. Whether you're working on simple tasks or tackling complex data challenges, these tools are here to empower your workflow and unlock new possibilities.

@@ -20,7 +20,7 @@ def ingest_texts(texts):
       dict: A status message.
     """
     db_dir = PARAMS["LLAMA_INDEX_DB_PATH"]
-    openai_api_key = PARAMS["OPENAI_API_KEY"]
+    openai_api_key = os.getenv("OPENAI_API_KEY")
     if not openai_api_key:
         raise ValueError("OPENAI_API_KEY not set in environment. Check your .env file.")
 
